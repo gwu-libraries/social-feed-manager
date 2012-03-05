@@ -1,0 +1,28 @@
+DEBUG = True
+
+ADMINS = (
+    ('Your Name', 'your.address@example.com'),
+)
+
+MANAGERS = ADMINS
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'sfm',                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
+
+TEMPLATE_DIRS = (
+)
+
+GNIP_USER = 'YOUR_USERNAME'
+GNIP_PASSWORD = 'YOUR_PASSWORD'
+
+GNIP_TWITTER_NOTICES_STREAM_URL = ''
+GNIP_TWITTER_NOTICES_POLL_URL = ''
+GNIP_TWITTER_NOTICES_RULES_URL = ''
