@@ -143,6 +143,8 @@ LOGGING = {
     }
 }
 
+# A directory in which to store streams using "pullstream"
+DATA_DIR = 'data'
 
 # Be sure to create your own 'local_settings.py' file as described in README
 try:

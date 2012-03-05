@@ -18,17 +18,17 @@ class Command(BaseCommand):
                 tag = rule.get('tag', None)
                 value = rule.get('value', '')
                 if tag:
-                    print 'value: %s (tag %s)' % (value, tag)
+                    print '%s (tag %s)' % (value, tag)
                     try:
                         tags[tag].append(value)
                     except:
                         tags[tag] = [value]
                 else:
-                    print 'value: %s' % value
+                    print '%s' % value
             if tags:
                 print '\n\nTags:'
                 for tag in sorted(tags.keys()):
-                    print 'tag: %s, values: %s' % (tag, tags[tag])
+                    print '"%s": %s' % (tag, ', '.join(sorted(tags[tag])))
             else:
                 print '\nNo tags.'
         except:

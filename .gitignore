@@ -3,4 +3,5 @@
 ENV
 local_settings.py
 *.swp
+data
 
