@@ -58,7 +58,7 @@ usage
 * delete rules
 
     % ./manage.py rulesdelete foo baz
-    % ./manage.py rulesadd --tag election2008 biden palin
+    % ./manage.py rulesdelete --tag election2008 biden palin
 
 * watch the stream
 
