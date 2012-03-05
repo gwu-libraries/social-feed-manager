@@ -1,6 +1,7 @@
 import gzip 
 from optparse import make_option
 import os
+import shutil
 from StringIO import StringIO
 import time
 
@@ -34,9 +35,19 @@ class Command(BaseCommand):
         for unprocessed_file in unprocessed_files:
             print 'processing:', unprocessed_file
             filename = '%s/%s' % (options['dir'], unprocessed_file)
-            self._process_file(filename)
+            try:
+                self._process_file(filename)
+            except IOError:
+                print '*******'
+                print 'IOError:', filename
+                print '*******'
+                continue
             if options.get('move', False):
                 print 'moving file aside'
+                target_filename = '%s/processed/%s' % (options['dir'],
+                    unprocessed_file)
+                print 'shutil.move("%s", "%s")' % (filename, target_filename)
+                shutil.move(filename, target_filename)
 
     def _process_file(self, filename):
         fp = gzip.open(filename, 'rb')
@@ -71,18 +82,20 @@ class Command(BaseCommand):
         # urls long/short
         # matching rule source/inferred tag / value
         e_rule = r.find('//{%s}matching_rule[@rel="source"]' % NS['gnip'])
-        rule = {'rel': e_rule.attrib['rel'],
+        rule = {
+            'rel': e_rule.attrib['rel'],
             'tag': e_rule.attrib['tag'],
-            'value': e_rule.text,}
+            'value': e_rule.text,
+            }
         status, created = Status.objects.get_or_create(
             user_id=author_link, date_published=date_published,
             avatar_url=author_avatar, status_id=status_link,
             summary=summary, content=content,
             rule_tag=rule['tag'], rule_match=rule['value'])
         if created:
-            print 'saved status:', status_link
+            print 'saved:', status_link
         else:
-            print 'skip status:', status_link
+            print 'skip:', status_link
 
 
 # NOTE: json url pattern for a single tweet is:
