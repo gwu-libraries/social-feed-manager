@@ -145,6 +145,8 @@ LOGGING = {
 
 # A directory in which to store streams using "pullstream"
 DATA_DIR = 'data'
+# How often to save polled data to the DATA_DIR
+SAVE_INTERVAL_SECONDS = 60 * 5 # 5 minutes
 
 # Be sure to create your own 'local_settings.py' file as described in README
 try:
