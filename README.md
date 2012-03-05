@@ -11,12 +11,13 @@ See also LICENSE.txt.
 installation
 ------------
 
-* developed using python 2.7 and postgresql-9.1 on osx for deployment
-  on ubuntu lts; ymmv.
+Developed using python 2.7 and postgresql-9.1 on osx for deployment
+on ubuntu lts; your mileage may vary.
 
 * get this code:
 
-    % git clone http://github.com/gwu-libraries/ADDME
+    % git clone git://github.com/gwu-libraries/social-feed-manager.git
+    % cd social-feed-manager
 
 * create and activate a virtualenv:
   

@@ -1,4 +1,6 @@
 django
-psycopg2
 lxml
+psycopg2
 requests
+simplejson
+south
