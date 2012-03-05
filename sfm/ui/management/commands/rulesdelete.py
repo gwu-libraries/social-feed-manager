@@ -6,10 +6,9 @@ from django.utils import simplejson as json
 
 import requests
 
-
 class Command(BaseCommand):
     args = '<rule1 rule2 ...>'
-    help = 'Add one or more rules'
+    help = 'Delete one or more rules'
     option_list = BaseCommand.option_list + (
         make_option('--tag', action='store', type='string',
             dest='tag', default=''),
@@ -22,10 +21,10 @@ class Command(BaseCommand):
             if options.get('tag', None):
                 rule['tag'] = options['tag']
             data['rules'].append(rule)
-        print 'going to post:'
+        print 'going to delete:'
         print json.dumps(data)
         headers = {'content-type': 'application/json'}
-        resp = requests.post(settings.GNIP_TWITTER_NOTICES_RULES_URL,
+        resp = requests.delete(settings.GNIP_TWITTER_NOTICES_RULES_URL,
             auth=(settings.GNIP_USER, settings.GNIP_PASSWORD),
             headers=headers,
             data=json.dumps(data))
