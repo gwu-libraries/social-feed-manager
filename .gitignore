@@ -3,5 +3,6 @@
 ENV
 local_settings.py
 *.swp
+*.swo
 data
 

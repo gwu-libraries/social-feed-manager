@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>hi.</h1>
+
+<p>
+see <a href="{% url status_list page=1 %}">statuses</a>. currently
+there are {{ statuses.count }} total.
+</p>
+
+{% endblock %}

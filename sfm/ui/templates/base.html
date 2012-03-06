@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        <title>sfm: {{ title }}</title>
+        {% block stylesheet %}
+        {% endblock stylesheet %}
+        {% block stylesheet_extra %}
+        {% endblock stylesheet_extra %}
+        {% block javascript %}
+        {% endblock javascript %}
+        {% block javascript_extra %}
+        {% endblock javascript_extra %}
+    </head>
+
+    <body>
+        {% block header %}
+            <a href="{% url home %}">home</a> -
+            {% if user.is_authenticated %}
+                logged in as <a href="#">{{ user.username }}</a>
+                -
+                <a href="#% url logout %}">log out</a>
+            {% else %}
+                <a href="#% url login %}">log in</a>
+            {% endif %}
+        {% endblock header %}
+
+        <div id="main">
+            <div class="container-fluid">
+                <div class="content">
+                {% block content %}
+
+                {% endblock content %}
+                </div>
+
+                {% block footer %}
+                {% endblock footer %}
+            </div>
+        </div>
+    </body>
+</html>

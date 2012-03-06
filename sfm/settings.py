@@ -117,7 +117,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'south',
-    'ui',
+    'sfm.ui',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
