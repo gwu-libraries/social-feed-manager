@@ -7,7 +7,7 @@ RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
 
 class Status(m.Model):
     user_id = m.URLField(verify_exists=False)
-    date_published = m.DateTimeField()
+    date_published = m.DateTimeField(db_index=True)
     avatar_url = m.TextField()
     status_id = m.URLField(verify_exists=False)
     summary = m.TextField()
@@ -19,7 +19,7 @@ class Status(m.Model):
         return self.status_id
 
     class Meta:
-        ordering = ['date_published']
+        ordering = ['-date_published']
         verbose_name_plural = 'statuses'
 
     @property
