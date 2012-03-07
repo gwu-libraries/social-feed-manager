@@ -3,15 +3,19 @@
 {% block content %}
 
 <div class='page-header'>
+    {% if user %}
+    <h1>hi {{ user.username }}.</h1>
+    {% else %}
     <h1>hi.</h1>
+    {% endif %}
 </div>
 
 <div class='row'>
     <div class='span-2'>
         <h2>overall status</h2>
         <p>
-        see <a href="{% url status_list page=1 %}">statuses</a>. currently
-        there are {{ statuses.count }} total.
+        see <a href="{% url status_list page=1 %}">all statuses</a>. 
+        currently there are {{ statuses.count }} total.
         </p>
     </div>
     <div class='span-6'>
@@ -29,7 +33,7 @@
             <tbody>
                 {% for rule in rules %}
                 <tr>
-                    <td>{{ rule.rule_match }}</td>
+                    <td><a href="{% url rule rule=rule.rule_match page=1 %}">{{ rule.rule_match }}</a></td>
                     <td>{{ rule.rule_match__count }}</td>
                 </tr>
                 {% endfor %}

@@ -3,7 +3,8 @@ from django.contrib import admin
 from django.views.generic import list_detail
 from django.views.generic import TemplateView
 
-from sfm.ui.models import Status
+from ui.models import Status
+from ui.views import StatusRuleListView
 
 admin.autodiscover()
 
@@ -25,4 +26,9 @@ urlpatterns += patterns('ui.views',
     url(r'^search/$', 'search', name='search'),
     url(r'^status/page/(?P<page>[0-9]+)/$', list_detail.object_list, 
         status_info, name='status_list'),
+)
+
+urlpatterns += patterns('',
+    url(r'^rule/(?P<rule>#?[a-zA-Z0-9_]+)/(?P<page>[0-9]+)/$', 
+        StatusRuleListView.as_view(), name='rule'), 
 )

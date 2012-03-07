@@ -15,7 +15,7 @@
             <tr>
                 <td><a href="{{ status.status_id }}">{{ status.id }}</a></td> 
                 <td>{{ status.rule_tag }}</td>
-                <td>{{ status.rule_match }}</td>
+                <td><a href="{% url rule rule=status.rule_match page=1 %}">{{ status.rule_match }}</a></td>
                 <td>{{ status.date_published|date:"Y-m-d H:i:s" }}</td>
                 <td><a href="{{ status.user_id }}">{{ status.user_name }}</a></td>
                 <td>{{ status.summary|urlize }}</td>
