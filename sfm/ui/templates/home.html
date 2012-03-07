@@ -2,11 +2,60 @@
 
 {% block content %}
 
-<h1>hi.</h1>
+<div class='page-header'>
+    <h1>hi.</h1>
+</div>
 
-<p>
-see <a href="{% url status_list page=1 %}">statuses</a>. currently
-there are {{ statuses.count }} total.
-</p>
+<div class='row'>
+    <div class='span-2'>
+        <h2>overall status</h2>
+        <p>
+        see <a href="{% url status_list page=1 %}">statuses</a>. currently
+        there are {{ statuses.count }} total.
+        </p>
+    </div>
+    <div class='span-6'>
+        <h2>rules</h2>
+        <p>
+        Rules that have been matched by active or past queries.
+        </p>
+        <table class='table'>
+            <thead>
+                <tr>
+                    <th>rule</th>
+                    <th>count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rule in rules %}
+                <tr>
+                    <td>{{ rule.rule_match }}</td>
+                    <td>{{ rule.rule_match__count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class='span-6'>
+        <h2>tags</h2>
+        <p>
+        Tags, or sets of rules, for which we have data.
+        </p>
+        <table class='table'>
+            <thead>
+                <th>tag</th>
+                <th>count</th>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                <tr>
+                    <td>{{ tag.rule_tag }}</td>
+                    <td>{{ tag.rule_tag__count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 {% endblock %}
