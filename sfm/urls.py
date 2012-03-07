@@ -22,6 +22,7 @@ urlpatterns += patterns('ui.views',
     url(r'^$', 'home', name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'),
         name='about'),
+    url(r'^search/$', 'search', name='search'),
     url(r'^status/page/(?P<page>[0-9]+)/$', list_detail.object_list, 
         status_info, name='status_list'),
 )

@@ -31,7 +31,7 @@
                             <li {% if '/status/page/' in request.path %} class='active'{% endif %}><a href="{% url status_list page=1 %}">status</a></li>
                             <li {% if '/about/' == request.path %} class='active'{% endif %}><a href="{% url about %}">about</a></li>
                         </ul>
-                        <form method="get" action="#" class="navbar-search ">
+                        <form method="get" action="{% url search %}" class="navbar-search ">
                             <input type="text" name="q" class="search-query" placeholder="search" />
                         </form>
                         <p class="navbar-text pull-right">

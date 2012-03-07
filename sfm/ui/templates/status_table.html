@@ -18,7 +18,7 @@
                 <td>{{ status.rule_match }}</td>
                 <td>{{ status.date_published|date:"Y-m-d H:i:s" }}</td>
                 <td><a href="{{ status.user_id }}">{{ status.user_name }}</a></td>
-                <td>{{ status.summary }}</td>
+                <td>{{ status.summary|urlize }}</td>
                 <td><a href="{{ status.status_id }}">{{ status.tweet_id }}</a></td>
             </tr>
             {% endfor %}
