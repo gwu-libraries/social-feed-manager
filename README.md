@@ -72,3 +72,7 @@ usage
 * process saved files into the db
 
         % ./manage.py processfeed
+
+* run the UI to browse saved data or use the admin
+
+        % ./manage.py runserver
