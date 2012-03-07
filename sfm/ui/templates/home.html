@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block content %}
 
@@ -15,7 +16,7 @@
         <h2>overall status</h2>
         <p>
         see <a href="{% url status_list page=1 %}">all statuses</a>. 
-        currently there are {{ statuses.count }} total.
+        currently there are {{ statuses.count|intcomma }} total.
         </p>
     </div>
     <div class='span-6'>
@@ -34,7 +35,7 @@
                 {% for rule in rules %}
                 <tr>
                     <td><a href="{% url rule rule=rule.rule_match page=1 %}">{{ rule.rule_match }}</a></td>
-                    <td>{{ rule.rule_match__count }}</td>
+                    <td>{{ rule.rule_match__count|intcomma }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -54,7 +55,7 @@
                 {% for tag in tags %}
                 <tr>
                     <td>{{ tag.rule_tag }}</td>
-                    <td>{{ tag.rule_tag__count }}</td>
+                    <td>{{ tag.rule_tag__count|intcomma }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
