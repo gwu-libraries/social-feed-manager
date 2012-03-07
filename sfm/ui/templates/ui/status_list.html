@@ -4,27 +4,10 @@
 
     <h1>Statuses</h1>
     
-    {% if page_obj %}
-        <p>
-        {% if page_obj.has_previous %}
-            <a href="{% url status_list page=page_obj.previous_page_number %}">prev</a>
-        {% endif %}
-        - {{ page_obj.number }} -
-        {% if page_obj.has_next %}
-            <a href="{% url status_list page=page_obj.next_page_number %}">next</a>
-        {% endif %}
-        </p>
-    {% endif %}
+    {% include "pagination.html" %}
 
-    <ul>
-        {% for status in object_list %}
-        <li>
-            <a href="{{ status.status_id }}">{{ status.status_id }}</a> <br />
-            <p>
-            {{ status.summary }}
-            </p>
-        </li>
-        {% endfor %}
-    </ul>
+    {% include "status_table.html" %}
+
+    {% include "pagination.html" %}
 
 {% endblock content %}

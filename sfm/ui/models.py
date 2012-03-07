@@ -2,7 +2,8 @@ import re
 
 from django.db import models as m
 
-RE_ID = re.compile(r'.*statuses/([0-9]+)$')
+RE_TWEET_ID = re.compile(r'.*statuses/([0-9]+)$')
+RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
 
 class Status(m.Model):
     user_id = m.URLField(verify_exists=False)
@@ -24,8 +25,15 @@ class Status(m.Model):
     @property
     def tweet_id(self):
         try:
-            m = RE_ID.match(self.status_id)
+            m = RE_TWEET_ID.match(self.status_id)
             return m.groups()[0]
         except:
             return 0
 
+    @property
+    def user_name(self):
+        try:
+            m = RE_USER_NAME.match(self.user_id)
+            return m.groups()[0]
+        except:
+            return None

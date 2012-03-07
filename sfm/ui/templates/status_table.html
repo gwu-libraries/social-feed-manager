@@ -1,0 +1,27 @@
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>tag</th>
+                <th>match</th>
+                <th>date</th>
+                <th>user</th>
+                <th width="40%">text</th>
+                <th>twitter</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for status in object_list %}
+            <tr>
+                <td><a href="{{ status.status_id }}">{{ status.id }}</a></td> 
+                <td>{{ status.rule_tag }}</td>
+                <td>{{ status.rule_match }}</td>
+                <td>{{ status.date_published|date:"Y-m-d H:i:s" }}</td>
+                <td><a href="{{ status.user_id }}">{{ status.user_name }}</a></td>
+                <td>{{ status.summary }}</td>
+                <td><a href="{{ status.status_id }}">{{ status.tweet_id }}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+

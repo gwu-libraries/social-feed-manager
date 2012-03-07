@@ -1,8 +1,16 @@
 <!doctype html>
 <html>
     <head>
+        <meta charset="utf-8">
         <title>sfm: {{ title }}</title>
         {% block stylesheet %}
+        <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <style>
+            body {
+                padding-top: 60px;
+            }
+        </style>
+        <link href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
         {% endblock stylesheet %}
         {% block stylesheet_extra %}
         {% endblock stylesheet_extra %}
@@ -14,27 +22,38 @@
 
     <body>
         {% block header %}
-            <a href="{% url home %}">home</a> -
-            {% if user.is_authenticated %}
-                logged in as <a href="#">{{ user.username }}</a>
-                -
-                <a href="#% url logout %}">log out</a>
-            {% else %}
-                <a href="#% url login %}">log in</a>
-            {% endif %}
-        {% endblock header %}
-
-        <div id="main">
-            <div class="container-fluid">
-                <div class="content">
-                {% block content %}
-
-                {% endblock content %}
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="{% url home %}">gwu libraries - social feed manager</a>
+                    <div class="nav-collapse">
+                        <ul class="nav">
+                            <li class="active"><a href="{% url status_list page=1 %}">status</a></li>
+                            <li><a href="#about">about</a></li>
+                        </ul>
+                        <form method="get" action="#" class="navbar-search ">
+                            <input type="text" name="q" class="search-query" placeholder="search" />
+                        </form>
+                        <p class="navbar-text pull-right">
+                            {% if user.is_authenticated %}
+                            logged in as {{ user.username }}
+                            - <a href="/admin/">admin</a>
+                            - <a href="#% url logout %}">log out</a>
+                            {% else %}
+                            <a href="#% url login %}">log in</a>
+                            {% endif %}
+                        </p>
+                    </div>
                 </div>
-
-                {% block footer %}
-                {% endblock footer %}
             </div>
         </div>
+        {% endblock header %}
+
+        <div class="container">
+            {% block content %}
+
+            {% endblock content %}
+        </div>
+
     </body>
 </html>
