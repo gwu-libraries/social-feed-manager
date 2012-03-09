@@ -31,6 +31,10 @@ class Status(m.Model):
             return 0
 
     @property
+    def tweet_json_url(self):
+        return 'http://api.twitter.com/1/statuses/show/%s.json' % self.tweet_id 
+
+    @property
     def user_name(self):
         try:
             m = RE_USER_NAME.match(self.user_id)
