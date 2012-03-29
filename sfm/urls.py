@@ -26,6 +26,8 @@ urlpatterns += patterns('ui.views',
     url(r'^search/$', 'search', name='search'),
     url(r'^status/page/(?P<page>[0-9]+)/$', list_detail.object_list, 
         status_info, name='status_list'),
+    url(r'^trends/weekly/$', 'trends_weekly', name='trends_weekly'),
+    url(r'^trends/daily/$', 'trends_daily', name='trends_daily'),
 )
 
 urlpatterns += patterns('',

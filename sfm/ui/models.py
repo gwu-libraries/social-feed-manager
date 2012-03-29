@@ -5,6 +5,39 @@ from django.db import models as m
 RE_TWEET_ID = re.compile(r'.*statuses/([0-9]+)$')
 RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
 
+
+class TrendWeekly(m.Model):
+    date = m.DateField(db_index=True)
+    events = m.TextField(blank=True)
+    name = m.TextField(db_index=True)
+    promoted_content = m.TextField(blank=True)
+    query = m.TextField()
+    sequence_num = m.SmallIntegerField(default=1)
+
+    def __unicode__(self):
+        return '%s - %s (%s)' % (self.name, self.date, self.sequence_num)
+
+    class Meta:
+        ordering = ['-date', 'sequence_num']
+        verbose_name_plural = 'trendsweekly'
+
+
+class TrendDaily(m.Model):
+    date = m.DateTimeField(db_index=True)
+    events = m.TextField(blank=True)
+    name = m.TextField(db_index=True)
+    promoted_content = m.TextField(blank=True)
+    query = m.TextField()
+    sequence_num = m.SmallIntegerField(default=1)
+
+    def __unicode__(self):
+        return '%s - %s (%s)' % (self.name, self.date, self.sequence_num)
+
+    class Meta:
+        ordering = ['-date', 'sequence_num']
+        verbose_name_plural = 'trendsdaily'
+
+
 class Status(m.Model):
     user_id = m.URLField(verify_exists=False)
     date_published = m.DateTimeField(db_index=True)
@@ -41,3 +74,5 @@ class Status(m.Model):
             return m.groups()[0]
         except:
             return None
+
+

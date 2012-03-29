@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class='page-header'>
+        <h1>weekly trends</h1>
+    </div>
+
+    {% if trends.count > 0 %}
+    <div class='span8'>
+        {% regroup trends by date as date_list %}
+        <table class='table'>
+            <thead>
+                <tr>
+                    <th width='25%'>date</th>
+                    <th>trend</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for date in date_list %}
+                <tr>
+                    <td>{{ date.grouper }}</td>
+                    <td>
+                        {% for trend in date.list %}
+                            <a href='http://twitter.com/#!/search/{{ trend.query }}'>{{ trend.name }}</a><br />
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>
+            Sorry, I couldn't find anything that matches that for you.
+        </p>
+    {% endif %}
+
+{% endblock content %}

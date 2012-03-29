@@ -18,6 +18,12 @@
         see <a href="{% url status_list page=1 %}">all statuses</a>. 
         currently there are {{ statuses.count|intcomma }} total.
         </p>
+
+        <h2>trends</h2>
+        <p>
+        see <a href='{% url trends_daily %}'>daily</a> or 
+        <a href='{% url trends_weekly %}'>weekly</a> trends.
+        </p>
     </div>
     <div class='span-6'>
         <h2>rules</h2>

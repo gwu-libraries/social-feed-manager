@@ -4,7 +4,7 @@ from django.db.models import Count
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 
-from ui.models import Status
+from ui.models import Status, TrendWeekly, TrendDaily
 
 def home(request):
     rules = Status.objects.values('rule_match').annotate(Count('rule_match')).order_by('-rule_match__count')
@@ -63,3 +63,14 @@ class StatusRuleListView(ListView):
         context['object_list'] = results.object_list
         return context
 
+def trends_weekly(request):
+    trends = TrendWeekly.objects.all()  
+    return render(request, 'trends_weekly.html', {
+        'trends': trends,
+        })
+
+def trends_daily(request):
+    trends = TrendDaily.objects.all()  
+    return render(request, 'trends_daily.html', {
+        'trends': trends,
+        })
