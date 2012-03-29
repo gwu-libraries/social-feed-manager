@@ -61,6 +61,11 @@ usage
         % ./manage.py rulesdelete foo baz
         % ./manage.py rulesdelete --tag election2008 biden palin
 
+* fetch daily or weekly trends
+
+        % ./manage.py trendsdaily
+        % ./manage.py trendsweekly
+
 * watch the stream
 
         % ./manage.py streamfeed
