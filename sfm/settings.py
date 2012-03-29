@@ -156,6 +156,9 @@ DATA_DIR = 'data'
 # How often to save polled data to the DATA_DIR
 SAVE_INTERVAL_SECONDS = 60 * 5 # 5 minutes
 
+# Location of twitter's free "spritzer" or sample stream
+TWITTER_SAMPLE_URL = 'https://stream.twitter.com/1/statuses/sample.json'
+
 # Be sure to create your own 'local_settings.py' file as described in README
 try:
     from local_settings import *
