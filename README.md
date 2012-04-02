@@ -24,6 +24,9 @@ on ubuntu lts; your mileage may vary.
         % virtualenv --no-site-packages ENV
         % source ENV/bin/activate
     
+* install ubuntu package dependencies:
+        
+        % sudo apt-get install python-dev libxml2-dev libxslt1-dev libpq-dev
 
 * install requirements
 
