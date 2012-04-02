@@ -26,19 +26,26 @@ on ubuntu lts; your mileage may vary.
     
 * install ubuntu package dependencies:
         
-        % sudo apt-get install python-dev libxml2-dev libxslt1-dev libpq-dev
+        % sudo apt-get install python-dev postgresql libxml2-dev libxslt1-dev libpq-dev
+
+* prep postgres (change name/pass/permissions/pg_hba.conf as appropriate):
+    
+        % sudo su - postgres
+        (postgres)% psql
+        postgres=# create user sfmuser with createdb password 'sfmpass';
+        CREATE ROLE
+        postgres=# \q
+        (postgres)% exit
+        % createdb -U sfmuser sfm -W
+        Password: <'sfmpass'>
 
 * install requirements
 
         % pip install -r requirements.txt
 
-* add and edit local_settings.py
+* add and edit local_settings.py; include db settings as appropriate
 
         % cp sfm/local_settings.py.template sfm/local_settings.py
-
-* create local database as you specified in local_settings.py
-
-        % createdb yourdbname
 
 * set up the db from django
 

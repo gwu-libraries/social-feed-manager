@@ -121,7 +121,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'south',
-    'sfm.ui',
+    'ui',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -166,7 +166,7 @@ WSGI_APPLICATION = 'sfm.wsgi.application'
 # A directory in which to store streams using "pullstream"
 DATA_DIR = 'data'
 # How often to save polled data to the DATA_DIR
-SAVE_INTERVAL_SECONDS = 60 * 5 # 5 minutes
+SAVE_INTERVAL_SECONDS = 60 * 15 # 5 minutes
 
 # Location of twitter's free "spritzer" or sample stream
 TWITTER_SAMPLE_URL = 'https://stream.twitter.com/1/statuses/sample.json'
