@@ -53,7 +53,9 @@ on ubuntu lts; your mileage may vary.
 
         % syncdb
 
-* to plug in to 
+* to plug in to apache, use sfm/apache.conf and adjust in an 
+  /etc/apache/sites-available file as appropriate
+
 * start a feed in Gnip's console
 
 
