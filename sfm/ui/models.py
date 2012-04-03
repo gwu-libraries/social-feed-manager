@@ -12,13 +12,12 @@ class TrendWeekly(m.Model):
     name = m.TextField(db_index=True)
     promoted_content = m.TextField(blank=True)
     query = m.TextField()
-    sequence_num = m.SmallIntegerField(default=1)
 
     def __unicode__(self):
-        return '%s - %s (%s)' % (self.name, self.date, self.sequence_num)
+        return '%s - %s (%s)' % (self.name, self.date, self.id)
 
     class Meta:
-        ordering = ['-date', 'sequence_num']
+        ordering = ['-date', 'name']
         verbose_name_plural = 'trendsweekly'
 
 
@@ -28,13 +27,12 @@ class TrendDaily(m.Model):
     name = m.TextField(db_index=True)
     promoted_content = m.TextField(blank=True)
     query = m.TextField()
-    sequence_num = m.SmallIntegerField(default=1)
 
     def __unicode__(self):
-        return '%s - %s (%s)' % (self.name, self.date, self.sequence_num)
+        return '%s - %s (%s)' % (self.name, self.date, self.id)
 
     class Meta:
-        ordering = ['-date', 'sequence_num']
+        ordering = ['-date', 'name']
         verbose_name_plural = 'trendsdaily'
 
 
