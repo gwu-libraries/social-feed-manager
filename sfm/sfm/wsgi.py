@@ -13,6 +13,10 @@ middleware here, or combine a Django application with an application of another
 framework.
 
 """
+# if using a virtualenv, set this appropriately
+import site
+site.addsitedir('/home/dchud/projects/social-feed-manager/ENV/lib/python2.6/site-packages')
+
 import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sfm.settings")

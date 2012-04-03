@@ -160,9 +160,6 @@ LOGGING = {
     }
 }
 
-# 'manage.py runserver' should use the same wsgi config as apache
-WSGI_APPLICATION = 'sfm.wsgi.application'
-
 # A directory in which to store streams using "pullstream"
 DATA_DIR = 'data'
 # How often to save polled data to the DATA_DIR

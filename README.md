@@ -26,7 +26,7 @@ on ubuntu lts; your mileage may vary.
     
 * install ubuntu package dependencies:
         
-        % sudo apt-get install python-dev postgresql libxml2-dev libxslt1-dev libpq-dev
+        % sudo apt-get install apache2 python-dev postgresql libxml2-dev libxslt1-dev libpq-dev libapache2-mod-wsgi
 
 * prep postgres (change name/pass/permissions/pg_hba.conf as appropriate):
     
@@ -47,10 +47,13 @@ on ubuntu lts; your mileage may vary.
 
         % cp sfm/local_settings.py.template sfm/local_settings.py
 
+* specify the location of your virtualenv's site-packages in sfm/wsgi.py
+
 * set up the db from django
 
         % syncdb
 
+* to plug in to 
 * start a feed in Gnip's console
 
 
