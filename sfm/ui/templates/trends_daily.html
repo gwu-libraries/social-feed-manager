@@ -22,7 +22,7 @@
                     <td>{{ date.grouper }}</td>
                     <td>
                         {% for trend in date.list %}
-                            <a href='http://twitter.com/#!/search/{{ trend.query }}'>{{ trend.name }}</a><br />
+                            <a href='http://twitter.com/#!/search/{{ trend.query|urlencode }}'>{{ trend.name }}</a><br />
                         {% endfor %}
                     </td>
                 </tr>
