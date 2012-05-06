@@ -41,9 +41,9 @@
                             {% if user.is_staff %}
                             - <a href="/admin/">admin</a>
                             {% endif %}
-                            - <a href="#% url logout %}">log out</a>
+                            - <a href="{% url logout %}">log out</a>
                             {% else %}
-                            <a href="#% url login %}">log in</a>
+                            <a href="{% url login %}">log in</a>
                             {% endif %}
                         </p>
                     </div>

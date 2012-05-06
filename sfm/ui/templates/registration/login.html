@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="page-header">
+    <h1>hi there.</h1>
+</div>
+
+<div class="row">
+    <div class="span4">
+
+        {% if form.errors %}
+        <p>Your username and password didn't match.  Please try again.</p>
+        {% endif %}
+
+        <form class='well form-inline' method='post' action'.'>
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>{{ form.username.label_tag }}</td>
+                    <td>{{ form.username }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.password.label_tag }}</td>
+                    <td>{{ form.password }}</td>
+                </tr>
+            </table>
+
+            <input type='submit' value='login' />
+            <input type='hidden' name='next' value='{{ next }}' />
+        </form>
+    </div>
+</div>
+
+{% endblock %}

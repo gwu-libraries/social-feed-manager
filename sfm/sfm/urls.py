@@ -9,9 +9,9 @@ from ui.views import StatusRuleListView
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
 )
 
 status_info = {
@@ -21,6 +21,7 @@ status_info = {
 
 urlpatterns += patterns('ui.views',
     url(r'^$', 'home', name='home'),
+    url(r'^logout/$', 'logout', name='logout'),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'),
         name='about'),
     url(r'^search/$', 'search', name='search'),

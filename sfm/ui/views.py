@@ -1,3 +1,4 @@
+from django.contrib import auth
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
 from django.db.models import Count
@@ -74,3 +75,7 @@ def trends_daily(request):
     return render(request, 'trends_daily.html', {
         'trends': trends,
         })
+
+def logout(request):
+    auth.logout(request)
+    return redirect(reverse('home'))

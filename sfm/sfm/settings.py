@@ -1,4 +1,6 @@
-# Django settings for sfm project.
+from os.path import dirname, abspath
+
+from django.core.urlresolvers import reverse_lazy
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -59,7 +61,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = dirname(dirname(abspath(__file__))) + '/static'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -160,13 +162,24 @@ LOGGING = {
     }
 }
 
+# BEGIN django-standard settings with not-default values
+LOGIN_URL = reverse_lazy('login')
+LOGIN_REDIRECT_URL = reverse_lazy('home')
+LOGOUT_REDIRECT_URL = reverse_lazy('home')
+
+
+# BEGIN non-django-standard settings specific to sfm
+
 # A directory in which to store streams using "pullstream"
 DATA_DIR = 'data'
+
 # How often to save polled data to the DATA_DIR
-SAVE_INTERVAL_SECONDS = 60 * 15 # 5 minutes
+SAVE_INTERVAL_SECONDS = 60 * 15 # 15 minutes
 
 # Location of twitter's free "spritzer" or sample stream
 TWITTER_SAMPLE_URL = 'https://stream.twitter.com/1/statuses/sample.json'
+TWITTER_USERNAME = ''
+TWITTER_PASSWORD = ''
 
 # Be sure to create your own 'local_settings.py' file as described in README
 try:
