@@ -15,7 +15,8 @@ framework.
 """
 # if using a virtualenv, set this appropriately
 import site
-site.addsitedir('/home/dchud/projects/social-feed-manager/ENV/lib/python2.6/site-packages')
+ENV = '/PATH/TO/YOUR/VIRTUALENV'
+site.addsitedir(ENV + '/lib/python2.6/site-packages')
 
 import os
 

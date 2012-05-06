@@ -47,7 +47,9 @@ on ubuntu lts; your mileage may vary.
 
         % cp sfm/local_settings.py.template sfm/local_settings.py
 
-* specify the location of your virtualenv's site-packages in sfm/wsgi.py
+* add and edit wsgi.py; specify your virtualenv root as ENV if you use one
+
+        % cp sfm/wsgi.py.template sfm/wsgi.py
 
 * set up the db from django
 

@@ -2,6 +2,7 @@
 *.log
 ENV
 local_settings.py
+wsgi.py
 *.swp
 *.swo
 data
