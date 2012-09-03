@@ -3,19 +3,14 @@ from optparse import make_option
 import os
 import shutil
 from StringIO import StringIO
-import time
 
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
-from django.utils import simplejson as json
+from django.core.management.base import BaseCommand
 
 from lxml import etree
 
-from ui.models import Status
-
 NS = {
     'atom': 'http://www.w3.org/2005/Atom',
-    'gnip': 'http://www.gnip.com/schemas/2010',
     'activity': 'http://activitystrea.ms/spec/1.0/',
     }
 
@@ -60,7 +55,6 @@ class Command(BaseCommand):
         fp.close()
 
     def _parse_entry(self, entry):
-        parser = etree.XMLParser(no_network=True, resolve_entities=False)
         r = etree.parse(StringIO(entry))
         # published
         e_published = r.find('//{%s}published' % NS['atom'])
@@ -70,32 +64,16 @@ class Command(BaseCommand):
         date_published = e_published.text.replace('T', ' ')
         date_published = date_published.replace('Z', '')
         # userid
-        e_author = r.find('//{%s}author' % NS['activity'])
-        author_link = e_author.find('.//{%s}id' % NS['atom']).text
+        #e_author = r.find('//{%s}author' % NS['activity'])
+        #author_link = e_author.find('.//{%s}id' % NS['atom']).text
         # avatar url
-        author_avatar = e_author.find('.//{%s}link[@rel="avatar"]' % NS['atom']).attrib['href']
+        #author_avatar = e_author.find('.//{%s}link[@rel="avatar"]' % NS['atom']).attrib['href']
         # status id
-        status_link = r.find('./{%s}link' % NS['atom']).attrib['href']
+        #status_link = r.find('./{%s}link' % NS['atom']).attrib['href']
         # summary / content?
-        summary = r.find('./{%s}summary' % NS['atom']).text
-        content = r.find('.//{%s}content' % NS['atom']).text
-        # urls long/short
-        # matching rule source/inferred tag / value
-        e_rule = r.find('//{%s}matching_rule[@rel="source"]' % NS['gnip'])
-        rule = {
-            'rel': e_rule.attrib['rel'],
-            'tag': e_rule.attrib['tag'],
-            'value': e_rule.text,
-            }
-        status, created = Status.objects.get_or_create(
-            user_id=author_link, date_published=date_published,
-            avatar_url=author_avatar, status_id=status_link,
-            summary=summary, content=content,
-            rule_tag=rule['tag'], rule_match=rule['value'])
-        if created:
-            print 'saved:', status_link
-        else:
-            print 'skip:', status_link
+        #summary = r.find('./{%s}summary' % NS['atom']).text
+        #content = r.find('.//{%s}content' % NS['atom']).text
+        return
 
 
 # NOTE: json url pattern for a single tweet is:
