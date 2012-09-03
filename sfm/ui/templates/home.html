@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 {% load humanize %}
 
 {% block content %}
@@ -13,16 +14,10 @@
 
 <div class='row'>
     <div class='span-2'>
-        <h2>overall status</h2>
-        <p>
-        see <a href="{% url status_list page=1 %}">all statuses</a>. 
-        currently there are {{ statuses.count|intcomma }} total.
-        </p>
-
         <h2>trends</h2>
         <p>
-        see <a href='{% url trends_daily %}'>daily</a> or 
-        <a href='{% url trends_weekly %}'>weekly</a> trends.
+        see <a href='{% url 'trends_daily' %}'>daily</a> or 
+        <a href='{% url 'trends_weekly' %}'>weekly</a> trends.
         </p>
     </div>
     <div class='span-6'>
@@ -40,7 +35,7 @@
             <tbody>
                 {% for rule in rules %}
                 <tr>
-                    <td><a href="{% url rule rule=rule.rule_match page=1 %}">{{ rule.rule_match }}</a></td>
+                    <td><a href="{% url 'rule' rule=rule.rule_match page=1 %}">{{ rule.rule_match }}</a></td>
                     <td>{{ rule.rule_match__count|intcomma }}</td>
                 </tr>
                 {% endfor %}

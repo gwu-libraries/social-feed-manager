@@ -2,8 +2,6 @@ from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 
-from ui.views import StatusRuleListView
-
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -21,7 +19,3 @@ urlpatterns += patterns('ui.views',
     url(r'^trends/daily/$', 'trends_daily', name='trends_daily'),
 )
 
-urlpatterns += patterns('',
-    url(r'^rule/(?P<rule>#?[a-zA-Z0-9_]+)/(?P<page>[0-9]+)/$', 
-        StatusRuleListView.as_view(), name='rule'), 
-)

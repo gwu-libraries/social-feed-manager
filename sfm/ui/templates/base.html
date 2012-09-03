@@ -1,3 +1,4 @@
+{% load url from future %}
 <!doctype html>
 <html>
     <head>
@@ -26,13 +27,12 @@
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class="brand" href="{% url home %}">gwu libraries - social feed manager</a>
+                    <a class="brand" href="{% url 'home' %}">gwu libraries - social feed manager</a>
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li {% if '/status/page/' in request.path %} class='active'{% endif %}><a href="{% url status_list page=1 %}">status</a></li>
-                            <li {% if '/about/' == request.path %} class='active'{% endif %}><a href="{% url about %}">about</a></li>
+                            <li {% if '/about/' == request.path %} class='active'{% endif %}><a href="{% url 'about' %}">about</a></li>
                         </ul>
-                        <form method="get" action="{% url search %}" class="navbar-search ">
+                        <form method="get" action="#" class="navbar-search ">
                             <input type="text" name="q" class="search-query" placeholder="search" />
                         </form>
                         <p class="navbar-text pull-right">
@@ -41,9 +41,9 @@
                             {% if user.is_staff %}
                             - <a href="/admin/">admin</a>
                             {% endif %}
-                            - <a href="{% url logout %}">log out</a>
+                            - <a href="{% url 'logout' %}">log out</a>
                             {% else %}
-                            <a href="{% url login %}">log in</a>
+                            <a href="{% url 'login' %}">log in</a>
                             {% endif %}
                         </p>
                     </div>
