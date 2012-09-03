@@ -1,12 +1,11 @@
-import gzip
 from optparse import make_option
-import time
 
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
-from django.utils import simplejson as json
+from django.core.management.base import BaseCommand
 
 import requests
+
+from ui.models import RotatingFile
 
 class Command(BaseCommand):
     help = 'Show or save the Twitter sample/spritzer feed'
@@ -22,24 +21,15 @@ class Command(BaseCommand):
             help='how often to save data (default=%s)' % settings.SAVE_INTERVAL_SECONDS),
         )
 
-    def _get_filename(self):
-        return '%s/sample-%s.xml.gz' % (settings.DATA_DIR,
-            time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))
-
     def handle(self, *args, **options):
         resp = requests.get(settings.TWITTER_SAMPLE_URL,
             auth=(settings.TWITTER_USERNAME, settings.TWITTER_PASSWORD))
         if options.get('save', False):
-            start_time = time.time()
-            fp = gzip.open(self._get_filename(), 'wb')
-            for line in resp.iter_lines():
-                if line:
-                    fp.write('%s\n' % line)
-                    time_now = time.time()
-                    if time_now - start_time > options['interval']:
-                        fp.close()
-                        fp = gzip.open(self._get_filename(), 'wb')
-                        start_time = time_now
+            rfp = RotatingFile(stream=resp, 
+                    filename_prefix='sample',
+                    save_interval_seconds=options['interval'],
+                    data_dir=options['dir'])
+            rfp.handle()
         else:
             for line in resp.iter_lines():
                 if line:

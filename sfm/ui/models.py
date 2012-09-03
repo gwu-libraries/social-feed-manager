@@ -11,21 +11,25 @@ RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
 
 class RotatingFile(object):
 
-    def __init__(self, stream, save_interval_seconds=0, data_dir='', 
-            compress=True):
+    def __init__(self, stream, filename_prefix='data',
+            save_interval_seconds=0, data_dir='', compress=True):
+        self.stream = stream
+        self.filename_prefix = filename_prefix
         self.save_interval_seconds = save_interval_seconds \
                 or settings.SAVE_INTERVAL_SECONDS
         self.data_dir = data_dir or settings.DATA_DIR
         self.compress = compress
+
+    def handle(self):
         start_time = time.time()
-        fp = self.get_file()
-        for line in stream.iter_lines():
+        fp = self._get_file()
+        for line in self.stream.iter_lines():
             if line:
-                fp.write(line)
+                fp.write('%s\n' % line)
                 time_now = time.time()
-                if time_now - start_time > save_interval_seconds:
+                if time_now - start_time > self.save_interval_seconds:
                     fp.close()
-                    fp = gzip.open(self._get_filename(), 'wb')
+                    fp = self._get_file()
                     start_time = time_now
 
     def _get_file(self):
@@ -35,8 +39,9 @@ class RotatingFile(object):
             return open(self._get_filename(), 'wb')
 
     def _get_filename(self):
-        return '%s/poll-%s.xml.gz' % (self.data_dir,
-            time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))
+        return '%s/%s-%s%s' % (self.data_dir, self.filename_prefix,
+                time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+                '.gz' if self.compress else '')
 
 
 class TrendWeekly(m.Model):
