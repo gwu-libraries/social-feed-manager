@@ -24,9 +24,13 @@ class Command(BaseCommand):
             if time.time() - stat.st_mtime < threshhold_seconds:
                 continue
             # pull out the prefix, year, month, day, and hour
-            prefixed_date, t, time_ext = fname.partition('T')
-            prefix, year, month, day = prefixed_date.split('-')
-            hour, minute, seconds_ext = time_ext.split(':')
+            try:
+                prefixed_date, t, time_ext = fname.partition('T')
+                prefix, year, month, day = prefixed_date.split('-')
+                hour, minute, seconds_ext = time_ext.split(':')
+            except:
+                # probably a prefix/directory
+                continue
             subdir = '%s/%s/%s/%s/%s/%s' % (settings.DATA_DIR, prefix,
                         year, month, day, hour)
             try:
