@@ -1,4 +1,5 @@
 django
+feedparser
 lxml
 psycopg2
 pytz
@@ -6,3 +7,4 @@ requests
 simplejson
 south
 tweepy
+tweetstream

@@ -74,6 +74,42 @@ class TrendDaily(m.Model):
         verbose_name_plural = 'trendsdaily'
 
 
+class TwitterUser(m.Model):
+    name = m.TextField(db_index=True)
+
+    def __unicode__(self):
+        return 'user %s (sfm id %s)' % (self.name, self.id)
+
+    @property
+    def feed_url(self):
+        return 'http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=%s' % self.name
+
+
+class TwitterUserItem(m.Model):
+    twitter_user = m.ForeignKey(TwitterUser)
+    twitter_url = m.URLField(verify_exists=False)
+    date_published = m.DateTimeField(db_index=True)
+    item_text = m.TextField(default='', blank=True)
+    item_json = m.TextField(default='', blank=True)
+    place = m.TextField(default='', blank=True)
+    source = m.TextField(default='', blank=True)
+
+    def __unicode__(self):
+        return 'useritem (%s) %s' % (self.id, self.twitter_url)
+
+    @property
+    def tweet_id(self):
+        try:
+            m = RE_TWEET_ID.match(self.twitter_url)
+            return m.groups()[0]
+        except:
+            return 0
+
+    @property
+    def tweet_json_url(self):
+        return 'http://api.twitter.com/1/statuses/show/%s.json' % self.tweet_id 
+
+
 class Status(m.Model):
     user_id = m.URLField(verify_exists=False)
     date_published = m.DateTimeField(db_index=True)
@@ -85,7 +121,7 @@ class Status(m.Model):
     rule_match = m.TextField(db_index=True)
     
     def __unicode__(self):
-        return self.status_id
+        return '%s' % self.status_id
 
     class Meta:
         ordering = ['-date_published']
@@ -112,3 +148,12 @@ class Status(m.Model):
             return None
 
 
+class Rule(m.Model):
+    name = m.CharField(max_length=255, unique=True)
+    is_active = m.BooleanField(default=False)
+    people = m.TextField(blank=True)
+    words = m.TextField(blank=True)
+    locations = m.TextField(blank=True)
+
+    def __unicode__(self):
+        return '%s' % self.id
