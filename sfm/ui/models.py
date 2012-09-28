@@ -86,7 +86,7 @@ class TwitterUser(m.Model):
 
 
 class TwitterUserItem(m.Model):
-    twitter_user = m.ForeignKey(TwitterUser)
+    twitter_user = m.ForeignKey(TwitterUser, related_name='items')
     twitter_url = m.URLField(verify_exists=False, unique=True)
     date_published = m.DateTimeField(db_index=True)
     item_text = m.TextField(default='', blank=True)
