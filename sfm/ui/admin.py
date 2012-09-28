@@ -21,7 +21,7 @@ class TwitterUserAdmin(admin.ModelAdmin):
 admin.site.register(m.TwitterUser, TwitterUserAdmin)
 
 class TwitterUserItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'twitter_user', 'date_published', 'source']
-    list_filter = ['date_published', 'source']
-    search_fields = ['item_text']
+    list_display = ['id', 'twitter_user', 'date_published', 'twitter_url']
+    list_filter = ['date_published']
+    search_fields = ['twitter_url', 'item_text']
 admin.site.register(m.TwitterUserItem, TwitterUserItemAdmin)

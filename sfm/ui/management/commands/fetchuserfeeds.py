@@ -5,6 +5,7 @@ import feedparser
 import requests
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from ui.models import TwitterUser, TwitterUserItem
 
@@ -26,9 +27,10 @@ class Command(BaseCommand):
             feed = feedparser.parse(r.content)
             for entry in feed['entries']:
                 dt = datetime.fromtimestamp(mktime(entry['published_parsed']))
+                dt_aware = timezone.make_aware(dt, timezone.utc)
                 item, created = TwitterUserItem.objects.get_or_create(
                         twitter_user=twitter_user, 
-                        date_published=dt,
+                        date_published=dt_aware,
                         twitter_url=entry['link'],
                         item_text=entry['title'], 
                         place=entry['twitter_place'],
