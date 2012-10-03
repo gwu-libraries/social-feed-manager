@@ -23,7 +23,7 @@ class RotatingFile(object):
     def handle(self):
         start_time = time.time()
         fp = self._get_file()
-        for line in self.stream.iter_lines():
+        for line in self.stream:
             if line:
                 fp.write('%s\n' % line)
                 time_now = time.time()
