@@ -110,44 +110,6 @@ class TwitterUserItem(m.Model):
         return 'http://api.twitter.com/1/statuses/show/%s.json' % self.tweet_id 
 
 
-class Status(m.Model):
-    user_id = m.URLField(verify_exists=False)
-    date_published = m.DateTimeField(db_index=True)
-    avatar_url = m.TextField()
-    status_id = m.URLField(verify_exists=False)
-    summary = m.TextField()
-    content = m.TextField() 
-    rule_tag = m.TextField(db_index=True)
-    rule_match = m.TextField(db_index=True)
-    
-    def __unicode__(self):
-        return '%s' % self.status_id
-
-    class Meta:
-        ordering = ['-date_published']
-        verbose_name_plural = 'statuses'
-
-    @property
-    def tweet_id(self):
-        try:
-            m = RE_TWEET_ID.match(self.status_id)
-            return m.groups()[0]
-        except:
-            return 0
-
-    @property
-    def tweet_json_url(self):
-        return 'http://api.twitter.com/1/statuses/show/%s.json' % self.tweet_id 
-
-    @property
-    def user_name(self):
-        try:
-            m = RE_USER_NAME.match(self.user_id)
-            return m.groups()[0]
-        except:
-            return None
-
-
 class Rule(m.Model):
     name = m.CharField(max_length=255, unique=True)
     is_active = m.BooleanField(default=False)

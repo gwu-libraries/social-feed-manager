@@ -3,16 +3,13 @@ from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.shortcuts import render, redirect
 
-from ui.models import Status, TrendWeekly, TrendDaily
+from ui.models import TwitterUserItem, TrendWeekly, TrendDaily
 
 def home(request):
-    rules = Status.objects.values('rule_match').annotate(Count('rule_match')).order_by('-rule_match__count')
-    tags = Status.objects.values('rule_tag').annotate(Count('rule_tag')).order_by('-rule_tag__count')
+    user_item_counts = TwitterUserItem.objects.values('twitter_user', 'twitter_user__name').annotate(Count('twitter_user')).order_by('-twitter_user__count')
     return render(request, 'home.html', {
         'title': 'home',
-        'rules': rules,
-        'tags': tags,
-        'statuses': Status.objects.all(),
+        'user_item_counts': user_item_counts,
         })
 
 def trends_weekly(request):

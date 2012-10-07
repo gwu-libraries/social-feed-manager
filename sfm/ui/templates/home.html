@@ -21,22 +21,19 @@
         </p>
     </div>
     <div class='span-6'>
-        <h2>rules</h2>
-        <p>
-        Rules that have been matched by active or past queries.
-        </p>
+        <h2>users by item count</h2>
         <table class='table'>
             <thead>
                 <tr>
-                    <th>rule</th>
+                    <th>user</th>
                     <th>count</th>
                 </tr>
             </thead>
             <tbody>
-                {% for rule in rules %}
+                {% for uic in user_item_counts %}
                 <tr>
-                    <td><a href="{% url 'rule' rule=rule.rule_match page=1 %}">{{ rule.rule_match }}</a></td>
-                    <td>{{ rule.rule_match__count|intcomma }}</td>
+                    <td><a href="#">{{ uic.twitter_user__name }}</a></td>
+                    <td>{{ uic.twitter_user__count|intcomma }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
