@@ -14,7 +14,13 @@ urlpatterns += patterns('ui.views',
     url(r'^logout/$', 'logout', name='logout'),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'),
         name='about'),
+
+    # twitter data patterns
     url(r'^trends/weekly/$', 'trends_weekly', name='trends_weekly'),
     url(r'^trends/daily/$', 'trends_daily', name='trends_daily'),
+    url(r'^twitter-user/(?P<name>[a-zA-Z0-9_]+)/(?P<page>[0-9]+)?', 'twitter_user',
+        name='twitter_user'),
+    url(r'^twitter-item/(?P<id>[0-9]+)/$', 'twitter_item',
+        name='twitter_item'),
 )
 

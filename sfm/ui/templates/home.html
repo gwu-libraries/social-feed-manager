@@ -32,28 +32,8 @@
             <tbody>
                 {% for uic in user_item_counts %}
                 <tr>
-                    <td><a href="#">{{ uic.twitter_user__name }}</a></td>
+                    <td><a href="{% url 'twitter_user' name=uic.twitter_user__name %}">{{ uic.twitter_user__name }}</a></td>
                     <td>{{ uic.twitter_user__count|intcomma }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class='span-6'>
-        <h2>tags</h2>
-        <p>
-        Tags, or sets of rules, for which we have data.
-        </p>
-        <table class='table'>
-            <thead>
-                <th>tag</th>
-                <th>count</th>
-            </thead>
-            <tbody>
-                {% for tag in tags %}
-                <tr>
-                    <td>{{ tag.rule_tag }}</td>
-                    <td>{{ tag.rule_tag__count|intcomma }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

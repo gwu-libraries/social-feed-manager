@@ -1,9 +1,12 @@
 from django.contrib import auth
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
-from ui.models import TwitterUserItem, TrendWeekly, TrendDaily
+from .models import TrendWeekly, TrendDaily
+from .models import TwitterUser, TwitterUserItem
 
 def home(request):
     user_item_counts = TwitterUserItem.objects.values('twitter_user', 'twitter_user__name').annotate(Count('twitter_user')).order_by('-twitter_user__count')
@@ -11,6 +14,35 @@ def home(request):
         'title': 'home',
         'user_item_counts': user_item_counts,
         })
+
+def twitter_user(request, name='', page=0):
+    user = get_object_or_404(TwitterUser, name=name)
+    if page < 1:
+        page = 1
+    qs_tweets = user.items.order_by('-date_published')
+    # grab a slightly older tweet to use for bio info
+    if qs_tweets.count() > 20:
+        recent_tweet = qs_tweets[25]
+    else:
+        recent_tweet = qs_tweets[0]
+    paginator = Paginator(qs_tweets, 50)
+    try:
+        tweets = paginator.page(page)
+    except PageNotAnInteger:
+        tweets = paginator.page(0)
+    except EmptyPage:
+        tweets = paginator.page(paginator.num_pages)
+    return render(request, 'twitter_user.html', {
+        'title': 'twitter user: %s' % name,
+        'user': user,
+        'qs_tweets': qs_tweets,
+        'tweets': tweets,
+        'recent_tweet': recent_tweet,
+        })
+
+def twitter_item(request, id=0):
+    item = get_object_or_404(TwitterUserItem, id=int(id))
+    return HttpResponse(item.item_json, content_type="application/json")
 
 def trends_weekly(request):
     trends = TrendWeekly.objects.all()  

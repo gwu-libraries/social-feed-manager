@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load humanize %}
+
+{% block content %}
+
+<div class='span-6'>
+    <h2>{{ user.name }} - 
+        {{ user.items.count|intcomma }} item{{ user.items.count|pluralize }}</h2>
+    {% with recent_tweet.tweet as t %}
+    <p>
+    Twitter user {{ t.user.id|intcomma }} - created {{ t.user.created_at }}.
+    <br />
+    {{ t.user.followers_count|intcomma }} followers - 
+    {{ t.user.friends_count|intcomma }} following -
+    view <a href="http://twitter.com/{{ user.name }}">in Twitter</a>
+    </p>
+    {% endwith %}
+
+    {% include "twitter_user_pagination.html" %}
+    <table class='table'>
+        <thead>
+            <tr>
+                <th width='20%'>date/id</th>
+                <th width='5%'>rt #</th>
+                <th>text</th>
+                <th width='15%'>view</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in tweets %}
+            <tr>
+                <td>
+                    {{ item.date_published|date:"Y-m-d h:i:s a" }} 
+                    <br />
+                    {{ item.tweet.id_str }}
+                </td>
+                <td>{{ item.tweet.retweet_count }}</td>
+                <td>{{ item.text|urlize }}</td>
+                <td>in <a href="{{ item.twitter_url }}">twitter</a> 
+                    <br />
+                    raw <a href="{{ item.tweet_json_url }}">live</a> -
+                        <a href="{% url 'twitter_item' id=item.id %}">cached</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include "twitter_user_pagination.html" %}
+</div>
+
+
+{% endblock content %}

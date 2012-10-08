@@ -2,8 +2,11 @@ import gzip
 import re
 import time
 
+import requests
+
 from django.conf import settings
 from django.db import models as m
+from django.utils import simplejson as json
 
 RE_TWEET_ID = re.compile(r'.*statuses/([0-9]+)$')
 RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
@@ -108,6 +111,36 @@ class TwitterUserItem(m.Model):
     @property
     def tweet_json_url(self):
         return 'http://api.twitter.com/1/statuses/show/%s.json' % self.tweet_id 
+
+    @property
+    def tweet(self):
+        """Cache/return a parsed version of the json if available."""
+        try: 
+            return self._parsed_tweet
+        except:
+            if self.item_json:
+                self._parsed_tweet = json.loads(self.item_json)
+            else:
+                self._parsed_tweet = {}
+            return self._parsed_tweet
+
+    @property
+    def text(self):
+        try:
+            return self.tweet['text']
+        except:
+            return self.item_text
+
+    def unshorten(self, url):
+        """Don't try to guess; just resolve it, and follow 301s"""
+        stack = [url]
+        h = requests.head(url)
+        while h.status_code == 301:
+            location = h.headers['location']
+            stack.append(location)
+            h = requests.head(location)
+        return stack
+
 
 
 class Rule(m.Model):
