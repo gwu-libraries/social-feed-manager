@@ -2,6 +2,17 @@
 {% load url from future %}
 {% load humanize %}
 
+{% block javascript_extra %}
+<script type='text/javascript'>
+function unshorten(id) {
+    $.get("/twitter-item/" + id + "/links/",
+        function(htmldata) {
+            $("div #links-" + id).replaceWith(htmldata);
+        });
+}
+</script>
+{% endblock %}
+
 {% block content %}
 
 <div class='span-6'>
@@ -11,6 +22,7 @@
     <p>
     Twitter user {{ t.user.id|intcomma }} - created {{ t.user.created_at }}.
     <br />
+    {{ t.user.statuses_count|intcomma }} tweets -
     {{ t.user.followers_count|intcomma }} followers - 
     {{ t.user.friends_count|intcomma }} following -
     view <a href="http://twitter.com/{{ user.name }}">in Twitter</a>
@@ -21,7 +33,9 @@
     <table class='table'>
         <thead>
             <tr>
-                <th width='20%'>date/id</th>
+                <th width='20%'>date
+                    <br />
+                    followers/following</th>
                 <th width='5%'>rt #</th>
                 <th>text</th>
                 <th width='15%'>view</th>
@@ -33,10 +47,19 @@
                 <td>
                     {{ item.date_published|date:"Y-m-d h:i:s a" }} 
                     <br />
-                    {{ item.tweet.id_str }}
+                    {{ item.tweet.user.followers_count|intcomma }} -
+                    {{ item.tweet.user.friends_count|intcomma }} 
                 </td>
                 <td>{{ item.tweet.retweet_count }}</td>
-                <td>{{ item.text|urlize }}</td>
+                <td>
+                    {{ item.text|urlize }}
+                    {% if item.links %}
+                    <div id='links-{{ item.id }}'>
+                        <i class='icon-resize-full'></i>
+                        <a href="javascript:unshorten({{ item.id }});">expand links</a>
+                    </div>
+                    {% endif %}
+                </td>
                 <td>in <a href="{{ item.twitter_url }}">twitter</a> 
                     <br />
                     raw <a href="{{ item.tweet_json_url }}">live</a> -

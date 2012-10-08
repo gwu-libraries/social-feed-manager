@@ -8,6 +8,8 @@ from django.conf import settings
 from django.db import models as m
 from django.utils import simplejson as json
 
+RE_LINKS = re.compile(r'(https?://\S+)')
+RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
 RE_TWEET_ID = re.compile(r'.*statuses/([0-9]+)$')
 RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
 
@@ -130,6 +132,14 @@ class TwitterUserItem(m.Model):
             return self.tweet['text']
         except:
             return self.item_text
+
+    @property
+    def mentions(self):
+        return RE_MENTIONS.findall(self.text)
+
+    @property
+    def links(self):
+        return RE_LINKS.findall(self.text)
 
     def unshorten(self, url):
         """Don't try to guess; just resolve it, and follow 301s"""

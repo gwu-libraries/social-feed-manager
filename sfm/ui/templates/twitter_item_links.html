@@ -1,0 +1,11 @@
+{% for stack in unshortened %}
+    {% for link in stack %}
+    <br />
+    <i {% if forloop.first %}
+        class='icon-search'
+        {% else %}
+        class='icon-arrow-right'
+        {% endif %}
+        ></i><a href="{{ link }}">{{ link }}</a>
+    {% endfor %}
+{% endfor %}

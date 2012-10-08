@@ -44,6 +44,14 @@ def twitter_item(request, id=0):
     item = get_object_or_404(TwitterUserItem, id=int(id))
     return HttpResponse(item.item_json, content_type="application/json")
 
+def twitter_item_links(request, id=0):
+    item = get_object_or_404(TwitterUserItem, id=int(id))
+    unshortened = [item.unshorten(l) for l in item.links]
+    return render(request, 'twitter_item_links.html', {
+        'item': item,
+        'unshortened': unshortened,
+        })
+
 def trends_weekly(request):
     trends = TrendWeekly.objects.all()  
     return render(request, 'trends_weekly.html', {
