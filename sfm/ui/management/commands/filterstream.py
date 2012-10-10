@@ -24,6 +24,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         rules = Rule.objects.filter(is_active=True)
+        if not rules:
+            print 'no rules to filter on'
+            return
         words = set()
         people = set()
         locations = set()
