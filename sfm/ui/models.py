@@ -5,6 +5,7 @@ import time
 import requests
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models as m
 from django.utils import simplejson as json
 
@@ -154,6 +155,7 @@ class TwitterUserItem(m.Model):
 
 
 class Rule(m.Model):
+    user = m.ForeignKey(User)
     name = m.CharField(max_length=255, unique=True)
     is_active = m.BooleanField(default=False)
     people = m.TextField(blank=True)
