@@ -24,5 +24,7 @@ urlpatterns += patterns('ui.views',
         name='twitter_item'),
     url(r'^twitter-item/(?P<id>[0-9]+)/links/$', 'twitter_item_links',
         name='twitter_item_links'),
+
+    url(r'', include('social_auth.urls')),
 )
 

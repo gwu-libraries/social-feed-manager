@@ -122,6 +122,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
+    'social_auth',
     'south',
     'ui',
 )
@@ -161,6 +162,22 @@ LOGGING = {
         },
     }
 }
+
+
+# BEGIN social_auth configuration (also INSTALLED_APP)
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.twitter.TwitterBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_ENABLED_BACKENDS = (
+    'twitter',
+)
+
+TWITTER_CONSUMER_KEY = ''
+TWITTER_CONSUMER_SECRET = ''
+
+INTERNAL_IPS = ['127.0.0.1', 'localhost']
 
 # BEGIN django-standard settings with not-default values
 LOGIN_URL = reverse_lazy('login')
