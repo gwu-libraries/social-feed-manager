@@ -3,6 +3,8 @@ import re
 import time
 
 import requests
+import tweepy
+from tweepy.parsers import JSONParser
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,6 +15,23 @@ RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
 RE_TWEET_ID = re.compile(r'.*statuses/([0-9]+)$')
 RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
+
+
+def authenticated_api(username, api_root=None, parser=None):
+    """Return an oauthenticated tweety API object."""
+    auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY, 
+            settings.TWITTER_CONSUMER_SECRET)
+    try:
+        user= User.objects.get(username=username)
+        sa = user.social_auth.all()[0]
+        auth.set_access_token(sa.tokens['oauth_token'], 
+                sa.tokens['oauth_token_secret'])
+        return tweepy.API(auth, 
+                api_root=api_root or settings.TWITTER_API_ROOT, 
+                parser=parser or JSONParser(),
+                secure=settings.TWITTER_USE_SECURE) 
+    except:
+        return None
 
 
 class RotatingFile(object):
@@ -82,6 +101,7 @@ class TrendDaily(m.Model):
 
 class TwitterUser(m.Model):
     name = m.TextField(db_index=True)
+    date_last_checked = m.DateTimeField(db_index=True, auto_now=True)
 
     def __unicode__(self):
         return 'user %s (sfm id %s)' % (self.name, self.id)
@@ -93,7 +113,7 @@ class TwitterUser(m.Model):
 
 class TwitterUserItem(m.Model):
     twitter_user = m.ForeignKey(TwitterUser, related_name='items')
-    twitter_url = m.URLField(verify_exists=False, unique=True)
+    twitter_id = m.BigIntegerField(unique=True, default=0)
     date_published = m.DateTimeField(db_index=True)
     item_text = m.TextField(default='', blank=True)
     item_json = m.TextField(default='', blank=True)
@@ -101,15 +121,12 @@ class TwitterUserItem(m.Model):
     source = m.TextField(default='', blank=True)
 
     def __unicode__(self):
-        return 'useritem (%s) %s' % (self.id, self.twitter_url)
+        return 'useritem (%s) %s' % (self.id, self.twitter_id)
 
-    @property
-    def tweet_id(self):
-        try:
-            m = RE_TWEET_ID.match(self.twitter_url)
-            return m.groups()[0]
-        except:
-            return 0
+    @property 
+    def twitter_url(self):
+        return 'http://twitter.com/%s/status/%s' % (self.twitter_user.name,
+                self.twitter_id)
 
     @property
     def tweet_json_url(self):

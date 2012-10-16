@@ -9,12 +9,12 @@ class RuleAdmin(admin.ModelAdmin):
 admin.site.register(m.Rule, RuleAdmin)
 
 class TwitterUserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name']
+    list_display = ['id', 'name', 'date_last_checked']
     search_fields = ['name']
 admin.site.register(m.TwitterUser, TwitterUserAdmin)
 
 class TwitterUserItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'twitter_user', 'date_published', 'twitter_url']
+    list_display = ['id', 'twitter_user', 'date_published', 'twitter_id']
     list_filter = ['date_published']
-    search_fields = ['twitter_url', 'item_text']
+    search_fields = ['twitter_id', 'item_text']
 admin.site.register(m.TwitterUserItem, TwitterUserItemAdmin)

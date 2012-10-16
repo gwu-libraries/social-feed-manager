@@ -1,6 +1,5 @@
 django
 django-social-auth
-feedparser
 lxml
 psycopg2
 pytz
