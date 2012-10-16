@@ -23,8 +23,10 @@ def twitter_user(request, name='', page=0):
     # grab a slightly older tweet to use for bio info
     if qs_tweets.count() > 20:
         recent_tweet = qs_tweets[25]
-    else:
+    elif qs_tweets.count() > 0:
         recent_tweet = qs_tweets[0]
+    else:
+        recent_tweet = None
     paginator = Paginator(qs_tweets, 50)
     try:
         tweets = paginator.page(page)

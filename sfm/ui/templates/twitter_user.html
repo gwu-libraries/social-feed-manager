@@ -18,6 +18,7 @@ function unshorten(id) {
 <div class='span-6'>
     <h2>{{ user.name }} - 
         {{ user.items.count|intcomma }} item{{ user.items.count|pluralize }}</h2>
+    {% if recent_tweet %}
     {% with recent_tweet.tweet as t %}
     <p>
     Twitter user {{ t.user.id|intcomma }} - created {{ t.user.created_at }}.
@@ -70,6 +71,7 @@ function unshorten(id) {
         </tbody>
     </table>
     {% include "twitter_user_pagination.html" %}
+    {% endif %}
 </div>
 
 
