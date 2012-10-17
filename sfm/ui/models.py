@@ -169,6 +169,20 @@ class TwitterUserItem(m.Model):
             h = requests.head(location)
         return stack
 
+    @property
+    def csv(self):
+        """A list of values suitable for csv-ification"""
+        return [
+            str(self.id), 
+            self.tweet['created_at'],
+            self.tweet['id_str'], 
+            self.tweet['user']['screen_name'],
+            str(self.tweet['user']['followers_count']),
+            str(self.tweet['user']['friends_count']),
+            ', '.join([ht['text'] \
+                for ht in self.tweet['entities']['hashtags']]),
+            self.tweet['text'],
+            ]
 
 
 class Rule(m.Model):

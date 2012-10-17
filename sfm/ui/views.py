@@ -1,3 +1,7 @@
+import codecs
+import cStringIO
+import csv
+
 from django.contrib import auth
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
@@ -42,9 +46,20 @@ def twitter_user(request, name='', page=0):
         'recent_tweet': recent_tweet,
         })
 
+def twitter_user_csv(request, name=''):
+    """fieldnames=['sfm_id', 'created_at', 'twitter_id', 'screen_name', 
+    'followers_count', 'friends_count', 'hashtags', 'text'])"""
+    user = get_object_or_404(TwitterUser, name=name)
+    qs_tweets = user.items.order_by('-date_published')
+    #out = ['\t'.join(t.csv) for t in qs_tweets]
+    csvwriter = UnicodeCSVWriter()
+    for t in qs_tweets:
+        csvwriter.writerow(t.csv)
+    return HttpResponse(csvwriter.out(), content_type='text/plain')
+
 def twitter_item(request, id=0):
     item = get_object_or_404(TwitterUserItem, id=int(id))
-    return HttpResponse(item.item_json, content_type="application/json")
+    return HttpResponse(item.item_json, content_type='application/json')
 
 def twitter_item_links(request, id=0):
     item = get_object_or_404(TwitterUserItem, id=int(id))
@@ -69,3 +84,21 @@ def trends_daily(request):
 def logout(request):
     auth.logout(request)
     return redirect(reverse('home'))
+
+class UnicodeCSVWriter:
+    
+    def __init__(self, dialect=csv.excel, encoding='utf-8', **params):
+        self.queue = cStringIO.StringIO()
+        self.writer = csv.writer(self.queue, dialect=dialect, **params)
+        self.encoding = encoding
+        self.encoder = codecs.getincrementalencoder(self.encoding)()
+
+    def writerow(self, row):
+        self.writer.writerow([s.encode(self.encoding) for s in row])
+
+    def writerows(self, rows):
+        for row in rows:
+            self.writerow(row)
+
+    def out(self):
+        return self.queue.getvalue()

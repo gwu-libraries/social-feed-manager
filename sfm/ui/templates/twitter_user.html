@@ -27,6 +27,9 @@ function unshorten(id) {
     {{ t.user.followers_count|intcomma }} followers - 
     {{ t.user.friends_count|intcomma }} following -
     view <a href="http://twitter.com/{{ user.name }}">in Twitter</a>
+    <br />
+    export this data <a href='{% url "twitter_user_csv" name=user.name %}'>as
+    csv for excel</a>
     </p>
     {% endwith %}
 
