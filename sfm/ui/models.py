@@ -130,7 +130,9 @@ class TwitterUserItem(m.Model):
 
     @property
     def tweet_json_url(self):
-        return 'http://api.twitter.com/1/statuses/show/%s.json' % self.tweet_id 
+        """Note: hard-codes v1 api in URL; will break in March 2013.
+        v1.1 requires oauth request."""
+        return 'http://api.twitter.com/1/statuses/show/%s.json' % self.twitter_id 
 
     @property
     def tweet(self):
