@@ -10,13 +10,18 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import TrendWeekly, TrendDaily
-from .models import TwitterUser, TwitterUserItem
+from .models import TwitterUser, TwitterUserItem, DATES
 
 def home(request):
     user_item_counts = TwitterUserItem.objects.values('twitter_user', 'twitter_user__name').annotate(Count('twitter_user')).order_by('-twitter_user__count')
+    users = {}
+    for uic in user_item_counts:
+        users[uic['twitter_user__name']] = TwitterUser.objects.get(id=uic['twitter_user'])
     return render(request, 'home.html', {
         'title': 'home',
         'user_item_counts': user_item_counts,
+        'users': users,
+        'dates': DATES,
         })
 
 def twitter_user(request, name='', page=0):
