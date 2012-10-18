@@ -2,6 +2,15 @@
 {% load url from future %}
 {% load humanize %}
 
+{% block javascript_extra %}
+<script type='text/javascript' src='{{ STATIC_URL }}js/jquery.sparkline.min.js'></script>
+<script type='text/javascript'>
+    $(function() {
+        $('.inlinesparkline').sparkline(); 
+    });
+</script>
+{% endblock javascript_extra %}
+
 {% block content %}
 
 <div class='page-header'>
@@ -20,6 +29,7 @@
                 <tr>
                     <th>user</th>
                     <th>count</th>
+                    <th>timeline ({{ dates|first|date:"Y-m-d" }}-{{ dates|last|date:"Y-m-d" }})</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,6 +37,11 @@
                 <tr>
                     <td><a href="{% url 'twitter_user' name=uic.twitter_user__name %}">{{ uic.twitter_user__name }}</a></td>
                     <td>{{ uic.twitter_user__count|intcomma }}</td>
+                    {% for user_name, user in users.items %}
+                        {% if user_name = uic.twitter_user__name %}
+                    <td><span class='inlinesparkline'>{{ user.counts }}</span></td>
+                        {% endif %}
+                    {% endfor %}
                 </tr>
                 {% endfor %}
             </tbody>

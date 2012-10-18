@@ -1,3 +1,4 @@
+import datetime
 import gzip
 import re
 import time
@@ -16,6 +17,15 @@ RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
 RE_TWEET_ID = re.compile(r'.*statuses/([0-9]+)$')
 RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
+
+DAY = datetime.timedelta(days=1)
+# Available tweets are pretty uneven before 2012-01-01
+dt = datetime.datetime(2012, 1, 1)
+dt_end = datetime.datetime.today()
+DATES = []
+while dt < dt_end:
+    DATES.append(dt)
+    dt += DAY
 
 
 def authenticated_api(username, api_root=None, parser=None):
@@ -108,6 +118,10 @@ class TwitterUser(m.Model):
     def feed_url(self):
         return 'http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=%s' % self.name
 
+    @property
+    def counts(self):
+        return ','.join([str(dc.num_tweets) for dc in self.daily_counts.all()])
+
 
 class TwitterUserItem(m.Model):
     twitter_user = m.ForeignKey(TwitterUser, related_name='items')
@@ -128,7 +142,9 @@ class TwitterUserItem(m.Model):
 
     @property
     def tweet_json_url(self):
-        return 'http://api.twitter.com/1/statuses/show/%s.json' % self.tweet_id 
+        """Note: hard-codes v1 api in URL; will break in March 2013.
+        v1.1 requires oauth request."""
+        return 'http://api.twitter.com/1/statuses/show/%s.json' % self.twitter_id 
 
     @property
     def tweet(self):
@@ -167,6 +183,20 @@ class TwitterUserItem(m.Model):
             h = requests.head(location)
         return stack
 
+    @property
+    def csv(self):
+        """A list of values suitable for csv-ification"""
+        return [
+            str(self.id), 
+            self.tweet['created_at'],
+            self.tweet['id_str'], 
+            self.tweet['user']['screen_name'],
+            str(self.tweet['user']['followers_count']),
+            str(self.tweet['user']['friends_count']),
+            ', '.join([ht['text'] \
+                for ht in self.tweet['entities']['hashtags']]),
+            self.tweet['text'],
+            ]
 
 
 class Rule(m.Model):
@@ -179,3 +209,15 @@ class Rule(m.Model):
 
     def __unicode__(self):
         return '%s' % self.id
+
+
+class DailyTwitterUserItemCount(m.Model):
+    twitter_user = m.ForeignKey(TwitterUser, related_name='daily_counts')
+    date = m.DateField(db_index=True, blank=True)
+    num_tweets = m.IntegerField(default=0)
+
+    def __unicode__(self):
+        return '%s' % self.id
+
+    class Meta:
+        ordering = ['date']
