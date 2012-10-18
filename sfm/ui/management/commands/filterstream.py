@@ -1,12 +1,22 @@
 from optparse import make_option
+import traceback
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
 
-import tweetstream
+import tweepy
+from tweepy.streaming import StreamListener
 
 from ui.models import RotatingFile, Rule
 
+class RotatingFileListener(StreamListener):
+
+    def __init__(self, rf):
+        self._rf = rf
+
+    def on_data(self, data):
+        pass
 
 class Command(BaseCommand):
     help = 'Filter tweets based on active rules'
@@ -35,18 +45,21 @@ class Command(BaseCommand):
             people.update(rule.people.split(' ') if rule.people else [])
             locations.update(rule.locations.split(' ') if rule.locations else [])
         try:
-            stream = tweetstream.FilterStream(settings.TWITTER_USERNAME,
-                    settings.TWITTER_PASSWORD, track=words, 
-                    follow=people, locations=locations)
+            gelmanbot = User.objects.get(username='gelmanbot')
+            sa = gelmanbot.social_auth.all()[0]
+            auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY, 
+                    settings.TWITTER_CONSUMER_SECRET)
+            auth.set_access_token(sa.tokens['oauth_token'], 
+                    sa.tokens['oauth_token_secret'])
+            listener = RotatingFile(filename_prefix='filter',
+                    save_interval_seconds=options['interval'],
+                    data_dir=options['dir'])
+            stream = tweepy.Stream(auth, listener)
+            stream.filter(track=words)
             if options.get('save', False):
-                rfp = RotatingFile(stream=stream, 
-                        filename_prefix='filter',
-                        save_interval_seconds=options['interval'],
-                        data_dir=options['dir'])
-                rfp.handle()
-            else:
                 for line in stream:
                     if line:
                         print line
-        except tweetstream.ConnectionError, e:
-            print 'Disconnected from twitter:', e.reason
+        except Exception, e:
+            print 'Disconnected from twitter:', e
+            print traceback.print_exc()
