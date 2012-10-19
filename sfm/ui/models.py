@@ -6,6 +6,7 @@ import time
 import requests
 import tweepy
 from tweepy.parsers import JSONParser
+from tweepy.streaming import StreamListener
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -33,7 +34,7 @@ def authenticated_api(username, api_root=None, parser=None):
     auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY, 
             settings.TWITTER_CONSUMER_SECRET)
     try:
-        user= User.objects.get(username=username)
+        user = User.objects.get(username=username)
         sa = user.social_auth.all()[0]
         auth.set_access_token(sa.tokens['oauth_token'], 
                 sa.tokens['oauth_token_secret'])
@@ -51,28 +52,25 @@ def dt_aware_from_created_at(created_at):
     return timezone.make_aware(dt, timezone.utc)
 
 
-class RotatingFile(object):
+class RotatingFile(StreamListener):
 
-    def __init__(self, stream, filename_prefix='data',
+    def __init__(self, filename_prefix='data', 
             save_interval_seconds=0, data_dir='', compress=True):
-        self.stream = stream
         self.filename_prefix = filename_prefix
         self.save_interval_seconds = save_interval_seconds \
                 or settings.SAVE_INTERVAL_SECONDS
         self.data_dir = data_dir or settings.DATA_DIR
         self.compress = compress
+        self.start_time = time.time()
+        self.fp = self._get_file()
 
-    def handle(self):
-        start_time = time.time()
-        fp = self._get_file()
-        for line in self.stream:
-            if line:
-                fp.write('%s\n' % line)
-                time_now = time.time()
-                if time_now - start_time > self.save_interval_seconds:
-                    fp.close()
-                    fp = self._get_file()
-                    start_time = time_now
+    def on_data(self, data):
+        self.fp.write('%s\n' % data)
+        time_now = time.time()
+        if time_now - self.start_time > self.save_interval_seconds:
+            self.fp.close()
+            self.fp = self._get_file()
+            self.start_time = time_now
 
     def _get_file(self):
         if self.compress: 
