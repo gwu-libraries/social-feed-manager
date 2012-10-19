@@ -201,6 +201,11 @@ TWITTER_SAMPLE_URL = 'https://stream.twitter.com/1/statuses/sample.json'
 TWITTER_USERNAME = ''
 TWITTER_PASSWORD = ''
 
+# Redis config info
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
 # Be sure to create your own 'local_settings.py' file as described in README
 try:
     from local_settings import *

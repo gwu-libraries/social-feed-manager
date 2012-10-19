@@ -18,10 +18,10 @@ import time
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Max
-from django.utils import timezone
 from django.utils import simplejson as json
 
-from ui.models import authenticated_api, TwitterUser, TwitterUserItem
+from ui.models import authenticated_api, dt_aware_from_created_at
+from ui.models import TwitterUser, TwitterUserItem
 
 # A little added cushion
 WAIT_BUFFER_SECONDS = 2
@@ -57,9 +57,7 @@ class Command(BaseCommand):
                     break
                 for status in timeline:
                     # eg 'Mon Oct 15 20:15:12 +0000 2012'
-                    dt = datetime.fromtimestamp(time.mktime(time.strptime(status['created_at'], 
-                            '%a %b %d %H:%M:%S +0000 %Y')))
-                    dt_aware = timezone.make_aware(dt, timezone.utc)
+                    dt_aware = dt_aware_from_created_at(status['created_at'])
                     item, created = TwitterUserItem.objects.get_or_create(
                             twitter_user=twitter_user,
                             twitter_id=status['id'],

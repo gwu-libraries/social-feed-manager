@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models as m
 from django.utils import simplejson as json
+from django.utils import timezone
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
@@ -42,6 +43,12 @@ def authenticated_api(username, api_root=None, parser=None):
                 secure=settings.TWITTER_USE_SECURE) 
     except:
         return None
+
+
+def dt_aware_from_created_at(created_at):
+    ts = time.mktime(time.strptime(created_at, '%a %b %d %H:%M:%S +0000 %Y'))
+    dt = datetime.datetime.fromtimestamp(ts)
+    return timezone.make_aware(dt, timezone.utc)
 
 
 class RotatingFile(object):
