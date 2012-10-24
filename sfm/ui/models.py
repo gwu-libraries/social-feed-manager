@@ -193,8 +193,10 @@ class TwitterUserItem(m.Model):
             self.tweet['user']['screen_name'],
             str(self.tweet['user']['followers_count']),
             str(self.tweet['user']['friends_count']),
+            str(self.tweet['retweet_count']),
             ', '.join([ht['text'] \
                 for ht in self.tweet['entities']['hashtags']]),
+            self.twitter_url,
             self.tweet['text'],
             ]
 

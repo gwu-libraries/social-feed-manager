@@ -52,15 +52,20 @@ def twitter_user(request, name='', page=0):
         })
 
 def twitter_user_csv(request, name=''):
-    """fieldnames=['sfm_id', 'created_at', 'twitter_id', 'screen_name', 
-    'followers_count', 'friends_count', 'hashtags', 'text'])"""
+    fieldnames = ['sfm_id', 'created_at', 'twitter_id', 'screen_name', 
+            'followers_count', 'friends_count', 'retweet_count', 
+            'hashtags', 'twitter_url', 'text']
     user = get_object_or_404(TwitterUser, name=name)
     qs_tweets = user.items.order_by('-date_published')
     #out = ['\t'.join(t.csv) for t in qs_tweets]
     csvwriter = UnicodeCSVWriter()
+    csvwriter.writerow(fieldnames)
     for t in qs_tweets:
         csvwriter.writerow(t.csv)
-    return HttpResponse(csvwriter.out(), content_type='text/plain')
+    response = HttpResponse(csvwriter.out(), content_type='text/csv')
+    response['Content-Disposition'] = \
+            'attachment; filename="%s.csv"' % name
+    return response
 
 def twitter_item(request, id=0):
     item = get_object_or_404(TwitterUserItem, id=int(id))
