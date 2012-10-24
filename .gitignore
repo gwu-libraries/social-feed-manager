@@ -6,4 +6,4 @@ wsgi.py
 *.swp
 *.swo
 data
-
+*.rdb
