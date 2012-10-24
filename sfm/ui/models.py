@@ -203,6 +203,8 @@ class TwitterUserItem(m.Model):
             str(self.tweet['retweet_count']),
             ', '.join([ht['text'] \
                 for ht in self.tweet['entities']['hashtags']]),
+            self.tweet['in_reply_to_screen_name'] or '',
+            ', '.join([m for m in self.mentions]),
             self.twitter_url,
             self.tweet['text'],
             ]
