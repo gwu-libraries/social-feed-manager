@@ -47,12 +47,26 @@ on ubuntu lts 10.4; your mileage may vary.
 
         % cp sfm/local_settings.py.template sfm/local_settings.py
 
-* been moving to twitter's 1.1 api which requires oauth for everything, so
-you might find the TWITTER_* settings in flux.  once the UI is running 
-after a few more steps, log in to the UI function that requests your 
-authentication through Twitter's oauth service.  this will give you a saved
-User that you can specify as a TWITTER_DEFAULT_USERNAME which some of the
-sample commands down below will use.
+* you might find the TWITTER_* settings in flux, but at minimum you will
+need to use an existing twitter account to register other users.  use that
+account to log in at:
+
+        https://dev.twitter.com/apps/new
+
+    Then create an app.  In addition to the required values, set the
+    application type to "read only", and give it a callback URL.  This can
+    be the same as your website URL, but you have to provide a value or
+    the authorization loop between twitter/oauth and django-social-auth/
+    sfm will not work correctly.
+
+    Use the resulting OAuth settings' consumer key and secret as your
+    TWITTER_CONSUMER_KEY and TWITTER_CONSUMER_SECRET.
+
+* once the sfm UI is running (after a few more steps), log in to the
+UI function that requests your authentication through Twitter's oauth
+service.  this will give you a saved User that you can specify as a
+TWITTER_DEFAULT_USERNAME which some of the sample commands down below
+will use.
 
 * add and edit wsgi.py; specify your virtualenv root as ENV if you use one
 
@@ -62,6 +76,9 @@ sample commands down below will use.
 
         % syncdb
 
+    This will prompt you to create a superuser for administrating the
+    running app.  Create one and remember your account info.
+
 * to plug in to apache, use sfm/apache.conf and adjust in an 
   /etc/apache/sites-available file as appropriate
 
@@ -69,14 +86,16 @@ sample commands down below will use.
 usage
 -----
 
-* fetch daily or weekly trends
+* run the UI to browse saved data and use the admin:
 
-        % ./manage.py trendsdaily
-        % ./manage.py trendsweekly
+        % ./manage.py runserver
 
-* log in to the admin app at /admin and add one or more TwitterUsers
-(use real screen names), then you can fetch the most recent 3200 tweets 
-for each. 
+* the home page will be at '/', the admin app at '/admin'. exciting eh.
+
+* log in to the admin app at /admin using the superuser django prompted
+you to create when you ran "syncdb" above.  add one or more TwitterUsers
+(use real screen names), then you can fetch the most recent 3200 tweets
+for each.
 
         % ./manage.py user_timeline
 
@@ -91,9 +110,10 @@ a nightly cronjob like the above, or from the commandline:
 
         % ./manage.py dailycounts
 
-* run the UI to browse saved data or use the admin
+* fetch daily or weekly trends
 
-        % ./manage.py runserver
+        % ./manage.py trendsdaily
+        % ./manage.py trendsweekly
 
 * use the admin UI to add a Rule, which specifies follow, track, or locations
 to use to poll from twitter's statuses/filter function. then you can poll
