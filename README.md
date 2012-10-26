@@ -12,7 +12,7 @@ installation
 ------------
 
 Developed using python 2.7 and postgresql-9.1 on osx for deployment
-on ubuntu lts; your mileage may vary.
+on ubuntu lts 10.4; your mileage may vary.
 
 * get this code:
 
@@ -47,6 +47,13 @@ on ubuntu lts; your mileage may vary.
 
         % cp sfm/local_settings.py.template sfm/local_settings.py
 
+* been moving to twitter's 1.1 api which requires oauth for everything, so
+you might find the TWITTER_* settings in flux.  once the UI is running 
+after a few more steps, log in to the UI function that requests your 
+authentication through Twitter's oauth service.  this will give you a saved
+User that you can specify as a TWITTER_DEFAULT_USERNAME which some of the
+sample commands down below will use.
+
 * add and edit wsgi.py; specify your virtualenv root as ENV if you use one
 
         % cp sfm/wsgi.py.template sfm/wsgi.py
@@ -58,43 +65,66 @@ on ubuntu lts; your mileage may vary.
 * to plug in to apache, use sfm/apache.conf and adjust in an 
   /etc/apache/sites-available file as appropriate
 
-* start a feed in Gnip's console
-
 
 usage
 -----
-
-* see your rules
-    
-        % ./manage.py rulesall
-
-* add rules
-
-        % ./manage.py rulesadd foo bar baz
-        % ./manage.py rulesadd --tag election2008 obama biden mccain palin
-
-* delete rules
-
-        % ./manage.py rulesdelete foo baz
-        % ./manage.py rulesdelete --tag election2008 biden palin
 
 * fetch daily or weekly trends
 
         % ./manage.py trendsdaily
         % ./manage.py trendsweekly
 
-* watch the stream
+* log in to the admin app at /admin and add one or more TwitterUsers
+(use real screen names), then you can fetch the most recent 3200 tweets 
+for each. 
 
-        % ./manage.py streamfeed
+        % ./manage.py user_timeline
 
-* poll and save the feed
+* this works as a cronjob, e.g. to run it every two hours, if you installed
+it under /sfm (spells out virtualenv-based paths, adjust as necessary):
 
-        % ./manage.py pollfeed --save 
+        5 */2 * * * cd /sfm/social-feed-manager && /sfm/social-feed-manager/ENV/bin/python /sfm/social-feed-manager/sfm/manage.py user_timeline
 
-* process saved files into the db
+* once you fetch one or more user timelines, you can pre-process the
+data that the home page sparklines with "dailycounts", which you could run as
+a nightly cronjob like the above, or from the commandline:
 
-        % ./manage.py processfeed
+        % ./manage.py dailycounts
 
 * run the UI to browse saved data or use the admin
 
         % ./manage.py runserver
+
+* use the admin UI to add a Rule, which specifies follow, track, or locations
+to use to poll from twitter's statuses/filter function. then you can poll
+with the filterstream command, which will write out gzipped files at intervals
+you can specify:
+
+        % ./manage.py filterstream
+
+* to tidy up a bunch of those files into data directories named and organized
+by stream type and date:
+
+        % ./manage.py organizedata
+
+* to grab the statuses/sample stream:
+
+        % ./manage.py streamsample
+
+Note that if you're going to be using twitter's streams, you should be 
+familiar with their documentation:
+
+    https://dev.twitter.com/docs/streaming-apis
+
+
+
+development
+-----------
+
+To work on sfm, clone/fork it in github.  If you send pull requests from
+a fork, please make them as atomic as you can.
+
+We are actively working on this, making changes in response to university
+researcher requests.  If the features it supports seem fickle and spotty
+it's because we're still just getting started and still figuring out
+what we need it to do.  Please get in touch and tell us what you think.
