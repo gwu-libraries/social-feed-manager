@@ -12,7 +12,6 @@
 #   https://dev.twitter.com/docs/error-codes-responses
 #   https://dev.twitter.com/docs/rate-limiting
 
-from datetime import datetime
 import time 
 
 from django.conf import settings
@@ -43,18 +42,21 @@ class Command(BaseCommand):
             # update their record (auto_now) as we're checking it now
             twitter_user.save()
             while True:
-                print 'getting latest for user:', twitter_user.name
+                stop = False
+                print 'user: %s' % twitter_user.name
                 if max_id:
-                    print 'since_id %s, max_id %s' % (since_id, max_id)
+                    print 'since: %s' % since_id
+                    print 'max: %s' % max_id
                     timeline = api.user_timeline(screen_name=twitter_user.name,
                             since_id=since_id, max_id=max_id, count=200)
                 else:
-                    print 'since_id %s' % (since_id)
+                    print 'since: %s' % (since_id)
                     timeline = api.user_timeline(screen_name=twitter_user.name,
                             since_id=since_id, count=200)
                 if len(timeline) == 0:
                     # Nothing new; stop for this user
-                    break
+                    stop = True
+                new_status_count = 0
                 for status in timeline:
                     # eg 'Mon Oct 15 20:15:12 +0000 2012'
                     dt_aware = dt_aware_from_created_at(status['created_at'])
@@ -67,14 +69,20 @@ class Command(BaseCommand):
                             place=status['place'] or '',
                             source=status['source'])
                     if created:
-                        print 'saved twitter id %s' % item.twitter_id
+                        print 'save: id %s' % item.twitter_id
                         max_id = item.twitter_id - 1
+                        new_status_count += 1
                     else:
-                        print 'skipped id %s' % item.id
+                        print 'skip: id %s' % item.id
+                # max new statuses per call is 200, so check for less than
+                # a reasonable fraction of that to see if we should stop
+                if new_status_count < 150:
+                    print 'stop: < 150 new statuses'
+                    stop = True
                 if max_id < since_id:
                     # Got 'em all, stop for this user
-                    print 'max_id < since_id'
-                    break
+                    print 'stop: max_id < since_id'
+                    stop = True
                 # Check response codes for issues
                 response_status = api.last_response.status
                 try:
@@ -84,7 +92,7 @@ class Command(BaseCommand):
                     print 'remaining: %s, rate limit resets in %s minutes' % \
                             (remaining, reset_seconds / 60.0)
                 except:
-                    print 'error calculating rate limits'
+                    print 'error: calculating rate limits'
                     reset_seconds = remaining = 1
                 if response_status == 200:
                     if remaining > 1:
@@ -93,15 +101,17 @@ class Command(BaseCommand):
                         # so cushion around that too
                         if wait_time < WAIT_BUFFER_SECONDS:
                             wait_time += WAIT_BUFFER_SECONDS
-                        print 'sleeping %s seconds' % wait_time
+                        print 'sleep: %s seconds' % wait_time
                         time.sleep(wait_time)
                     else:
-                        print 'no API calls remaining this window.'
-                        break
+                        print 'error: no API calls remaining this window.'
+                        stop = True
                 elif response_status >= 500:
-                    print 'API error:', api.last_response.getheader('status')
-                    break
+                    print 'error:', api.last_response.getheader('status')
+                    stop = True
                 elif response_status >= 400:
-                    print 'API authorization issue:', \
+                    print 'error::', \
                             api.last_response.getheader('status')
+                    stop = True
+                if stop:
                     break
