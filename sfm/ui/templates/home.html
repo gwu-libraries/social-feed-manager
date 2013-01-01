@@ -29,7 +29,7 @@
                 <tr>
                     <th>user</th>
                     <th>count</th>
-                    <th>timeline ({{ dates|first|date:"Y-m-d" }}-{{ dates|last|date:"Y-m-d" }})</th>
+                    <th>timeline ({{ dates|slice:"-365:"|first|date:"Y-m-d" }} - {{ dates|last|date:"Y-m-d" }})</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,7 +39,7 @@
                     <td>{{ uic.twitter_user__count|intcomma }}</td>
                     {% for user_name, user in users.items %}
                         {% if user_name = uic.twitter_user__name %}
-                    <td><span class='inlinesparkline'>{{ user.counts }}</span></td>
+                    <td><span class='inlinesparkline'>{{ user.counts|slice:'-365:' }}</span></td>
                         {% endif %}
                     {% endfor %}
                 </tr>

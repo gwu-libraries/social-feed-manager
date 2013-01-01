@@ -20,7 +20,6 @@ RE_TWEET_ID = re.compile(r'.*statuses/([0-9]+)$')
 RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
 
 DAY = datetime.timedelta(days=1)
-# Available tweets are pretty uneven before 2012-01-01
 dt = datetime.datetime(2012, 1, 1)
 dt_end = datetime.datetime.today()
 DATES = []

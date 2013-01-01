@@ -13,7 +13,12 @@ from .models import TrendWeekly, TrendDaily
 from .models import TwitterUser, TwitterUserItem, DATES
 
 def home(request):
-    user_item_counts = TwitterUserItem.objects.values('twitter_user', 'twitter_user__name').annotate(Count('twitter_user')).order_by('-twitter_user__count')
+    user_item_counts = TwitterUserItem.objects.filter(
+            date_published__gte=DATES[0])
+    user_item_counts = user_item_counts.values('twitter_user', 
+                                               'twitter_user__name')
+    user_item_counts = user_item_counts.annotate(Count('twitter_user'))
+    user_item_counts = user_item_counts.order_by('-twitter_user__count')
     users = {}
     for uic in user_item_counts:
         users[uic['twitter_user__name']] = TwitterUser.objects.get(id=uic['twitter_user'])
