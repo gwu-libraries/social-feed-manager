@@ -9,7 +9,8 @@ class RuleAdmin(admin.ModelAdmin):
 admin.site.register(m.Rule, RuleAdmin)
 
 class TwitterUserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'date_last_checked']
+    list_display = ['id', 'is_active', 'name', 'date_last_checked']
+    list_filter = ['is_active']
     search_fields = ['name']
 admin.site.register(m.TwitterUser, TwitterUserAdmin)
 

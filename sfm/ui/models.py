@@ -116,6 +116,7 @@ class TrendDaily(m.Model):
 class TwitterUser(m.Model):
     name = m.TextField(db_index=True)
     date_last_checked = m.DateTimeField(db_index=True, auto_now=True)
+    is_active = m.BooleanField(default=True)
 
     def __unicode__(self):
         return 'user %s (sfm id %s)' % (self.name, self.id)

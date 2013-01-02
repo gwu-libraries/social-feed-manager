@@ -17,7 +17,10 @@ import time
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Max
+from django.db.utils import IntegrityError
 from django.utils import simplejson as json
+
+import tweepy
 
 from ui.models import authenticated_api, dt_aware_from_created_at
 from ui.models import TwitterUser, TwitterUserItem
@@ -27,10 +30,11 @@ WAIT_BUFFER_SECONDS = 2
 
 class Command(BaseCommand):
     help = 'fetch status updates from twitter user timelines'
-
+    
     def handle(self, *args, **options):
         api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
-        qs_twitter_users = TwitterUser.objects.order_by('-date_last_checked')
+        qs_twitter_users = TwitterUser.objects.filter(is_active=True)
+        qs_twitter_users = qs_twitter_users.order_by('date_last_checked')
         for twitter_user in qs_twitter_users:
             # Do they have any statuses recorded?
             if twitter_user.items.count():
@@ -44,15 +48,20 @@ class Command(BaseCommand):
             while True:
                 stop = False
                 print 'user: %s' % twitter_user.name
-                if max_id:
-                    print 'since: %s' % since_id
-                    print 'max: %s' % max_id
-                    timeline = api.user_timeline(screen_name=twitter_user.name,
-                            since_id=since_id, max_id=max_id, count=200)
-                else:
-                    print 'since: %s' % (since_id)
-                    timeline = api.user_timeline(screen_name=twitter_user.name,
-                            since_id=since_id, count=200)
+                try:
+                    if max_id:
+                        print 'since: %s' % since_id
+                        print 'max: %s' % max_id
+                        timeline = api.user_timeline(screen_name=twitter_user.name,
+                                since_id=since_id, max_id=max_id, count=200)
+                    else:
+                        print 'since: %s' % (since_id)
+                        timeline = api.user_timeline(screen_name=twitter_user.name,
+                                since_id=since_id, count=200)
+                except tweepy.error.TweepError as e:
+                    print 'ERROR: %s' % e
+                    # stop processing this user immediately
+                    break
                 if len(timeline) == 0:
                     # Nothing new; stop for this user
                     stop = True
@@ -60,20 +69,23 @@ class Command(BaseCommand):
                 for status in timeline:
                     # eg 'Mon Oct 15 20:15:12 +0000 2012'
                     dt_aware = dt_aware_from_created_at(status['created_at'])
-                    item, created = TwitterUserItem.objects.get_or_create(
-                            twitter_user=twitter_user,
-                            twitter_id=status['id'],
-                            date_published=dt_aware,
-                            item_text=status['text'],
-                            item_json=json.dumps(status),
-                            place=status['place'] or '',
-                            source=status['source'])
-                    if created:
-                        print 'save: id %s' % item.twitter_id
-                        max_id = item.twitter_id - 1
-                        new_status_count += 1
-                    else:
-                        print 'skip: id %s' % item.id
+                    try:
+                        item, created = TwitterUserItem.objects.get_or_create(
+                                twitter_user=twitter_user,
+                                twitter_id=status['id'],
+                                date_published=dt_aware,
+                                item_text=status['text'],
+                                item_json=json.dumps(status),
+                                place=status['place'] or '',
+                                source=status['source'])
+                        if created:
+                            max_id = item.twitter_id - 1
+                            new_status_count += 1
+                        else:
+                            print 'skip: id %s' % item.id
+                    except IntegrityError as ie:
+                        print 'ERROR: %s' % ie
+                print 'saved: %s item(s)' % new_status_count
                 # max new statuses per call is 200, so check for less than
                 # a reasonable fraction of that to see if we should stop
                 if new_status_count < 150:
