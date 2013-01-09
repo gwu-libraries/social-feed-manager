@@ -53,23 +53,27 @@ account to log in at:
 
         https://dev.twitter.com/apps/new
 
-    Then create an app.  In addition to the required values, set the
-    application type to "read only", and give it a callback URL.  This can
-    be the same as your website URL, but you have to provide a value or
-    the authorization loop between twitter/oauth and django-social-auth/
-    sfm will not work correctly.
-
-    Use the resulting OAuth settings' consumer key and secret as your
-    TWITTER_CONSUMER_KEY and TWITTER_CONSUMER_SECRET.
+    Then create an app.  In addition to the required values, set
+    the application type to "read only", and give it a callback URL.
+    This can be the same as your website URL, but you have to provide
+    a value or the authorization loop between twitter/oauth and
+    django-social-auth/ sfm will not work correctly.  Use the resulting
+    OAuth settings' consumer key and secret as your TWITTER_CONSUMER_KEY
+    and TWITTER_CONSUMER_SECRET.
 
 * once the sfm UI is running (after a few more steps), log in to the
 UI function that requests your authentication through Twitter's oauth
 service.  this will give you a saved User that you can specify as a
-TWITTER_DEFAULT_USERNAME which some of the sample commands down below
-will use.  Set this username as TWITTER_DEFAULT_USERNAME and the key
-and secret as TWITTER_CONSUMER_KEY and TWITTER_CONSUMER_SECRET, 
-respectively.  sfm will use this trio of settings for management tasks
-like user_timeline.
+TWITTER_DEFAULT_USERNAME which some of the commands down below will use.
+Set this username as TWITTER_DEFAULT_USERNAME in your local_settings.py.
+
+* to verify, you should have each of these set in ```local_settings.py```:
+
+```python
+TWITTER_DEFAULT_USERNAME 
+TWITTER_CONSUMER_KEY
+TWITTER_CONSUMER_SECRET
+```
 
 * add and edit wsgi.py; specify your virtualenv root as ENV if you use one
 
