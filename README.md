@@ -66,7 +66,10 @@ account to log in at:
 UI function that requests your authentication through Twitter's oauth
 service.  this will give you a saved User that you can specify as a
 TWITTER_DEFAULT_USERNAME which some of the sample commands down below
-will use.
+will use.  Set this username as TWITTER_DEFAULT_USERNAME and the key
+and secret as TWITTER_CONSUMER_KEY and TWITTER_CONSUMER_SECRET, 
+respectively.  sfm will use this trio of settings for management tasks
+like user_timeline.
 
 * add and edit wsgi.py; specify your virtualenv root as ENV if you use one
 
