@@ -12,6 +12,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import TrendWeekly, TrendDaily
 from .models import TwitterUser, TwitterUserItem, DATES
 
+
+def _paginate(request, paginator):
+    page = request.GET.get('page')
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        items = paginator.page(1)
+    except EmptyPage:
+        items = paginator.page(paginator.num_pages)
+    return page, items
+
+
 def home(request):
     user_item_counts = TwitterUserItem.objects.filter(
             date_published__gte=DATES[0])
@@ -36,24 +48,21 @@ def twitter_user(request, name='', page=0):
     qs_tweets = user.items.order_by('-date_published')
     # grab a slightly older tweet to use for bio info
     if qs_tweets.count() > 20:
-        recent_tweet = qs_tweets[25]
+        recent_tweet = qs_tweets[20]
     elif qs_tweets.count() > 0:
         recent_tweet = qs_tweets[0]
     else:
         recent_tweet = None
     paginator = Paginator(qs_tweets, 50)
-    try:
-        tweets = paginator.page(page)
-    except PageNotAnInteger:
-        tweets = paginator.page(0)
-    except EmptyPage:
-        tweets = paginator.page(paginator.num_pages)
+    page, tweets = _paginate(request, paginator)
     return render(request, 'twitter_user.html', {
         'title': 'twitter user: %s' % name,
         'user': user,
         'qs_tweets': qs_tweets,
         'tweets': tweets,
         'recent_tweet': recent_tweet,
+        'paginator': paginator,
+        'page': page,
         })
 
 def twitter_user_csv(request, name=''):
