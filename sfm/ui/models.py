@@ -195,7 +195,8 @@ class TwitterUserItem(m.Model):
         """A list of values suitable for csv-ification"""
         return [
             str(self.id), 
-            self.tweet['created_at'],
+            datetime.datetime.strftime(self.date_published, 
+                '%Y-%m-%dT%H:%M:%SZ'),
             self.tweet['id_str'], 
             self.tweet['user']['screen_name'],
             str(self.tweet['user']['followers_count']),
