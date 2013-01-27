@@ -16,7 +16,8 @@
         {% block stylesheet_extra %}
         {% endblock stylesheet_extra %}
         {% block javascript %}
-        <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+        <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        </script>
         {% endblock javascript %}
         {% block javascript_extra %}
         {% endblock javascript_extra %}
@@ -32,8 +33,8 @@
                         <ul class="nav">
                             <li {% if '/about/' == request.path %} class='active'{% endif %}><a href="{% url 'about' %}">about</a></li>
                         </ul>
-                        <form method="get" action="#" class="navbar-search ">
-                            <input type="text" name="q" class="search-query" placeholder="search" />
+                        <form method="get" action="{% url 'search' %}" class="navbar-search">
+                            <input type="text" name="q" class="search-query" placeholder="{% if q %}{{ q }}{% else %}find users{% endif %}" />
                         </form>
                         <p class="navbar-text pull-right">
                             {% if user.is_authenticated %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load humanize %}
+
+{% block content %}
+<div class='span-12'> 
+
+    {% if title %}
+    <h2>{{ title }} ({{ users.count }} found)</h2>
+    {% endif %}
+
+    {% if users %}
+    <table class='table'>
+        <thead>
+            <th>user</th>
+            <th>items</th>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td><a href='{% url "twitter_user" user.name %}'>{{ user.name }}</a></td>
+                <td>{{ user.items.count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>
+    Sorry, I didn't find any users that match.
+    </p>
+    {% endif %}
+
+</div>
+{% endblock content %}

@@ -18,6 +18,7 @@ urlpatterns += patterns('ui.views',
     # twitter data patterns
     url(r'^trends/weekly/$', 'trends_weekly', name='trends_weekly'),
     url(r'^trends/daily/$', 'trends_daily', name='trends_daily'),
+    url(r'^search/$', 'search', name='search'),
     url(r'^twitter-user/(?P<name>[a-zA-Z0-9_]+).csv$', 'twitter_user_csv',
         name='twitter_user_csv'),
     url(r'^twitter-user/(?P<name>[a-zA-Z0-9_]+)/(?P<page>[0-9]+)?', 'twitter_user',

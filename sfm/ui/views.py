@@ -41,6 +41,22 @@ def home(request):
         'dates': DATES,
         })
 
+
+def search(request):
+    q = request.GET.get('q', '')
+    title = ''
+    if q:
+        qs_users = TwitterUser.objects.filter(name__icontains=q)
+        qs_users = qs_users.extra(select={'lower_name': 'lower(name)'})
+        qs_users = qs_users.order_by('lower_name')
+        title = 'search: "%s"' % q
+    return render(request, 'search.html', {
+        'title': title,
+        'users': qs_users,
+        'q': q
+        })
+
+
 def twitter_user(request, name='', page=0):
     user = get_object_or_404(TwitterUser, name=name)
     if page < 1:
