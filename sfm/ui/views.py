@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.cache import cache_page
 
 from .models import TrendWeekly, TrendDaily
 from .models import TwitterUser, TwitterUserItem
@@ -24,6 +25,7 @@ def _paginate(request, paginator):
     return page, items
 
 
+@cache_page(60 * 20)
 def home(request):
     qs_users = TwitterUser.objects.all()
     qs_users_alpha = qs_users.order_by('?')

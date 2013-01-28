@@ -34,7 +34,7 @@
                             <li {% if '/about/' == request.path %} class='active'{% endif %}><a href="{% url 'about' %}">about</a></li>
                         </ul>
                         <form method="get" action="{% url 'search' %}" class="navbar-search">
-                            <input type="text" name="q" class="search-query" placeholder="{% if q %}{{ q }}{% else %}find users{% endif %}" />
+                            <input type="text" name="q" class="search-query" placeholder="find users" {% if q %}value="{{ q }}"{% endif %}" />
                         </form>
                         <p class="navbar-text pull-right">
                             {% if user.is_authenticated %}

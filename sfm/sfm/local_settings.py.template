@@ -17,6 +17,14 @@ DATABASES = {
     }
 }
 
+# See https://docs.djangoproject.com/en/1.4/topics/cache/
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'your-unique-sfm-instance-name',
+    }   
+}   
+
 TEMPLATE_DIRS = (
 )
 
