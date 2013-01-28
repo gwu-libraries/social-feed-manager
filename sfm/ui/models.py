@@ -182,12 +182,9 @@ class TwitterUserItem(m.Model):
 
     def unshorten(self, url):
         """Don't try to guess; just resolve it, and follow 301s"""
-        stack = [url]
         h = requests.head(url)
-        while h.status_code == 301:
-            location = h.headers['location']
-            stack.append(location)
-            h = requests.head(location)
+        stack = [i.url for i in h.history]
+        stack.append(h.url)
         return stack
 
     @property
