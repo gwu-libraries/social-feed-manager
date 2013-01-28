@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load humanize %}
+
+{% block javascript_extra %}
+<script type='text/javascript'>
+function unshorten(id) {
+    $.get("/twitter-item/" + id + "/links/",
+        function(htmldata) {
+            $("div #links-" + id).replaceWith(htmldata);
+        });
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<div class='span12'>
+
+    {% include "tweets_pagination.html" %}
+    <table class='table'>
+        <thead>
+            <tr>
+                <th width='20%'>date
+                    <br />
+                    followers/following</th>
+                <th>user</th>
+                <th width='5%'>rt #</th>
+                <th>text</th>
+                <th width='15%'>view</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in tweets %}
+            <tr>
+                <td>
+                    {{ item.date_published|date:"Y-m-d h:i:s a" }} 
+                    <br />
+                    {{ item.tweet.user.followers_count|intcomma }} -
+                    {{ item.tweet.user.friends_count|intcomma }} 
+                </td>
+                <td><a href='{% url "twitter_user" item.twitter_user.name %}'>{{ item.twitter_user.name }}</a></td>
+                <td>{{ item.tweet.retweet_count }}</td>
+                <td>
+                    {{ item.text|urlize }}
+                    {% if item.links %}
+                    <div id='links-{{ item.id }}'>
+                        <i class='icon-resize-full'></i>
+                        <a href="javascript:unshorten({{ item.id }});">expand links</a>
+                    </div>
+                    {% endif %}
+                </td>
+                <td>in <a href="{{ item.twitter_url }}">twitter</a> 
+                    <br />
+                    raw <a href="{{ item.tweet_json_url }}">live</a> -
+                        <a href="{% url 'twitter_item' id=item.id %}">cached</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include "tweets_pagination.html" %}
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load humanize %}
+
+{% block content %}
+
+<div class='span-6'>
+    <h2>{{ title }}</h2>
+
+    {% if users %}
+    {% include "users_alpha_pagination.html" %}
+    <table class='table'>
+        <thead>
+            <tr>
+                <th>user</th>
+                <th>items</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td><a href='{% url "twitter_user" user.name %}'>{{ user.name }}</a></td>
+                <td>{{ user.items.count|intcomma }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include "users_alpha_pagination.html" %}
+    {% endif %}
+</div>
+
+
+{% endblock content %}

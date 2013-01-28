@@ -1,0 +1,18 @@
+{% load url from future %}
+<div class="pagination pagination-centered">
+    <ul>
+        {% if tweets.has_previous %}
+        <li><a href="{% url 'tweets' %}?page=1">&laquo; 1</a></li>
+        <li><a href="{% url 'tweets' %}?page={{ tweets.previous_page_number }}">newer</a></li>
+        {% else %}
+        <li class="active"><a href="{% url 'tweets' %}?page=1 %}">&laquo;</a></li>
+        {% endif %}
+        <li class="active">
+            <a href="#">{{ tweets.number }}</a>
+        </li>
+        {% if tweets.has_next %}
+        <li><a href="{% url 'tweets' %}?page={{ tweets.next_page_number }}">older</a></li>
+        <li><a href="{% url 'tweets' %}?page={{ tweets.paginator.num_pages }}">{{ tweets.paginator.num_pages }} &raquo;</a></li>
+        {% endif %}
+    </ul>
+</div>

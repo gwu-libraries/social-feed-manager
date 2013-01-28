@@ -14,39 +14,52 @@
 {% block content %}
 
 <div class='page-header'>
-    {% if user.is_authenticated %}
-    <h1>hi {{ user.username }}.</h1>
-    {% else %}
-    <h1>hi.</h1>
-    {% endif %}
+    <h1>welcome.</h1>
 </div>
 
 <div class='row'>
-    <div class='span-6'>
-        <h2>users by item count</h2>
+    <div class='span4'>
+        <h1><a href='{% url "tweets" %}'>{{ item_count|intcomma }} items</a></h1>
+        <h1>from <a href='{% url "users_alpha" %}'>{{ users.count|intcomma }} users</a></h1>
+
+        {% if users_alpha %}
+        <p />
+        <h3>a sampling:</h3>
+        <div class='well'>
+            {% for user in users_alpha %}
+                <a href='{% url "twitter_user" user.name %}'>{{ user.name }}</a>
+                {% if forloop.last %}
+                {% else %}
+                    &middot;
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if items %}
+    <div class='span8'>
+        <h1>recent tweets</h1>
         <table class='table'>
             <thead>
                 <tr>
                     <th>user</th>
-                    <th>count</th>
-                    <th>timeline ({{ dates|slice:"-365:"|first|date:"Y-m-d" }} - {{ dates|last|date:"Y-m-d" }})</th>
+                    <th>date</th>
+                    <th>text</th>
                 </tr>
             </thead>
             <tbody>
-                {% for uic in user_item_counts %}
+                {% for item in items %}
                 <tr>
-                    <td><a href="{% url 'twitter_user' name=uic.twitter_user__name %}">{{ uic.twitter_user__name }}</a></td>
-                    <td>{{ uic.twitter_user__count|intcomma }}</td>
-                    {% for user_name, user in users.items %}
-                        {% if user_name = uic.twitter_user__name %}
-                    <td><span class='inlinesparkline'>{{ user.counts|slice:'-365:' }}</span></td>
-                        {% endif %}
-                    {% endfor %}
+                    <td><a href='{% url "twitter_user" item.twitter_user.name %}'>{{ item.twitter_user.name }}</a></td>
+                    <td>{{ item.date_published }}</td>
+                    <td>{{ item.tweet.text }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    {% endif %}
 </div>
 
 {% endblock %}

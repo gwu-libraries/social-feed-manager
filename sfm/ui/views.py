@@ -5,16 +5,15 @@ import csv
 from django.contrib import auth
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
-from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import TrendWeekly, TrendDaily
-from .models import TwitterUser, TwitterUserItem, DATES
+from .models import TwitterUser, TwitterUserItem
 
 
 def _paginate(request, paginator):
-    page = request.GET.get('page')
+    page = request.GET.get('page', 1)
     try:
         items = paginator.page(page)
     except PageNotAnInteger:
@@ -25,20 +24,16 @@ def _paginate(request, paginator):
 
 
 def home(request):
-    user_item_counts = TwitterUserItem.objects.filter(
-            date_published__gte=DATES[0])
-    user_item_counts = user_item_counts.values('twitter_user', 
-                                               'twitter_user__name')
-    user_item_counts = user_item_counts.annotate(Count('twitter_user'))
-    user_item_counts = user_item_counts.order_by('-twitter_user__count')
-    users = {}
-    for uic in user_item_counts:
-        users[uic['twitter_user__name']] = TwitterUser.objects.get(id=uic['twitter_user'])
+    qs_users = TwitterUser.objects.all()
+    qs_users_alpha = qs_users.order_by('?')
+    qs_items = TwitterUserItem.objects.order_by('-date_published')
+    item_count = qs_items.count()
     return render(request, 'home.html', {
         'title': 'home',
-        'user_item_counts': user_item_counts,
-        'users': users,
-        'dates': DATES,
+        'users': qs_users,
+        'users_alpha': qs_users_alpha[:25],
+        'items': qs_items[:10],
+        'item_count': item_count,
         })
 
 
@@ -57,10 +52,34 @@ def search(request):
         })
 
 
-def twitter_user(request, name='', page=0):
+def tweets(request):
+    qs_tweets = TwitterUserItem.objects.order_by('-date_published')
+    paginator = Paginator(qs_tweets, 50)
+    page, tweets = _paginate(request, paginator)
+    return render(request, 'tweets.html', {
+        'title': 'all tweets, chronologically',
+        'tweets': tweets,
+        'paginator': paginator,
+        'page': page,
+        })
+
+
+def users_alpha(request):
+    qs_users = TwitterUser.objects.all()
+    qs_users = qs_users.extra(select={'lower_name': 'lower(name)'})
+    qs_users = qs_users.order_by('lower_name')
+    paginator = Paginator(qs_users, 25)
+    page, users = _paginate(request, paginator)
+    return render(request, 'users_alpha.html', {
+        'title': 'all users, alphabetically',
+        'users': users,
+        'paginator': paginator,
+        'page': page,
+        })
+
+
+def twitter_user(request, name=''):
     user = get_object_or_404(TwitterUser, name=name)
-    if page < 1:
-        page = 1
     qs_tweets = user.items.order_by('-date_published')
     # grab a slightly older tweet to use for bio info
     if qs_tweets.count() > 20:
@@ -81,6 +100,7 @@ def twitter_user(request, name='', page=0):
         'page': page,
         })
 
+
 def twitter_user_csv(request, name=''):
     fieldnames = ['sfm_id', 'created_at', 'twitter_id', 'screen_name', 
             'followers_count', 'friends_count', 'retweet_count', 
@@ -88,7 +108,6 @@ def twitter_user_csv(request, name=''):
             'twitter_url', 'text']
     user = get_object_or_404(TwitterUser, name=name)
     qs_tweets = user.items.order_by('-date_published')
-    #out = ['\t'.join(t.csv) for t in qs_tweets]
     csvwriter = UnicodeCSVWriter()
     csvwriter.writerow(fieldnames)
     for t in qs_tweets:

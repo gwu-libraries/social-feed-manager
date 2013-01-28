@@ -1,0 +1,18 @@
+{% load url from future %}
+<div class="pagination pagination-centered">
+    <ul>
+        {% if users.has_previous %}
+        <li><a href="{% url 'users_alpha' %}?page=1">&laquo; 1</a></li>
+        <li><a href="{% url 'users_alpha' %}?page={{ users.previous_page_number }}">prev</a></li>
+        {% else %}
+        <li class="active"><a href="{% url 'users_alpha' %}?page=1">&laquo;</a></li>
+        {% endif %}
+        <li class="active">
+            <a href="#">{{ users.number }}</a>
+        </li>
+        {% if users.has_next %}
+        <li><a href="{% url 'users_alpha' %}?page={{ users.next_page_number }}">next</a></li>
+        <li><a href="{% url 'users_alpha' %}?page={{ users.paginator.num_pages }}">{{ users.paginator.num_pages }} &raquo;</a></li>
+        {% endif %}
+    </ul>
+</div>
