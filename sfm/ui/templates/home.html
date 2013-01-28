@@ -3,19 +3,95 @@
 {% load humanize %}
 
 {% block javascript_extra %}
-<script type='text/javascript' src='{{ STATIC_URL }}js/jquery.sparkline.min.js'></script>
+<script type='text/javascript' src="http://d3js.org/d3.v3.min.js"></script>
 <script type='text/javascript'>
-    $(function() {
-        $('.inlinesparkline').sparkline(); 
+    var daily_counts = {{ daily_counts|safe }};
+    function getDate(d) {
+        return new Date(d);
+    };
+
+    // assume sorted by date
+    var minDate = getDate(daily_counts[0][0]);
+    var maxDate = getDate(daily_counts[daily_counts.length-1][0]);
+
+    var width = 600;
+    var height = 200;
+
+    var x = d3.scale.linear()
+        .domain([0, daily_counts.length])
+        .range([0, width]);
+
+    var x_axis = d3.time.scale()
+        .domain([minDate, maxDate])
+        .range([0, width]);
+                                                
+    var format = d3.time.format("%Y-%m-%d");
+    var y = d3.scale.linear()
+        .domain([0, d3.max(daily_counts, function(d) { return d[1]; } )])
+        .range([0, height]);
+
+    var y_axis = d3.scale.linear()
+        .domain([d3.max(daily_counts, function(d) { return d[1]; }), 0])
+        .range([0, height]);
+    $(document).ready(function() {
+        var chart = d3.select("#viz").append("svg")
+            .attr("class", "chart")
+            .attr("width", width * 1.2)
+            .attr("height", height * 1.2)
+          .append("g")
+            .attr("transform", "translate(60, 20)");
+
+        chart.selectAll("line")
+            .data(y.ticks(10))
+          .enter().append("line")
+            .attr("x1", 0)
+            .attr("x2", width)
+            .attr("y1", y)
+            .attr("y2", y)
+            .style("stroke", "#bbb");
+
+        chart.selectAll("rect")
+            .data(daily_counts)
+          .enter().append("rect")
+            .attr("opacity", 0.85)
+            .attr("x", function(d, i) { return x(i); })
+            .attr("y", function(d) { return height - y(d[1]) - 12; })
+            .attr("width", function(d) { return 6; })
+            .attr("height", function(d) { return y(d[1]) + 1; });
+
+        chart.selectAll(".yrule")
+            .data(y_axis.ticks(10))
+          .enter().append("text")
+            .attr("class", "rule")
+            .attr("x", -20)
+            .attr("y", y_axis)
+            .attr("dy", -7)
+            .attr("text-anchor", "middle")
+            .text(String);
+
+        chart.selectAll(".xrule")
+            .data(x_axis.ticks(4))
+          .enter().append("text")
+            .attr("class", "rule")
+            .attr("x", x_axis)
+            .attr("y", height )
+            .attr("dx", -30)
+            .attr("dy", 10)
+            .text(function(d, i) { return format(d); });
     });
 </script>
 {% endblock javascript_extra %}
 
-{% block content %}
+{% block stylesheet_extra %}
+<style type='text/css'>
+    .chart rect {
+        fill: steelblue;
+        stroke: white;
+    }
+</style>
+{% endblock stylesheet_extra %}
 
-<div class='page-header'>
-    <h1>welcome.</h1>
-</div>
+{% block content %}
 
 <div class='row'>
     <div class='span4'>
@@ -37,14 +113,24 @@
         {% endif %}
     </div>
 
-    {% if items %}
     <div class='span8'>
+        <h1>tweets per day</h1>
+
+        <div id='viz'>
+        </div>
+    </div>
+</div>
+
+{% if items %}
+<div class="row">
+    <div class="span12"> 
         <h1>recent tweets</h1>
         <table class='table'>
             <thead>
                 <tr>
                     <th>user</th>
                     <th>date</th>
+                    <th>rt #</th>
                     <th>text</th>
                 </tr>
             </thead>
@@ -52,14 +138,15 @@
                 {% for item in items %}
                 <tr>
                     <td><a href='{% url "twitter_user" item.twitter_user.name %}'>{{ item.twitter_user.name }}</a></td>
-                    <td>{{ item.date_published }}</td>
+                    <td>{{ item.date_published|date:"H:i:s" }}</td>
+                    <td>{{ item.tweet.retweet_count }}</td>
                     <td>{{ item.tweet.text }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    {% endif %}
 </div>
+{% endif %}
 
 {% endblock %}

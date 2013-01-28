@@ -5,7 +5,9 @@
 {% block content %}
 
 <div class='span-6'>
-    <h2>{{ title }}</h2>
+    <div class='page-header'>
+        <h2>{{ title }}</h2>
+    </div>
 
     {% if users %}
     {% include "users_alpha_pagination.html" %}

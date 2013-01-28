@@ -6,7 +6,9 @@
 <div class='span-12'> 
 
     {% if title %}
-    <h2>{{ title }} ({{ users.count }} found)</h2>
+    <div class='page-header'>
+        <h2>{{ title }} ({{ users.count }} found)</h2>
+    </div>
     {% endif %}
 
     {% if users %}
