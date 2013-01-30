@@ -38,7 +38,7 @@ def home(request):
             FROM ui_twitteruseritem 
             WHERE date_published > NOW() - INTERVAL '3 months' 
             GROUP BY 1 
-            LIMIT 90 OFFSET 1;
+            LIMIT 91 OFFSET 1;
             """)
         daily_counts = [[row[0].strftime('%Y-%m-%d'), int(row[1])] for row in cursor.fetchall()]
     except:

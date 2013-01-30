@@ -39,7 +39,7 @@
             .attr("width", width * 1.2)
             .attr("height", height * 1.2)
           .append("g")
-            .attr("transform", "translate(60, 20)");
+            .attr("transform", "translate(60, 40)");
 
         chart.selectAll("line")
             .data(y.ticks(10))
@@ -50,14 +50,22 @@
             .attr("y2", y)
             .style("stroke", "#bbb");
 
-        chart.selectAll("rect")
+        var rect = chart.selectAll("rect")
             .data(daily_counts)
           .enter().append("rect")
             .attr("opacity", 0.85)
             .attr("x", function(d, i) { return x(i); })
-            .attr("y", function(d) { return height - y(d[1]) - 12; })
+            .attr("y", function(d) { return height - y(d[1]) - 20; })
             .attr("width", function(d) { return 6; })
             .attr("height", function(d) { return y(d[1]) + 1; });
+
+        rect.append("svg:title")
+            .attr("class", "recttext")
+            .attr("x", function(d, i) { return x(i); })
+            .attr("y", 100)
+            .attr("dx", 0)
+            .attr("dy", 0)
+            .text(function(d) { return d[0] + ": " + d[1] + " tweets"; });
 
         chart.selectAll(".yrule")
             .data(y_axis.ticks(10))
@@ -65,7 +73,7 @@
             .attr("class", "rule")
             .attr("x", -20)
             .attr("y", y_axis)
-            .attr("dy", -7)
+            .attr("dy", -15)
             .attr("text-anchor", "middle")
             .text(String);
 
@@ -74,9 +82,9 @@
           .enter().append("text")
             .attr("class", "rule")
             .attr("x", x_axis)
-            .attr("y", height )
+            .attr("y", height)
             .attr("dx", -30)
-            .attr("dy", 10)
+            .attr("dy", 0)
             .text(function(d, i) { return format(d); });
     });
 </script>
