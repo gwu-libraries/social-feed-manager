@@ -209,7 +209,7 @@ class TwitterUserItem(m.Model):
     @property
     def csv(self):
         """A list of values suitable for csv-ification"""
-        return [
+        r = [
             str(self.id), 
             datetime.datetime.strftime(self.date_published, 
                 '%Y-%m-%dT%H:%M:%SZ'),
@@ -227,6 +227,10 @@ class TwitterUserItem(m.Model):
             str(self.is_retweet(strict=False)),
             self.tweet['text'],
             ]
+        # only show up to two urls w/expansions
+        for url in self.tweet['entities']['urls'][:2]:
+            r.extend([url['url'], url['expanded_url']])
+        return r
 
 
 class Rule(m.Model):
