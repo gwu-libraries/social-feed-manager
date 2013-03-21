@@ -121,7 +121,7 @@ def twitter_user_csv(request, name=''):
     fieldnames = ['sfm_id', 'created_at', 'twitter_id', 'screen_name', 
             'followers_count', 'friends_count', 'retweet_count', 
             'hashtags', 'in_reply_to_screen_name', 'mentions',
-            'twitter_url', 'text']
+            'twitter_url', 'is_retweet_strict', 'is_retweet', 'text']
     user = get_object_or_404(TwitterUser, name=name)
     qs_tweets = user.items.order_by('-date_published')
     csvwriter = UnicodeCSVWriter()

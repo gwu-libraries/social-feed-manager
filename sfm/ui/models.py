@@ -180,6 +180,25 @@ class TwitterUserItem(m.Model):
     def links(self):
         return RE_LINKS.findall(self.text)
 
+    def is_retweet(self, strict=True):
+        """A simple-minded attempt to catch RTs that aren't flagged
+        by twitter proper with a retweeted_status.  This will catch
+        some cases, others will slip through, e.g. quoted RTs in 
+        responses, or "RT this please".  Can't get them all. Likely
+        heavily biased toward english."""
+        if self.tweet.get('retweeted_status', False):
+            return True
+        if not strict:
+            text_lower = self.tweet['text'].lower()
+            if text_lower.startswith('rt '):
+                return True
+            if ' rt ' in text_lower:
+                if not 'please rt' in text_lower \
+                    and not 'pls rt' in text_lower \
+                    and not 'plz rt' in text_lower:
+                    return True
+        return False
+
     def unshorten(self, url):
         """Don't try to guess; just resolve it, and follow 301s"""
         h = requests.head(url)
@@ -204,6 +223,8 @@ class TwitterUserItem(m.Model):
             self.tweet['in_reply_to_screen_name'] or '',
             ', '.join([m for m in self.mentions]),
             self.twitter_url,
+            str(self.is_retweet()),
+            str(self.is_retweet(strict=False)),
             self.tweet['text'],
             ]
 
