@@ -16,13 +16,15 @@
             <tr>
                 <th>user</th>
                 <th>items</th>
+                <th>inactive?</th>
             </tr>
         </thead>
         <tbody>
             {% for user in users %}
-            <tr>
+            <tr {% if not user.is_active %}class='warning'{% endif %}>
                 <td><a href='{% url "twitter_user" user.name %}'>{{ user.name }}</a></td>
                 <td>{{ user.items.count|intcomma }}</td>
+                <td>{% if not user.is_active %}inactive{% endif %}</td>
             </tr>
             {% endfor %}
         </tbody>
