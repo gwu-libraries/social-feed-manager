@@ -11,8 +11,12 @@ See also LICENSE.txt.
 installation
 ------------
 
-Developed using python 2.7 and postgresql-9.1 on osx for deployment
+Developed using python 2.6 and postgresql-8.4 with and for deployment
 on ubuntu lts 10.4; your mileage may vary.
+
+* install ubuntu package dependencies:
+        
+        % sudo apt-get install git-core apache2 python-dev python-virtualenv postgresql libxml2-dev libxslt1-dev libpq-dev libapache2-mod-wsgi
 
 * get this code:
 
@@ -24,10 +28,6 @@ on ubuntu lts 10.4; your mileage may vary.
         % virtualenv --no-site-packages ENV
         % source ENV/bin/activate
     
-* install ubuntu package dependencies:
-        
-        % sudo apt-get install apache2 python-dev postgresql libxml2-dev libxslt1-dev libpq-dev libapache2-mod-wsgi
-
 * prep postgres (change name/pass/permissions/pg_hba.conf as appropriate):
     
         % sudo su - postgres
@@ -43,8 +43,10 @@ on ubuntu lts 10.4; your mileage may vary.
 
         % pip install -r requirements.txt
 
-* add and edit local_settings.py; include db settings as appropriate
+* add and edit local_settings.py; include db settings and define
+ALLOWED_HOSTS as appropriate
 
+        % cd sfm
         % cp sfm/local_settings.py.template sfm/local_settings.py
 
 * you might find the TWITTER_* settings in flux, but at minimum you will
@@ -81,10 +83,14 @@ TWITTER_CONSUMER_SECRET
 
 * set up the db from django
 
-        % syncdb
+        % ./manage.py syncdb
 
     This will prompt you to create a superuser for administrating the
     running app.  Create one and remember your account info.
+
+* run migrations for social_auth and ui
+
+        % ./manage.py migrate
 
 * to plug in to apache, use sfm/apache.conf and adjust in an 
   /etc/apache/sites-available file as appropriate

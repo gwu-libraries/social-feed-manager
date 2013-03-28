@@ -12,13 +12,13 @@
 #   https://dev.twitter.com/docs/error-codes-responses
 #   https://dev.twitter.com/docs/rate-limiting
 
+import json
 import time 
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Max
 from django.db.utils import IntegrityError
-from django.utils import simplejson as json
 
 import tweepy
 

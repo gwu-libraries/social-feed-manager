@@ -1,5 +1,6 @@
 import datetime
 import gzip
+import json
 import re
 import time
 
@@ -11,7 +12,6 @@ from tweepy.streaming import StreamListener
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models as m
-from django.utils import simplejson as json
 from django.utils import timezone
 
 RE_LINKS = re.compile(r'(https?://\S+)')
