@@ -201,7 +201,7 @@ class TwitterUserItem(m.Model):
 
     def unshorten(self, url):
         """Don't try to guess; just resolve it, and follow 301s"""
-        h = requests.head(url)
+        h = requests.get(url)
         stack = [i.url for i in h.history]
         stack.append(h.url)
         return stack
