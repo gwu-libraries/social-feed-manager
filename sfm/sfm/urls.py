@@ -16,8 +16,6 @@ urlpatterns += patterns('ui.views',
         name='about'),
 
     # twitter data patterns
-    url(r'^trends/weekly/$', 'trends_weekly', name='trends_weekly'),
-    url(r'^trends/daily/$', 'trends_daily', name='trends_daily'),
     url(r'^search/$', 'search', name='search'),
     url(r'^tweets/$', 'tweets', name='tweets'),
     url(r'^users/alpha/$', 'users_alpha', name='users_alpha'),

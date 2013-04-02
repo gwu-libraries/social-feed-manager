@@ -83,36 +83,6 @@ class RotatingFile(StreamListener):
                 '.gz' if self.compress else '')
 
 
-class TrendWeekly(m.Model):
-    date = m.DateField(db_index=True)
-    events = m.TextField(blank=True)
-    name = m.TextField(db_index=True)
-    promoted_content = m.TextField(blank=True)
-    query = m.TextField()
-
-    def __unicode__(self):
-        return '%s - %s (%s)' % (self.name, self.date, self.id)
-
-    class Meta:
-        ordering = ['-date', 'name']
-        verbose_name_plural = 'trendsweekly'
-
-
-class TrendDaily(m.Model):
-    date = m.DateTimeField(db_index=True)
-    events = m.TextField(blank=True)
-    name = m.TextField(db_index=True)
-    promoted_content = m.TextField(blank=True)
-    query = m.TextField()
-
-    def __unicode__(self):
-        return '%s - %s (%s)' % (self.name, self.date, self.id)
-
-    class Meta:
-        ordering = ['-date', 'name']
-        verbose_name_plural = 'trendsdaily'
-
-
 class TwitterUser(m.Model):
     name = m.TextField(db_index=True)
     date_last_checked = m.DateTimeField(db_index=True, auto_now=True)

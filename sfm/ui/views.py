@@ -9,7 +9,6 @@ from django.db import connection
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .models import TrendWeekly, TrendDaily
 from .models import TwitterUser, TwitterUserItem
 
 
@@ -146,18 +145,6 @@ def twitter_item_links(request, id=0):
     return render(request, 'twitter_item_links.html', {
         'item': item,
         'unshortened': unshortened,
-        })
-
-def trends_weekly(request):
-    trends = TrendWeekly.objects.all()  
-    return render(request, 'trends_weekly.html', {
-        'trends': trends,
-        })
-
-def trends_daily(request):
-    trends = TrendDaily.objects.all()  
-    return render(request, 'trends_daily.html', {
-        'trends': trends,
         })
 
 def logout(request):
