@@ -8,7 +8,6 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.cache import cache_page
 
 from .models import TrendWeekly, TrendDaily
 from .models import TwitterUser, TwitterUserItem
@@ -25,22 +24,25 @@ def _paginate(request, paginator):
     return page, items
 
 
-@cache_page(60 * 20)
 def home(request):
     qs_users = TwitterUser.objects.all()
     qs_users_alpha = qs_users.order_by('?')
     qs_items = TwitterUserItem.objects.order_by('-date_published')
-    item_count = qs_items.count()
     try:
         cursor = connection.cursor()
         cursor.execute("""
             SELECT DATE_TRUNC('day', date_published) AS day, COUNT(*) AS item_count
             FROM ui_twitteruseritem 
-            WHERE date_published > NOW() - INTERVAL '3 months' 
+            WHERE date_published > NOW() - INTERVAL '1 month' 
             GROUP BY 1 
-            LIMIT 91 OFFSET 1;
+            LIMIT 31 OFFSET 1;
             """)
         daily_counts = [[row[0].strftime('%Y-%m-%d'), int(row[1])] for row in cursor.fetchall()]
+        # Workaround for known "slow count(*)" issue 
+        cursor.execute("""
+            SELECT reltuples FROM pg_class WHERE relname='ui_twitteruseritem'
+            """)
+        item_count = int(cursor.fetchone()[0])
     except:
         daily_counts = []
     return render(request, 'home.html', {

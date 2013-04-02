@@ -1,0 +1,168 @@
+@charset "utf-8";
+
+/* Libraries site styles */
+/* use libheader7_lite_dropin.css instead if you don't need to alter the main content/body styles */
+/* mods for Bootstrap swatch are at the end */
+
+html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+
+body { margin: 0; font-size: 100%; font-family: Helvetica, Arial, sans-serif; line-height: 1.231; }
+/* optionally set page background color inside body tag: "background-color: #ccc" etc  */
+
+p, li {
+	line-height: 1.125em; /* 18px; */
+	font-size: .814em; /* 14px; */
+	color: #333;
+}
+
+h1, h2 {
+	font-size: 1.25em; /* 20px; */
+	font-family: Helvetica, Arial, sans-serif;
+	color: #333;
+	font-weight: normal;
+	line-height: 1.5em; /* 24px; */
+	letter-spacing: -1px;
+}
+
+h3 {
+	font-size: 1em; /* 16px; */
+	font-family: Helvetica, Arial, sans-serif;
+	color: #333;
+	font-weight: normal;
+	line-height: 1.25em; /* 20px; */
+}
+
+h4 {
+	font-size: .75em; /* 12px; */
+	font-family: Helvetica, Arial, sans-serif;
+	color: #333;
+	font-weight: bold;
+	line-height: 1em; /* 16px; */
+}
+
+a img {
+	text-decoration: none;
+	border: 0 none;
+	}
+
+/* to force images to scale (responsive) -- optional */
+img, object, embed {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Correct font-size not inheriting in all browsers, Remove margins in FF3/4 S5 Chrome, Define consistent vertical alignment display in all browsers */
+button, input, select, textarea { font-size: 100%; margin: 0; vertical-align: baseline; *vertical-align: middle; }
+
+/* This is the new Libraries "blue" submit button */
+input[type=submit], button {
+    border-color: #4081AF #4081AF #20559A;
+    border-style: solid;
+    border-width: 1px;
+    color: white;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 0 2px rgba(255, 255, 255, 0.3) inset, 0 1px 2px rgba(0, 0, 0, 0.29);
+    text-decoration: none;
+	font-size: 1em;
+	padding: .3em .4em;
+	background: -moz-linear-gradient(center top , #1F65A0 20%, #4282B1 100%); /* mozilla */
+	/*background-color: #4282B1;*/
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(20%, #1F65A0), color-stop(100%, #4282B1)); /* Safari 4+, Chrome 2+ */  	
+    background: -o-linear-gradient(#1F65A0, #4282B1); /* Opera 11.10 */  
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1F65A0', endColorstr='#4282B1'); /* IE6 & IE7 */  
+    ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#1F65A0', endColorstr='#4282B1')"; /* IE8+ */  
+    background: linear-gradient(#1F65A0, #4282B1); /* the standard */ 
+	-moz-border-radius: .4em;
+	-webkit-border-radius: .4em;
+	border-radius: .4em;	
+	display: inline-block;
+}
+
+#libheader-container {
+	width: 100%; 
+	margin-bottom: 1em; 
+	height: 2em; 
+	padding: 0 0 .3em;
+    background-color: #005581; 
+	background-image: url(../img/bg-local-nav-bottom.png);
+	background-position: bottom;
+	background-width: 100%;
+	background-repeat: repeat-x;
+}
+
+#libheader {
+	width: 100%;
+	max-width: 940px;
+	min-width: 320px; /* change to 720px if removing responsive or the IE stylesheet */
+	margin: 0 auto 0; 
+	height: 2em; 
+	color: #fff; 
+	padding: 0; 
+	white-space: nowrap; 
+	overflow: hidden;
+}
+
+#libheader a {color:#fff; text-decoration:none;}
+#libheader a:visited {color:#fff;}
+#libheader a:hover {color:#fff; text-decoration:underline;} 
+
+.libheader-link {float:left; font-size:.9em; padding-top:.6em; margin-left:1em;}
+.libheader-liblink {float:left; font-size: 1.1em; padding-top:.3em; margin-right:2em; margin-left:.5em;}
+.libheader-logo {float:right; overflow:hidden; height:2em; margin-right:.5em;}
+.libfooter-text {margin: 0 .5em .5em; font-size:.7em; padding-top:.75em; overflow:hidden;}
+
+.bullet {float:left; padding:.6em 0 0 .75em; color:#fff;}
+
+#libfooter-container {
+	width: 100%; 
+	height: 2em; 
+	background-color: #005581; 
+}
+
+#libfooter {
+	width: 100%;
+	max-width: 940px;
+	min-width: 320px; /* change to 720px if removing responsive or the IE stylesheet */
+	margin: 1em auto 0; 
+	color: #fff; 
+	padding: 0; 
+	white-space: nowrap; 
+	overflow: hidden;
+}
+
+#libfooter a:link {color:#fff; text-decoration:none;}
+#libfooter a:visited {color:#fff;}
+#libfooter a:hover {color:#fff; text-decoration:underline;} 
+
+/* responsive class to drop the gw logo when window is 720px or below (mobile-first)  */
+@media screen and (max-width: 720px) {
+  .hide-lo {display:none; visibility:hidden;}
+}
+
+/* this is set at 721 to leave room for links, adjust as needed if your links are shorter/longer */
+@media screen and (min-width: 721px) {
+	.hide-lo {
+		display: block;
+		visibility: visible;  
+	}
+}
+
+
+/* MODS FOR BOOTSTRAP SWATCH, uncomment to use */
+
+/* #libheader {
+    width: auto;
+    max-width: 1170px;
+}
+
+#libfooter {
+    width: auto;
+    max-width: 1170px;
+}
+
+.libheader-liblink {margin-left:0;}
+@media screen and (max-width:1200px) {.libheader-liblink {margin-left:.5em;} }
+.libfooter-text {margin:0 0;}
+@media screen and (max-width:1200px) {.libfooter-text {margin: 0 .5em;} }
+
+*/

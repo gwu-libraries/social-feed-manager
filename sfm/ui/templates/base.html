@@ -4,60 +4,89 @@
     <head>
         <meta charset="utf-8">
         <title>sfm: {{ title }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% block stylesheet %}
-        <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet" />
+        <link href="{{ STATIC_URL }}css/libheader7_lite.css" rel="stylesheet" />
+        <link href="{{ STATIC_URL }}css/libheader7_lite_bootswatch.css" rel="stylesheet" />
+        <!--[if lt IE 9]>
+        <link href="{{ STATIC_URL }}css/libheader7_lite_ie.css" rel="stylesheet">
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <link href="{{ STATIC_URL }}css/sfm.css" rel="stylesheet" />
+
+        <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
         <style>
             body {
-                padding-top: 60px;
+                padding-top: 80px;
             }
         </style>
-        <link href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
         {% endblock stylesheet %}
         {% block stylesheet_extra %}
         {% endblock stylesheet_extra %}
-        {% block javascript %}
-        <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-        </script>
-        {% endblock javascript %}
-        {% block javascript_extra %}
-        {% endblock javascript_extra %}
     </head>
 
     <body>
         {% block header %}
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <a class="brand" href="{% url 'home' %}">gwu libraries - social feed manager</a>
-                    <div class="nav-collapse">
-                        <ul class="nav">
-                            <li {% if '/about/' == request.path %} class='active'{% endif %}><a href="{% url 'about' %}">about</a></li>
-                        </ul>
-                        <form method="get" action="{% url 'search' %}" class="navbar-search">
+        <header class="navbar navbar-fixed-top">
+            <div id="libheader-container" class="navbar-inner">
+                <div id="libheader" class="container">
+                    <div class="libheader-logo hide-lo">
+                        <a href="http://www.gwu.edu" target="_blank" title="GWU website"><img src="{{ STATIC_URL }}img/gwheaderlogo.png" alt="logo: The George Washington University" /></a>
+                    </div>
+                    <div class="libheader-liblink">
+                        <a href="http://library.gwu.edu" target="_blank" title="GW Libraries website">GW Libraries</a>
+                    </div>
+                    <ul class="nav">
+                        <li><a class="brand" href="{% url 'home' %}">social feed manager</a></li>
+                        <li><a href="{% url 'about' %}">about</a></li>
+                        <form method="get" action="{% url 'search' %}" class="navbar-search pull-left">
                             <input type="text" name="q" class="search-query" placeholder="find users" {% if q %}value="{{ q }}"{% endif %}" />
                         </form>
-                        <p class="navbar-text pull-right">
-                            {% if user.is_authenticated %}
-                            logged in as {{ user.username }}
+                        {% if user.is_authenticated %}
                             {% if user.is_staff %}
-                            - <a href="/admin/">admin</a>
+                            <li><a href="/admin/">admin</a></li>
+                            <div class="bullet" style="">&bull;</div>
                             {% endif %}
-                            - <a href="{% url 'logout' %}">log out</a>
-                            {% else %}
-                            <a href="{% url 'login' %}">log in</a>
-                            {% endif %}
-                        </p>
-                    </div>
+                            <li><a href="{% url 'logout' %}">log out {{ user.username }}</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">log in</a></li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
-        </div>
+        </header>
         {% endblock header %}
 
-        <div class="container">
+        <article class="container">
             {% block content %}
 
             {% endblock content %}
-        </div>
+        </article>
+
+        <footer class="navbar-fixed-bottom">
+            <div id="libfooter-container" style="">
+                <div id="libfooter" class="container" style="">
+                    <div class="libfooter-text" style="">
+                        <span class="address">
+                            <a href="http://library.gwu.edu" target="_blank" title="GW Libraries Website">GW Libraries</a>
+                            &#8226; 2130 H Street NW &#8226; Washington DC 20052
+                        </span>
+                        &#8226;
+                        <span class="tel">202.994.6558</span>
+                        &#8226;
+                        <a href="mailto:refdesk@gwu.edu" target="_blank" title="">refdesk@gwu.edu</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+                            
+        {% block javascript %}
+        <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type='text/javascript' src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+        {% endblock javascript %}
+        {% block javascript_extra %}
+        {% endblock javascript_extra %}
 
     </body>
 </html>

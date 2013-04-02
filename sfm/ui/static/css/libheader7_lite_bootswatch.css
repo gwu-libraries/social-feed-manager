@@ -1,0 +1,16 @@
+/* MODS FOR BOOTSTRAP SWATCH, optionally paste at the end of the main css file libsite7_lite.css  */
+
+#libheader {
+    width: auto;
+    max-width: 1170px;
+}
+
+#libfooter {
+    width: auto;
+    max-width: 1170px;
+}
+
+.libheader-liblink {margin-left:0;}
+@media screen and (max-width:1200px) {.libheader-liblink {margin-left:.5em;} }
+.libfooter-text {margin:0 0;}
+@media screen and (max-width:1200px) {.libfooter-text {margin: 0 .5em;} }

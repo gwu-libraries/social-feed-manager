@@ -1,0 +1,9 @@
+@charset "utf-8";
+
+/* for older IE to override responsive since it's unsupported */
+
+body { font-family: Arial, sans-serif; }
+
+#libheader {min-width:720px;}
+
+#libfooter {min-width:720px;}
