@@ -16,11 +16,6 @@
         <link href="{{ STATIC_URL }}css/sfm.css" rel="stylesheet" />
 
         <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
-        <style>
-            body {
-                padding-top: 80px;
-            }
-        </style>
         {% endblock stylesheet %}
         {% block stylesheet_extra %}
         {% endblock stylesheet_extra %}
@@ -31,7 +26,7 @@
         <header class="navbar navbar-fixed-top">
             <div id="libheader-container" class="navbar-inner" style="">
                 <div id="libheader" class="container">
-                    <div class="libheader-logo hide-lo">
+                    <div class="libheader-logo">
                         <a href="http://www.gwu.edu" target="_blank" title="GWU website"><img src="{{ STATIC_URL }}img/gwheaderlogo.png" alt="logo: The George Washington University" /></a>
                     </div>
                     <div class="libheader-liblink">
@@ -41,7 +36,7 @@
                         <li><a class="brand" href="{% url 'home' %}">social feed manager</a></li>
                         <li><a href="{% url 'about' %}">about</a></li>
                         <form method="get" action="{% url 'search' %}" class="navbar-search pull-left">
-                            <input type="text" name="q" class="search-query" placeholder="find users" {% if q %}value="{{ q }}"{% endif %}" />
+                            <input type="text" name="q" class="search-query" placeholder="find users" {% if q %}value="{{ q }}"{% endif %} />
                         </form>
                         {% if user.is_authenticated %}
                             {% if user.is_staff %}

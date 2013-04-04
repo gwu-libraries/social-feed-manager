@@ -1,9 +1,55 @@
+/* site specific css */
+
 h1 {
     font-size: xx-large;
 }
+
 p {
     font-size: large;
 }
+
 article {
+    padding-top: 80px;
     padding-bottom: 60px;
+}
+
+@media screen and (max-width:970px) {
+    article {
+        padding-top: inherit;
+        padding-bottom: inherit;
+    }
+}
+
+.chart rect {
+    fill: steelblue;
+    stroke: white;
+}
+.rule {
+    font-size: small;
+}
+
+/* tweaks to libheader7_lite.css */
+
+#libheader {
+    padding: .2em 0 0;
+    height: auto;
+}
+
+.libheader-liblink {
+    /*width: 200px;*/
+    padding-top: 0;
+    font-size: 1.6em;
+}
+
+@media screen and (max-width:834px) {
+    .hide-med {
+        display: none;
+        visibility: hidden;
+    }
+}
+
+/* tweaks to bootstrap */
+
+.navbar-search {
+    margin-top: .125em; /* from .2em */
 }
