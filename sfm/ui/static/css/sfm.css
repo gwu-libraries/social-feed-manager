@@ -13,6 +13,13 @@ article {
     padding-bottom: 60px;
 }
 
+@media screen and (max-width:970px) {
+    article {
+        padding-top: inherit;
+        padding-bottom: inherit;
+    }
+}
+
 .chart rect {
     fill: steelblue;
     stroke: white;
