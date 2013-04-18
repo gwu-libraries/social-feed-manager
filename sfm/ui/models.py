@@ -83,10 +83,24 @@ class RotatingFile(StreamListener):
                 '.gz' if self.compress else '')
 
 
+class TwitterUserSet(m.Model):
+    user = m.ForeignKey(User, related_name='sets')
+    name = m.CharField(max_length=255)
+    notes = m.TextField(blank=True, default='')
+
+    def __unicode__(self):
+        return '<Set: %s for user %s>' % (self.name, self.user.username)
+
+    class Meta:
+        ordering = ['user', 'name']
+        unique_together = ['user', 'name']
+
+
 class TwitterUser(m.Model):
     name = m.TextField(db_index=True)
     date_last_checked = m.DateTimeField(db_index=True, auto_now=True)
     is_active = m.BooleanField(default=True)
+    sets = m.ManyToManyField(TwitterUserSet)
 
     def __unicode__(self):
         return 'user %s (sfm id %s)' % (self.name, self.id)
@@ -195,7 +209,7 @@ class TwitterUserItem(m.Model):
             self.twitter_url,
             str(self.is_retweet()),
             str(self.is_retweet(strict=False)),
-            self.tweet['text'],
+            self.tweet['text'].replace('\n', ' '),
             ]
         # only show up to two urls w/expansions
         for url in self.tweet['entities']['urls'][:2]:
