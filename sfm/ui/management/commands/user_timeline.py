@@ -13,6 +13,7 @@
 #   https://dev.twitter.com/docs/rate-limiting
 
 import json
+from optparse import make_option
 import time 
 
 from django.conf import settings
@@ -31,9 +32,16 @@ WAIT_BUFFER_SECONDS = 2
 class Command(BaseCommand):
     help = 'fetch status updates from twitter user timelines'
     
+    option_list = BaseCommand.option_list + (
+            make_option('--user', action='store', dest='user',
+                default=None, help='Specific user to fetch'),
+            )
+
     def handle(self, *args, **options):
         api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
         qs_twitter_users = TwitterUser.objects.filter(is_active=True)
+        if options.get('user', None):
+            qs_twitter_users = qs_twitter_users.filter(name=options.get('user'))
         qs_twitter_users = qs_twitter_users.order_by('date_last_checked')
         for twitter_user in qs_twitter_users:
             # Do they have any statuses recorded?
