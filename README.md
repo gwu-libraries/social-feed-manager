@@ -11,12 +11,12 @@ See also LICENSE.txt.
 installation
 ------------
 
-Developed using python 2.6 and postgresql-8.4 with and for deployment
-on ubuntu lts 10.4; your mileage may vary.
+Developed using python 2.7 and postgresql-9.1 with and for deployment
+on ubuntu lts 12.04; your mileage may vary.
 
 * install ubuntu package dependencies:
         
-        % sudo apt-get install git-core apache2 python-dev python-virtualenv postgresql libxml2-dev libxslt1-dev libpq-dev libapache2-mod-wsgi
+        % sudo apt-get install git apache2 python-dev python-virtualenv postgresql libxml2-dev libxslt1-dev libpq-dev libapache2-mod-wsgi
 
 * get this code:
 
