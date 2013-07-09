@@ -28,16 +28,16 @@ on ubuntu lts 12.04; your mileage may vary.
         % virtualenv --no-site-packages ENV
         % source ENV/bin/activate
     
-* prep postgres (change name/pass/permissions/pg_hba.conf as appropriate):
+* prep postgres (change name/pass/permissions/pg_hba.conf as appropriate, and pick your own user/passwd):
     
         % sudo su - postgres
         (postgres)% psql
-        postgres=# create user sfmuser with createdb password 'sfmpass';
+        postgres=# create user YOURSFMDBUSERNAME with createdb password 'YOURSFMDBPASSWORD';
         CREATE ROLE
         postgres=# \q
         (postgres)% exit
         % createdb -U sfmuser sfm -W
-        Password: <'sfmpass'>
+        Password: YOURSFMDBPASSWORD
 
 * install requirements
 
