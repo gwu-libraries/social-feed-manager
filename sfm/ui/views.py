@@ -30,14 +30,15 @@ def home(request):
     try:
         cursor = connection.cursor()
         cursor.execute("""
-            SELECT DATE_TRUNC('day', date_published) AS day, COUNT(*) AS item_count
-            FROM ui_twitteruseritem 
-            WHERE date_published > NOW() - INTERVAL '1 month' 
-            GROUP BY 1 
-            LIMIT 31 OFFSET 1;
+        SELECT DATE_TRUNC('day', date_published) AS day, COUNT(*) AS item_count
+        FROM ui_twitteruseritem
+        WHERE date_published > NOW() - INTERVAL '1 month'
+        GROUP BY 1
+        LIMIT 31 OFFSET 1;
             """)
-        daily_counts = [[row[0].strftime('%Y-%m-%d'), int(row[1])] for row in cursor.fetchall()]
-        # Workaround for known "slow count(*)" issue 
+        daily_counts = [[row[0].strftime('%Y-%m-%d'), int(row[1])]
+                        for row in cursor.fetchall()]
+        # Workaround for known "slow count(*)" issue
         cursor.execute("""
             SELECT reltuples FROM pg_class WHERE relname='ui_twitteruseritem'
             """)
@@ -51,7 +52,7 @@ def home(request):
         'items': qs_items[:10],
         'item_count': item_count,
         'daily_counts': daily_counts,
-        })
+    })
 
 
 def search(request):
@@ -66,7 +67,7 @@ def search(request):
         'title': title,
         'users': qs_users,
         'q': q
-        })
+    })
 
 
 def tweets(request):
@@ -78,7 +79,7 @@ def tweets(request):
         'tweets': tweets,
         'paginator': paginator,
         'page': page,
-        })
+    })
 
 
 def users_alpha(request):
@@ -92,7 +93,7 @@ def users_alpha(request):
         'users': users,
         'paginator': paginator,
         'page': page,
-        })
+    })
 
 
 def twitter_user(request, name=''):
@@ -115,15 +116,15 @@ def twitter_user(request, name=''):
         'recent_tweet': recent_tweet,
         'paginator': paginator,
         'page': page,
-        })
+    })
 
 
 def twitter_user_csv(request, name=''):
-    fieldnames = ['sfm_id', 'created_at', 'twitter_id', 'screen_name', 
-            'followers_count', 'friends_count', 'retweet_count', 
-            'hashtags', 'in_reply_to_screen_name', 'mentions',
-            'twitter_url', 'is_retweet_strict', 'is_retweet', 'text',
-            'url1', 'url1_expanded', 'url2', 'url2_expanded']
+    fieldnames = ['sfm_id', 'created_at', 'twitter_id', 'screen_name',
+                  'followers_count', 'friends_count', 'retweet_count',
+                  'hashtags', 'in_reply_to_screen_name', 'mentions',
+                  'twitter_url', 'is_retweet_strict', 'is_retweet', 'text',
+                  'url1', 'url1_expanded', 'url2', 'url2_expanded']
     user = get_object_or_404(TwitterUser, name=name)
     qs_tweets = user.items.order_by('-date_published')
     csvwriter = UnicodeCSVWriter()
@@ -131,13 +132,14 @@ def twitter_user_csv(request, name=''):
     for t in qs_tweets:
         csvwriter.writerow(t.csv)
     response = HttpResponse(csvwriter.out(), content_type='text/csv')
-    response['Content-Disposition'] = \
-            'attachment; filename="%s.csv"' % name
+    response['Content-Disposition'] = 'attachment; filename="%s.csv"' % name
     return response
+
 
 def twitter_item(request, id=0):
     item = get_object_or_404(TwitterUserItem, id=int(id))
     return HttpResponse(item.item_json, content_type='application/json')
+
 
 def twitter_item_links(request, id=0):
     item = get_object_or_404(TwitterUserItem, id=int(id))
@@ -145,14 +147,16 @@ def twitter_item_links(request, id=0):
     return render(request, 'twitter_item_links.html', {
         'item': item,
         'unshortened': unshortened,
-        })
+    })
+
 
 def logout(request):
     auth.logout(request)
     return redirect(reverse('home'))
 
+
 class UnicodeCSVWriter:
-    
+
     def __init__(self, dialect=csv.excel, encoding='utf-8', **params):
         self.queue = cStringIO.StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **params)
