@@ -1,8 +1,7 @@
-# Cycle through all the TwitterUsers we're tracking and fetch
-# as many new items as possible.  Limit fetches to users who haven't
-# been updated for at least some minimum interval.  Attempt to backfill
-# up to the limit twitter provides (currently 3200 statuses).  Obey
-# timeline and rate limit laws like a good citizen.  For more info:
+# Cycle through all the TwitterUsers we're tracking and fetch as many
+# new items as possible. Attempt to backfill up to the limit twitter
+# provides (currently 3200 statuses).  Obey timeline and rate limit laws
+# like a good citizen.  For more info:
 #
 # see https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
 #   for explanation of user_timeline call
@@ -14,7 +13,7 @@
 
 import json
 from optparse import make_option
-import time 
+import time
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -29,47 +28,69 @@ from ui.models import TwitterUser, TwitterUserItem
 # A little added cushion
 WAIT_BUFFER_SECONDS = 2
 
+
+def set_wait_time(last_response):
+    """based on last tweepy api response, calculate a time buffer in
+    seconds to wait before issuing next api call."""
+    wait_time = 0
+    try:
+        remaining = int(last_response.getheader('x-rate-limit-remaining'))
+        reset = int(last_response.getheader('x-rate-limit-reset'))
+        reset_seconds = reset - int(time.time())
+    except:
+        remaining = reset_seconds = 1
+    # the out-of-calls-for-this-window case
+    if remaining == 0:
+        return reset_seconds + WAIT_BUFFER_SECONDS
+    else:
+        wait_time = (reset_seconds / remaining) + WAIT_BUFFER_SECONDS
+    # #22: saw some negative ratelimit-reset/wait_times
+    # so cushion around that too
+    while wait_time < WAIT_BUFFER_SECONDS:
+        wait_time += WAIT_BUFFER_SECONDS
+    return wait_time
+
+
 class Command(BaseCommand):
     help = 'fetch status updates from twitter user timelines'
-    
+
     option_list = BaseCommand.option_list + (
-            make_option('--user', action='store', dest='user',
-                default=None, help='Specific user to fetch'),
-            )
+        make_option('--user', action='store', dest='user',
+                    default=None, help='Specific user to fetch'),
+    )
 
     def handle(self, *args, **options):
         api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
-        qs_twitter_users = TwitterUser.objects.filter(is_active=True)
+        qs_tweeps = TwitterUser.objects.filter(is_active=True)
         if options.get('user', None):
-            qs_twitter_users = qs_twitter_users.filter(name=options.get('user'))
-        qs_twitter_users = qs_twitter_users.order_by('date_last_checked')
-        for twitter_user in qs_twitter_users:
-            # Do they have any statuses recorded?
-            if twitter_user.items.count():
-                max_dict = twitter_user.items.all().aggregate(Max('twitter_id'))
+            qs_tweeps = qs_tweeps.filter(name=options.get('user'))
+        qs_tweeps = qs_tweeps.order_by('date_last_checked')
+        for tweep in qs_tweeps:
+            print 'user: %s' % tweep.name
+            since_id = 1
+            # set since_id if they have any statuses recorded
+            if tweep.items.count() > 0:
+                max_dict = tweep.items.all().aggregate(Max('twitter_id'))
                 since_id = max_dict['twitter_id__max']
-            else:
-                since_id = 1
             max_id = 0
             # update their record (auto_now) as we're checking it now
-            twitter_user.save()
+            tweep.save()
             while True:
                 stop = False
-                print 'user: %s' % twitter_user.name
                 try:
+                    print 'since: %s' % (since_id)
                     if max_id:
-                        print 'since: %s' % since_id
                         print 'max: %s' % max_id
-                        timeline = api.user_timeline(screen_name=twitter_user.name,
-                                since_id=since_id, max_id=max_id, count=200)
+                        timeline = api.user_timeline(screen_name=tweep.name,
+                                                     since_id=since_id,
+                                                     max_id=max_id, count=200)
                     else:
-                        print 'since: %s' % (since_id)
-                        timeline = api.user_timeline(screen_name=twitter_user.name,
-                                since_id=since_id, count=200)
+                        timeline = api.user_timeline(screen_name=tweep.name,
+                                                     since_id=since_id,
+                                                     count=200)
                 except tweepy.error.TweepError as e:
                     print 'ERROR: %s' % e
-                    # stop processing this user immediately
-                    break
+                    timeline = []
                 if len(timeline) == 0:
                     # Nothing new; stop for this user
                     stop = True
@@ -79,13 +100,13 @@ class Command(BaseCommand):
                     dt_aware = dt_aware_from_created_at(status['created_at'])
                     try:
                         item, created = TwitterUserItem.objects.get_or_create(
-                                twitter_user=twitter_user,
-                                twitter_id=status['id'],
-                                date_published=dt_aware,
-                                item_text=status['text'],
-                                item_json=json.dumps(status),
-                                place=status['place'] or '',
-                                source=status['source'])
+                            tweep=tweep,
+                            twitter_id=status['id'],
+                            date_published=dt_aware,
+                            item_text=status['text'],
+                            item_json=json.dumps(status),
+                            place=status['place'] or '',
+                            source=status['source'])
                         if created:
                             max_id = item.twitter_id - 1
                             new_status_count += 1
@@ -105,33 +126,10 @@ class Command(BaseCommand):
                     stop = True
                 # Check response codes for issues
                 response_status = api.last_response.status
-                try:
-                    remaining = int(api.last_response.getheader('x-rate-limit-remaining'))
-                    reset = int(api.last_response.getheader('x-rate-limit-reset'))
-                    reset_seconds = reset - int(time.time())
-                    print 'remaining: %s, rate limit resets in %s minutes' % \
-                            (remaining, reset_seconds / 60.0)
-                except:
-                    print 'error: calculating rate limits'
-                    reset_seconds = remaining = 1
-                if response_status == 200:
-                    if remaining > 1:
-                        wait_time = WAIT_BUFFER_SECONDS + (reset_seconds / remaining)
-                        # #22: saw some negative ratelimit-reset/wait_times
-                        # so cushion around that too
-                        if wait_time < WAIT_BUFFER_SECONDS:
-                            wait_time += WAIT_BUFFER_SECONDS
-                        print 'sleep: %s seconds' % wait_time
-                        time.sleep(wait_time)
-                    else:
-                        print 'error: no API calls remaining this window.'
-                        stop = True
-                elif response_status >= 500:
+                if response_status >= 400:
                     print 'error:', api.last_response.getheader('status')
                     stop = True
-                elif response_status >= 400:
-                    print 'error::', \
-                            api.last_response.getheader('status')
-                    stop = True
+                # wait before next call no matter what
+                time.sleep(set_wait_time(api.last_response))
                 if stop:
                     break
