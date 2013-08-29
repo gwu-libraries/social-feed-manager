@@ -100,7 +100,7 @@ class Command(BaseCommand):
                     dt_aware = dt_aware_from_created_at(status['created_at'])
                     try:
                         item, created = TwitterUserItem.objects.get_or_create(
-                            tweep=tweep,
+                            twitter_user=tweep,
                             twitter_id=status['id'],
                             date_published=dt_aware,
                             item_text=status['text'],
