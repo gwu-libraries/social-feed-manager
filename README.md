@@ -35,8 +35,7 @@ on ubuntu lts 12.04; your mileage may vary.
         postgres=# create user YOURSFMDBUSERNAME with createdb password 'YOURSFMDBPASSWORD';
         CREATE ROLE
         postgres=# \q
-        (postgres)% exit
-        % createdb -U YOURSFMDBUSERNAME sfm -W
+        (postgres)% createdb -U YOURSFMDBUSERNAME sfm -W
         Password: YOURSFMDBPASSWORD
 
 * install requirements
