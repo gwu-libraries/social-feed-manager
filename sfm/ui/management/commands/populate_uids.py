@@ -1,10 +1,11 @@
-# Cycle through all the TwitterUsers we're tracking and fetch as many
-# new items as possible. Attempt to backfill up to the limit twitter
-# provides (currently 3200 statuses).  Obey timeline and rate limit laws
+# Cycle through all the TwitterUsers we're tracking.  For each TwitterUser,
+# if the uid==0 (default value, i.e. it hasn't been set yet), look the
+# user up by name and populate the uid.
+# TODO:  Obey timeline and rate limit laws
 # like a good citizen.  For more info:
 #
-# see https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
-#   for explanation of user_timeline call
+# see https://dev.twitter.com/docs/api/1.1/get/users/lookup
+#   for explanation of get_user call
 # see https://dev.twitter.com/docs/working-with-timelines
 #   for explanation of max_id, since_id usage
 # see also:
