@@ -50,9 +50,62 @@
 		</ul>
 	<table>
 	<tr>
-		<td>sfm_id</td>
-		<td>SFM internal identifier for tweet.</td>
-		<td>6114</td>
+		<th>Field</th><th>Description</th><th>Example</th>
+	</tr>
+	<tr>
+		<td>sfm_id</td><td>SFM internal identifier for tweet.</td><td>6114</td>
+	</tr>
+	<tr>	
+		<td>created_at</td><td>UTC time when the tweet was created.</td><td>2013-10-28T17:52:53Z</td>
+	</tr>
+	<tr>
+		<td>twitter_id</td><td>Twitter identifier for the tweet.</td><td>114749583439036416</td>
+	</tr>
+	<tr>
+		<td>screen_name</td><td>The screen name, handle, or alias that this user identifies themselves with. Screen_names are unique but subject to change.</td>NASA</td>
+	</tr>
+	<tr>	
+		<td>followers_count</td><td>Number of followers this account had at the time the tweet was harvested.</td><td>5158956</td>
+	</tr>
+	<tr>
+		<td>friends_count</td><td>Number of users this account is following at the time the tweet was harvested.</td><td>202</td>
+	</tr>
+	<tr>
+		<td>retweet_count</td><td>Number of times the tweet has been retweeted at the time the tweet was harvested.</td><td>185</td>
+	</tr>
+	<tr>
+		<td>hashtags</td><td>Hashtags which have been parsed out of the tweet text, separated by a comma and space.</td><td>Mars, askNASA</td>
+	</tr>
+	<tr>
+		<td>in_reply_to_screen_name</td><td>If the tweet is a reply, the screen name of the original tweet's author.</td><td>wiredscience</td>
+	</tr>
+	<tr>
+		<td>mentions</td><td>Other Twitter users mentioned in the text of the tweet, separated by comma and space.</td><td>@NASA_Airborne, @NASA_Ice</td>
+	</tr>
+	<tr>
+		<td>twitter_url</td><td>URL of the tweet. If the tweet is a retweet made using the Twitter retweet feature, the URL will redirect to the original tweet.</td><td>http://twitter.com/NASA/status/394883921303056384 <br>retweet redirecting to original tweet-- http://twitter.com/NASA/status/394875351894994944</td>
+	</tr>
+	<tr>
+		<td>is_retweet_strict</td><td>Tweet is a retweet of another tweet, using Twitter’s retweet function.</td><td>FALSE</td>
+	</tr>
+	<tr>
+		<td>is_retweet</td><td>Sfm's best guess at whether tweet is a retweet of another tweet; includes retweets accomplished using old-style method of placing RT in front of tweet.</td><td>TRUE</td>
+	</tr>
+	<tr>
+		<td>text</td><td>The UTF-8 text of the tweet.</td><td>Observing Hurricane Raymond Lashing Western Mexico: Low pressure System 96E developed quickly over the… http://t.co/YpffdKVrgm</td>
+	</tr>
+	<tr>
+		<td>url1</td><td>First URL in text of tweet, as shortened by Twitter.</td><td>http://t.co/WGJ9VmoKME</td>
+	</tr>
+	<tr>
+		<td>url1_expanded</td><td>Expanded version of URL; URL entered by user and displayed in Twitter. May itself be a user-shortened URL, e.g. from bit.ly.  Further expansion available in sfm web interface, not in csv export.</td><td>http://instagram.com/p/gA_zQ5IaCz/</td>
+	</tr>
+	<tr>
+		<td>url2</tr><td>Second URL in text of tweet, as shortened by Twitter.</td><td></td>
+	</tr>
+	<tr>
+		<td>url2_expanded</td><td>Expanded version of URL; URL entered by user and displayed in Twitter. May itself be a user-shortened URL, e.g. from bit.ly. Further expansion available in sfm web interface, not in csv export.
+</td><td></td>
 	</tr>
 	</table>
 
