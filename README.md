@@ -123,11 +123,6 @@ a nightly cronjob like the above, or from the commandline:
 
         % ./manage.py dailycounts
 
-* fetch daily or weekly trends
-
-        % ./manage.py trendsdaily
-        % ./manage.py trendsweekly
-
 * use the admin UI to add a Rule, which specifies follow, track, or locations
 to use to poll from twitter's statuses/filter function. then you can poll
 with the filterstream command, which will write out gzipped files at intervals
