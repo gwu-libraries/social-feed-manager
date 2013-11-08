@@ -14,6 +14,7 @@
 import json
 from optparse import make_option
 import time
+import datetime
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -67,6 +68,26 @@ class Command(BaseCommand):
         qs_tweeps = qs_tweeps.order_by('date_last_checked')
         for tweep in qs_tweeps:
             print 'user: %s' % tweep.name
+            # check user status, update twitter user name if it has changed
+            if tweep.uid == 0:
+                print 'uid has not been set yet - aborting.'
+                continue
+            try:
+                user_status = api.get_user(id=tweep.uid)
+                if user_status['screen_name'] != tweep.name:
+                    oldnames = json.loads(tweep.former_names)
+                    oldnames[datetime.datetime.now().strftime('%c')] = \
+                        tweep.name
+                    tweep.former_names = json.dumps(oldnames)
+                    tweep.name = user_status['screen_name']
+                    #TODO: Is this save unnecessary, since it gets saved below?
+                    tweep.save()
+            except tweepy.error.TweepError as e:
+                print 'Error: %s' % e
+                #find a way to just go to the next tweep in the for loop
+                continue
+            # we have a valid user and have updated the screen_name if needed.
+            # now move on to determining first tweet id to get
             since_id = 1
             # set since_id if they have any statuses recorded
             if tweep.items.count() > 0:
