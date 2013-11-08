@@ -101,7 +101,7 @@ class TwitterUser(m.Model):
     name = m.TextField(db_index=True)
     date_last_checked = m.DateTimeField(db_index=True, auto_now=True)
     uid = m.BigIntegerField(default=0)
-    former_names = m.TextField(default='', blank=True)
+    former_names = m.TextField(default='{}', blank=True)
     is_active = m.BooleanField(default=True)
     sets = m.ManyToManyField(TwitterUserSet, blank=True)
 
