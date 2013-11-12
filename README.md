@@ -94,6 +94,11 @@ TWITTER_CONSUMER_SECRET
 * to plug in to apache, use sfm/apache.conf and adjust in an 
   /etc/apache/sites-available file as appropriate
 
+* if you are upgrading a database that was created in m1_001,
+  then you must run populate_uid
+
+        % ./manage.py populate_uid
+
 
 usage
 -----
