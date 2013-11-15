@@ -24,7 +24,9 @@ from ui.models import TwitterUser
 
 
 class Command(BaseCommand):
-    help = 'Fetch uids for twitter users by name, where uids are not populated.  Intended for migrating old databases prior to m2_001.'
+    help = 'Fetch uids for twitter users by name, where uids ' \
+           + 'are not populated.  Intended for migrating old ' \
+           + 'databases prior to m2_001.'
 
     option_list = BaseCommand.option_list + (
         make_option('--user', dest='user',
