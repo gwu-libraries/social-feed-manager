@@ -68,25 +68,12 @@ class Command(BaseCommand):
         qs_tweeps = qs_tweeps.order_by('date_last_checked')
         for tweep in qs_tweeps:
             print 'user: %s' % tweep.name
-            # check user status, update twitter user name if it has changed
+            # can't do this unless we have a twitter user_id stored
             if tweep.uid == 0:
-                print 'uid has not been set yet - aborting.'
+                print 'uid has not been set yet - skipping this user.' + \
+                      'May need to run populate_uids if this is an old ' + \
+                      'database.'
                 continue
-            try:
-                user_status = api.get_user(id=tweep.uid)
-                if user_status['screen_name'] != tweep.name:
-                    oldnames = json.loads(tweep.former_names)
-                    oldnames[datetime.datetime.now().strftime('%c')] = \
-                        tweep.name
-                    tweep.former_names = json.dumps(oldnames)
-                    tweep.name = user_status['screen_name']
-                    #TODO: Is this save unnecessary, since it gets saved below?
-                    tweep.save()
-            except tweepy.error.TweepError as e:
-                print 'Error: %s' % e
-                #find a way to just go to the next tweep in the for loop
-                continue
-            # we have a valid user and have updated the screen_name if needed.
             # now move on to determining first tweet id to get
             since_id = 1
             # set since_id if they have any statuses recorded
@@ -102,11 +89,11 @@ class Command(BaseCommand):
                     print 'since: %s' % (since_id)
                     if max_id:
                         print 'max: %s' % max_id
-                        timeline = api.user_timeline(screen_name=tweep.name,
+                        timeline = api.user_timeline(id=tweep.uid,
                                                      since_id=since_id,
                                                      max_id=max_id, count=200)
                     else:
-                        timeline = api.user_timeline(screen_name=tweep.name,
+                        timeline = api.user_timeline(id=tweep.uid,
                                                      since_id=since_id,
                                                      count=200)
                 except tweepy.error.TweepError as e:
