@@ -40,7 +40,7 @@
                         </form>
                         {% if user.is_authenticated %}
                             {% if user.is_staff %}
-                            <li><a href="/admin/">admin</a></li>
+                            <li><a href="{% url 'admin:index' %}">admin</a></li>
                             <div class="bullet" style="">&bull;</div>
                             {% endif %}
                             <li><a href="{% url 'logout' %}">log out {{ user.username }}</a></li>
