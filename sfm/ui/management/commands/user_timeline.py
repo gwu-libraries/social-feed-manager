@@ -14,7 +14,6 @@
 import json
 from optparse import make_option
 import time
-import datetime
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -25,31 +24,7 @@ import tweepy
 
 from ui.models import authenticated_api, dt_aware_from_created_at
 from ui.models import TwitterUser, TwitterUserItem
-
-# A little added cushion
-WAIT_BUFFER_SECONDS = 2
-
-
-def set_wait_time(last_response):
-    """based on last tweepy api response, calculate a time buffer in
-    seconds to wait before issuing next api call."""
-    wait_time = 0
-    try:
-        remaining = int(last_response.getheader('x-rate-limit-remaining'))
-        reset = int(last_response.getheader('x-rate-limit-reset'))
-        reset_seconds = reset - int(time.time())
-    except:
-        remaining = reset_seconds = 1
-    # the out-of-calls-for-this-window case
-    if remaining == 0:
-        return reset_seconds + WAIT_BUFFER_SECONDS
-    else:
-        wait_time = (reset_seconds / remaining) + WAIT_BUFFER_SECONDS
-    # #22: saw some negative ratelimit-reset/wait_times
-    # so cushion around that too
-    while wait_time < WAIT_BUFFER_SECONDS:
-        wait_time += WAIT_BUFFER_SECONDS
-    return wait_time
+from ui.utils import set_wait_time
 
 
 class Command(BaseCommand):
@@ -70,7 +45,7 @@ class Command(BaseCommand):
             print 'user: %s' % tweep.name
             # can't do this unless we have a twitter user_id stored
             if tweep.uid == 0:
-                print 'uid has not been set yet - skipping this user.' + \
+                print 'uid has not been set yet - skipping this user.  ' + \
                       'May need to run populate_uids if this is an old ' + \
                       'database.'
                 continue
