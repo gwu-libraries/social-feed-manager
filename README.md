@@ -95,9 +95,9 @@ TWITTER_CONSUMER_SECRET
   /etc/apache/sites-available file as appropriate
 
 * if you are upgrading a database that was created in m1_001,
-  then you must run populate_uid
+  run populate_uids to add user ids to TwitterUser nicks:
 
-        % ./manage.py populate_uid
+        % ./manage.py populate_uids
 
 
 usage
