@@ -22,7 +22,7 @@ from django.core.management.base import BaseCommand
 
 from ui.models import authenticated_api
 from ui.models import TwitterUser
-from ui.utils import set_wait_time
+from ui.utils import set_wait_time, populate_uid
 
 
 class Command(BaseCommand):
@@ -38,19 +38,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
         qs_tweeps = TwitterUser.objects.filter(is_active=True)
+        # if a username has been specified, limit to only that user
         if options.get('user', None):
             qs_tweeps = qs_tweeps.filter(name=options.get('user'))
-        qs_tweeps = qs_tweeps.order_by('date_last_checked')
         for tweep in qs_tweeps:
             print 'user: %s' % tweep.name
             # check user status, update twitter user name if it has changed
-            try:
-                # only update if tweep.uid == 0, otherwise leave it alone
-                if tweep.uid == 0:
-                    user_status = api.get_user(screen_name=tweep.name)
-                    tweep.uid = user_status['id']
-                    tweep.save()
-            except tweepy.error.TweepError as e:
-                print 'Error: %s' % e
-            finally:
-                time.sleep(set_wait_time(api.last_response))
+            populate_uid(tweep.name)
