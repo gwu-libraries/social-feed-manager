@@ -13,6 +13,9 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models as m
 from django.utils import timezone
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from ui.utils import set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
@@ -231,3 +234,27 @@ class DailyTwitterUserItemCount(m.Model):
 
     class Meta:
         ordering = ['date']
+
+@receiver(post_save, sender=TwitterUser)
+def uid_update(sender, instance, **kwargs):
+    populate_uid(instance.name)
+
+def populate_uid(name, force=False):
+    #TODO: if user is None:
+
+    api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
+    qs_tweeps = TwitterUser.objects.filter(is_active=True, name=name)
+    #TODO: What if we didn't find someone with that name?
+    for tweep in qs_tweeps:
+        if tweep.uid == 0 or force is True:
+            try:
+                #TODO: better way to catch when user isn't found
+                user_status = api.get_user(screen_name=name)
+                tweep.uid = user_status['id']
+                tweep.save()
+                print 'updated user \'%s\' uid to %d' % (name, tweep.uid)
+            except tweepy.error.TweepError as e:
+                print 'Failed to find user \'%s\'. Error: %s' % (name, e)
+            finally:
+                time.sleep(set_wait_time(api.last_response))
+

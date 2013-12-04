@@ -14,8 +14,6 @@
 import time
 import tweepy
 from django.conf import settings
-from ui.models import authenticated_api
-from ui.models import TwitterUser
 
 # A little added cushion
 WAIT_BUFFER_SECONDS = 2
@@ -55,7 +53,12 @@ def set_wait_time(last_response):
 # see also:
 #   https://dev.twitter.com/docs/error-codes-responses
 #   https://dev.twitter.com/docs/rate-limiting
-
+'''
+@receiver(post_save, sender=TwitterUser)
+def uid_update(sender, instance, **kwargs):
+    print 'inside Uid_populate' 
+    populate_uid(instance.name)
+    print 'name %s' %instance.name
 
 def populate_uid(name, force=False):
     #TODO: if user is None:
@@ -75,3 +78,4 @@ def populate_uid(name, force=False):
                 print 'Failed to find user \'%s\'. Error: %s' % (name, e)
             finally:
                 time.sleep(set_wait_time(api.last_response))
+'''

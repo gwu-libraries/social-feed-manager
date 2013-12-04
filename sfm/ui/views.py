@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-
+from time import time
 from .models import TwitterUser, TwitterUserItem
 
 
@@ -120,6 +120,7 @@ def twitter_user(request, name=''):
 
 
 def twitter_user_csv(request, name=''):
+    starttime = time()
     fieldnames = ['sfm_id', 'created_at', 'twitter_id', 'screen_name',
                   'followers_count', 'friends_count', 'retweet_count',
                   'hashtags', 'in_reply_to_screen_name', 'mentions',
@@ -134,6 +135,9 @@ def twitter_user_csv(request, name=''):
     response = HttpResponse(csvwriter.out(), content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s.csv"' % name
     return response
+    return response_time 
+    timetaken = time() - starttime 
+    print " the response time is %t" %timetaken
 
 
 def twitter_item(request, id=0):
