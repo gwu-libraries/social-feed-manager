@@ -1,14 +1,3 @@
-# Cycle through all the TwitterUsers we're tracking and update any
-# screen names that have changed.
-#
-# see https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
-#   for explanation of user_timeline call
-# see https://dev.twitter.com/docs/working-with-timelines
-#   for explanation of max_id, since_id usage
-# see also:
-#   https://dev.twitter.com/docs/error-codes-responses
-#   https://dev.twitter.com/docs/rate-limiting
-
 import json
 from optparse import make_option
 import datetime
@@ -24,6 +13,18 @@ from ui.models import TwitterUser
 
 class Command(BaseCommand):
     help = 'update any screen names that have changed'
+    """
+    Cycle through all the TwitterUsers we're tracking and update any
+    screen names that have changed.
+
+    see https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
+      for explanation of user_timeline call
+    see https://dev.twitter.com/docs/working-with-timelines
+      for explanation of max_id, since_id usage
+    see also:
+      https://dev.twitter.com/docs/error-codes-responses
+      https://dev.twitter.com/docs/rate-limiting
+    """
 
     option_list = BaseCommand.option_list + (
         make_option('--user', action='store', dest='user',
@@ -46,7 +47,10 @@ class Command(BaseCommand):
                 if user_status['screen_name'] != tweep.name:
                     print ' -- updating screen name to %s' % \
                         user_status['screen_name']
-                    oldnames = json.loads(tweep.former_names)
+                    former_names = tweep.former_names
+                    if not tweep.former_names:
+                        former_names = '{}'
+                    oldnames = json.loads(former_names)
                     oldnames[datetime.datetime.now().strftime('%c')] = \
                         tweep.name
                     tweep.former_names = json.dumps(oldnames)
