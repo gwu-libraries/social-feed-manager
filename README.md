@@ -48,25 +48,24 @@ ALLOWED_HOSTS as appropriate
         % cd sfm
         % cp sfm/local_settings.py.template sfm/local_settings.py
 
-* you might find the TWITTER_* settings in flux, but at minimum you will
-need to use an existing twitter account to register other users.  use that
-account to log in at:
+* Set TWITTER_DEFAULT_USERNAME to the twitter account username that you
+would like the application to use to register other users.
+
+* Using the twitter account you designated as your TWITTER_DEFAULT_USERNAME,
+log in to:
+
 
         https://dev.twitter.com/apps/new
 
-    Then create an app.  In addition to the required values, set
-    the application type to "read only", and give it a callback URL.
-    This can be the same as your website URL, but you have to provide
-    a value or the authorization loop between twitter/oauth and
-    django-social-auth/ sfm will not work correctly.  Use the resulting
-    OAuth settings' consumer key and secret as your TWITTER_CONSUMER_KEY
-    and TWITTER_CONSUMER_SECRET.
+    Then create an app for your instance of SFM.  In addition to
+    the required values, set the application type to "read only",
+    and give it a callback URL.  The callback URL can be the same as
+    your website URL, but you have to provide a value or the authorization
+    loop between twitter/oauth and django-social-auth/ sfm will not work
+    correctly.
 
-* once the sfm UI is running (after a few more steps), log in to the
-UI function that requests your authentication through Twitter's oauth
-service.  this will give you a saved User that you can specify as a
-TWITTER_DEFAULT_USERNAME which some of the commands down below will use.
-Set this username as TWITTER_DEFAULT_USERNAME in your local_settings.py.
+    Use the resulting OAuth settings' consumer key and secret as your
+    TWITTER_CONSUMER_KEY and TWITTER_CONSUMER_SECRET in local_settings.py.
 
 * to verify, you should have each of these set in ```local_settings.py```:
 
@@ -103,6 +102,13 @@ usage
         % ./manage.py runserver
 
 * the home page will be at '/', the admin app at '/admin'. exciting eh.
+
+* Make sure you are logged out of twitter in your browser.  Use the "log in"
+link on your SFM app's home page.  The login page requests your authentication
+through Twitter's OAuth service.  Log in using the twitter account you
+specified earlier as your TWITTER_DEFAULT_USERNAME.  This will give you a
+saved django User and associated User Social Auth for the
+TWITTER_DEFAULT_USERNAME which some of the commands down below will use.
 
 * log in to the admin app at /admin using the superuser django prompted
 you to create when you ran "syncdb" above.  add one or more TwitterUsers
