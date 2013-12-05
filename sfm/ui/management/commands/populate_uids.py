@@ -22,7 +22,8 @@ from django.core.management.base import BaseCommand
 
 from ui.models import authenticated_api
 from ui.models import TwitterUser
-from ui.utils import set_wait_time, populate_uid
+from ui.models import populate_uid
+from ui.utils import set_wait_time
 
 
 class Command(BaseCommand):
