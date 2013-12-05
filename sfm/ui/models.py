@@ -237,20 +237,15 @@ class DailyTwitterUserItemCount(m.Model):
 
 @receiver(post_save, sender=TwitterUser)
 def uid_update(sender, instance, **kwargs):
-    print "inside signal1"
     populate_uid(instance.name)
-    print "username %s" %instance.name
 
 def populate_uid(name, force=False):
-    #TODO: if user is None:
 
     api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
     qs_tweeps = TwitterUser.objects.filter(is_active=True, name=name)
-    #TODO: What if we didn't find someone with that name?
     for tweep in qs_tweeps:
         if tweep.uid == 0 or force is True:
             try:
-                #TODO: better way to catch when user isn't found
                 user_status = api.get_user(screen_name=name)
                 tweep.uid = user_status['id']
                 tweep.save()
