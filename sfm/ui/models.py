@@ -237,7 +237,9 @@ class DailyTwitterUserItemCount(m.Model):
 
 @receiver(post_save, sender=TwitterUser)
 def uid_update(sender, instance, **kwargs):
+    print "inside signal1"
     populate_uid(instance.name)
+    print "username %s" %instance.name
 
 def populate_uid(name, force=False):
     #TODO: if user is None:
@@ -257,4 +259,3 @@ def populate_uid(name, force=False):
                 print 'Failed to find user \'%s\'. Error: %s' % (name, e)
             finally:
                 time.sleep(set_wait_time(api.last_response))
-
