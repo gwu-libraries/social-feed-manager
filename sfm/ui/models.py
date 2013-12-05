@@ -30,17 +30,17 @@ while dt < dt_end:
 
 def authenticated_api(username, api_root=None, parser=None):
     """Return an oauthenticated tweety API object."""
-    auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY, 
-            settings.TWITTER_CONSUMER_SECRET)
+    auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,
+                               settings.TWITTER_CONSUMER_SECRET)
     try:
         user = User.objects.get(username=username)
         sa = user.social_auth.all()[0]
-        auth.set_access_token(sa.tokens['oauth_token'], 
-                sa.tokens['oauth_token_secret'])
-        return tweepy.API(auth, 
-                api_root=api_root or settings.TWITTER_API_ROOT, 
-                parser=parser or JSONParser(),
-                secure=settings.TWITTER_USE_SECURE) 
+        auth.set_access_token(sa.tokens['oauth_token'],
+                              sa.tokens['oauth_token_secret'])
+        return tweepy.API(auth,
+                          api_root=api_root or settings.TWITTER_API_ROOT,
+                          parser=parser or JSONParser(),
+                          secure=settings.TWITTER_USE_SECURE)
     except:
         return None
 
@@ -53,11 +53,11 @@ def dt_aware_from_created_at(created_at):
 
 class RotatingFile(StreamListener):
 
-    def __init__(self, filename_prefix='data', 
-            save_interval_seconds=0, data_dir='', compress=True):
+    def __init__(self, filename_prefix='data', save_interval_seconds=0,
+                 data_dir='', compress=True):
         self.filename_prefix = filename_prefix
         self.save_interval_seconds = save_interval_seconds \
-                or settings.SAVE_INTERVAL_SECONDS
+            or settings.SAVE_INTERVAL_SECONDS
         self.data_dir = data_dir or settings.DATA_DIR
         self.compress = compress
         self.start_time = time.time()
@@ -72,15 +72,16 @@ class RotatingFile(StreamListener):
             self.start_time = time_now
 
     def _get_file(self):
-        if self.compress: 
+        if self.compress:
             return gzip.open(self._get_filename(), 'wb')
         else:
             return open(self._get_filename(), 'wb')
 
     def _get_filename(self):
         return '%s/%s-%s%s' % (self.data_dir, self.filename_prefix,
-                time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
-                '.gz' if self.compress else '')
+                               time.strftime('%Y-%m-%dT%H:%M:%SZ',
+                                             time.gmtime()),
+                               '.gz' if self.compress else '')
 
 
 class TwitterUserSet(m.Model):
@@ -106,10 +107,6 @@ class TwitterUser(m.Model):
         return 'user %s (sfm id %s)' % (self.name, self.id)
 
     @property
-    def feed_url(self):
-        return 'http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=%s' % self.name
-
-    @property
     def counts(self):
         return ','.join([str(dc.num_tweets) for dc in self.daily_counts.all()])
 
@@ -126,21 +123,15 @@ class TwitterUserItem(m.Model):
     def __unicode__(self):
         return 'useritem (%s) %s' % (self.id, self.twitter_id)
 
-    @property 
+    @property
     def twitter_url(self):
         return 'http://twitter.com/%s/status/%s' % (self.twitter_user.name,
-                self.twitter_id)
-
-    @property
-    def tweet_json_url(self):
-        """Note: hard-codes v1 api in URL; will break in March 2013.
-        v1.1 requires oauth request."""
-        return 'http://api.twitter.com/1/statuses/show/%s.json' % self.twitter_id 
+                                                    self.twitter_id)
 
     @property
     def tweet(self):
         """Cache/return a parsed version of the json if available."""
-        try: 
+        try:
             return self._parsed_tweet
         except:
             if self.item_json:
@@ -167,7 +158,7 @@ class TwitterUserItem(m.Model):
     def is_retweet(self, strict=True):
         """A simple-minded attempt to catch RTs that aren't flagged
         by twitter proper with a retweeted_status.  This will catch
-        some cases, others will slip through, e.g. quoted RTs in 
+        some cases, others will slip through, e.g. quoted RTs in
         responses, or "RT this please".  Can't get them all. Likely
         heavily biased toward english."""
         if self.tweet.get('retweeted_status', False):
@@ -179,7 +170,7 @@ class TwitterUserItem(m.Model):
             if ' rt ' in text_lower:
                 if not 'please rt' in text_lower \
                     and not 'pls rt' in text_lower \
-                    and not 'plz rt' in text_lower:
+                        and not 'plz rt' in text_lower:
                     return True
         return False
 
@@ -193,24 +184,23 @@ class TwitterUserItem(m.Model):
     @property
     def csv(self):
         """A list of values suitable for csv-ification"""
-        r = [
-            str(self.id), 
-            datetime.datetime.strftime(self.date_published, 
-                '%Y-%m-%dT%H:%M:%SZ'),
-            self.tweet['id_str'], 
-            self.tweet['user']['screen_name'],
-            str(self.tweet['user']['followers_count']),
-            str(self.tweet['user']['friends_count']),
-            str(self.tweet['retweet_count']),
-            ', '.join([ht['text'] \
-                for ht in self.tweet['entities']['hashtags']]),
-            self.tweet['in_reply_to_screen_name'] or '',
-            ', '.join([m for m in self.mentions]),
-            self.twitter_url,
-            str(self.is_retweet()),
-            str(self.is_retweet(strict=False)),
-            self.tweet['text'].replace('\n', ' '),
-            ]
+        r = [str(self.id),
+             datetime.datetime.strftime(self.date_published,
+                                        '%Y-%m-%dT%H:%M:%SZ'),
+             self.tweet['id_str'],
+             self.tweet['user']['screen_name'],
+             str(self.tweet['user']['followers_count']),
+             str(self.tweet['user']['friends_count']),
+             str(self.tweet['retweet_count']),
+             ', '.join([ht['text']
+                        for ht in self.tweet['entities']['hashtags']]),
+             self.tweet['in_reply_to_screen_name'] or '',
+             ', '.join([m for m in self.mentions]),
+             self.twitter_url,
+             str(self.is_retweet()),
+             str(self.is_retweet(strict=False)),
+             self.tweet['text'].replace('\n', ' '),
+             ]
         # only show up to two urls w/expansions
         for url in self.tweet['entities']['urls'][:2]:
             r.extend([url['url'], url['expanded_url']])

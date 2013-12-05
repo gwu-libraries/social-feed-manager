@@ -1,0 +1,15 @@
+Social Feed Manager (SFM) began in 2012 at GW Libraries in Washington, DC, USA.
+
+The programmer team (past and present) at GW Libraries includes:
+
+- Daniel Chudnov <dchud@gwu.edu>
+- Daniel Kerchner <kerchner@gwu.edu>
+- Laura Wrubel <lwrubel@gwu.edu>
+- Ankushi Sharma <anksharm@email.gwu.edu>
+- Christian Aldridge <zut@gwu.edu>
+
+The following people have contributed code to this repository and agreed
+to assign the copyright on their contributions to The George Washington
+University:
+
+- none yet.
