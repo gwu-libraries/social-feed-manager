@@ -1,8 +1,12 @@
 import time
+
 import tweepy
+
 from django.conf import settings
+
 from ui.models import authenticated_api
 from ui.models import TwitterUser
+
 
 # A little added cushion
 WAIT_BUFFER_SECONDS = 2
@@ -30,7 +34,7 @@ def set_wait_time(last_response):
     return wait_time
 
 
-def populate_uid(name, force=False):
+def populate_uid(name, force=False, api=None):
     """
     For a TwitterUser, populate its uid based on its stored screen name,
     if uid==0 (default value, indicating it hasn't been set yet).
@@ -46,7 +50,8 @@ def populate_uid(name, force=False):
       https://dev.twitter.com/docs/rate-limiting
     """
 
-    api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
+    if api is None:
+        api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
     qs_tweeps = TwitterUser.objects.filter(is_active=True, name=name)
 
     for tweep in qs_tweeps:
