@@ -217,15 +217,3 @@ class Rule(m.Model):
 
     def __unicode__(self):
         return '%s' % self.id
-
-
-class DailyTwitterUserItemCount(m.Model):
-    twitter_user = m.ForeignKey(TwitterUser, related_name='daily_counts')
-    date = m.DateField(db_index=True, blank=True)
-    num_tweets = m.IntegerField(default=0)
-
-    def __unicode__(self):
-        return '%s' % self.id
-
-    class Meta:
-        ordering = ['date']

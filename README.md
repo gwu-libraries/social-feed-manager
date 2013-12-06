@@ -122,12 +122,6 @@ it under /sfm (spells out virtualenv-based paths, adjust as necessary):
 
         5 */2 * * * cd /sfm/social-feed-manager && /sfm/social-feed-manager/ENV/bin/python /sfm/social-feed-manager/sfm/manage.py user_timeline
 
-* once you fetch one or more user timelines, you can pre-process the
-data that the home page sparklines with "dailycounts", which you could run as
-a nightly cronjob like the above, or from the commandline:
-
-        % ./manage.py dailycounts
-
 * use the admin UI to add a Rule, which specifies follow, track, or locations
 to use to poll from twitter's statuses/filter function. then you can poll
 with the filterstream command, which will write out gzipped files at intervals
