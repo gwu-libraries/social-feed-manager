@@ -1,6 +1,7 @@
+import datetime
 import json
 from optparse import make_option
-import datetime
+import time
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -9,6 +10,7 @@ import tweepy
 
 from ui.models import authenticated_api
 from ui.models import TwitterUser
+from ui.utils import set_wait_time
 
 
 class Command(BaseCommand):
@@ -61,3 +63,5 @@ class Command(BaseCommand):
                 print 'Error: %s' % e
                 #go to the next tweep in the for loop
                 continue
+            finally:
+                time.sleep(set_wait_time(api.last_response))
