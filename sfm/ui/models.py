@@ -117,6 +117,43 @@ class TwitterUser(m.Model):
         return ','.join([str(dc.num_tweets) for dc in self.daily_counts.all()])
 
 
+@receiver(post_save, sender=TwitterUser)
+def uid_update(sender, instance, **kwargs):
+    populate_uid(instance.name)
+
+
+def populate_uid(name, force=False, api=None):
+    """
+    For a TwitterUser, populate its uid based on its stored screen name,
+    if uid==0 (default value, indicating it hasn't been set yet).
+    if force==True, do it even if uid isn't 0
+    Only do this for active users.
+
+    see https://dev.twitter.com/docs/api/1.1/get/users/lookup
+       for explanation of get_user call
+    see https://dev.twitter.com/docs/working-with-timelines
+       for explanation of max_id, since_id usage
+    see also:
+       https://dev.twitter.com/docs/error-codes-responses
+       https://dev.twitter.com/docs/rate-limiting
+    """
+
+    if api is None:
+        api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
+    qs_tweeps = TwitterUser.objects.filter(is_active=True, name=name)
+    for tweep in qs_tweeps:
+        if tweep.uid == 0 or force is True:
+            try:
+                user_status = api.get_user(screen_name=name)
+                tweep.uid = user_status['id']
+                tweep.save()
+                print 'updated user \'%s\' uid to %d' % (name, tweep.uid)
+            except tweepy.error.TweepError as e:
+                print 'Failed to find user \'%s\'. Error: %s' % (name, e)
+            finally:
+                time.sleep(set_wait_time(api.last_response))
+
+
 class TwitterUserItem(m.Model):
     twitter_user = m.ForeignKey(TwitterUser, related_name='items')
     twitter_id = m.BigIntegerField(unique=True, default=0)
@@ -223,52 +260,3 @@ class Rule(m.Model):
 
     def __unicode__(self):
         return '%s' % self.id
-
-
-class DailyTwitterUserItemCount(m.Model):
-    twitter_user = m.ForeignKey(TwitterUser, related_name='daily_counts')
-    date = m.DateField(db_index=True, blank=True)
-    num_tweets = m.IntegerField(default=0)
-
-    def __unicode__(self):
-        return '%s' % self.id
-
-    class Meta:
-        ordering = ['date']
-
-
-@receiver(post_save, sender=TwitterUser)
-def uid_update(sender, instance, **kwargs):
-    populate_uid(instance.name)
-
-
-def populate_uid(name, force=False, api=None):
-    """
-    For a TwitterUser, populate its uid based on its stored screen name,
-    if uid==0 (default value, indicating it hasn't been set yet).
-    if force==True, do it even if uid isn't 0
-    Only do this for active users.
-
-    see https://dev.twitter.com/docs/api/1.1/get/users/lookup
-       for explanation of get_user call
-    see https://dev.twitter.com/docs/working-with-timelines
-       for explanation of max_id, since_id usage
-    see also:
-       https://dev.twitter.com/docs/error-codes-responses
-       https://dev.twitter.com/docs/rate-limiting
-    """
-
-    if api is None:
-        api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
-    qs_tweeps = TwitterUser.objects.filter(is_active=True, name=name)
-    for tweep in qs_tweeps:
-        if tweep.uid == 0 or force is True:
-            try:
-                user_status = api.get_user(screen_name=name)
-                tweep.uid = user_status['id']
-                tweep.save()
-                print 'updated user \'%s\' uid to %d' % (name, tweep.uid)
-            except tweepy.error.TweepError as e:
-                print 'Failed to find user \'%s\'. Error: %s' % (name, e)
-            finally:
-                time.sleep(set_wait_time(api.last_response))
