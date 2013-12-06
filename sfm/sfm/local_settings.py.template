@@ -6,6 +6,11 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# This value should be something like [sfm-test] (with a trailing space)
+EMAIL_SUBJECT_PREFIX = ' '
+# Set SERVER_EMIL to root@myserver, e.g. 'root@gwsfm-test.wrlc.org'
+SERVER_EMAIL = ''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',

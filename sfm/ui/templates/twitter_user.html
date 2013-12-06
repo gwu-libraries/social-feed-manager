@@ -66,8 +66,7 @@ function unshorten(id) {
                 </td>
                 <td>in <a href="{{ item.twitter_url }}">twitter</a> 
                     <br />
-                    raw <a href="{{ item.tweet_json_url }}">live</a> -
-                        <a href="{% url 'twitter_item' id=item.id %}">cached</a>
+                    raw <a href="{% url 'twitter_item' id=item.id %}">cached</a>
                 </td>
             </tr>
             {% endfor %}
