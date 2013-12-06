@@ -12,7 +12,11 @@ from tweepy.streaming import StreamListener
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models as m
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
+
+from ui.utils import set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
@@ -100,6 +104,8 @@ class TwitterUserSet(m.Model):
 class TwitterUser(m.Model):
     name = m.TextField(db_index=True)
     date_last_checked = m.DateTimeField(db_index=True, auto_now=True)
+    uid = m.BigIntegerField(default=0)
+    former_names = m.TextField(default='{}', blank=True)
     is_active = m.BooleanField(default=True)
     sets = m.ManyToManyField(TwitterUserSet, blank=True)
 
@@ -109,6 +115,43 @@ class TwitterUser(m.Model):
     @property
     def counts(self):
         return ','.join([str(dc.num_tweets) for dc in self.daily_counts.all()])
+
+
+@receiver(post_save, sender=TwitterUser)
+def uid_update(sender, instance, **kwargs):
+    populate_uid(instance.name)
+
+
+def populate_uid(name, force=False, api=None):
+    """
+    For a TwitterUser, populate its uid based on its stored screen name,
+    if uid==0 (default value, indicating it hasn't been set yet).
+    if force==True, do it even if uid isn't 0
+    Only do this for active users.
+
+    see https://dev.twitter.com/docs/api/1.1/get/users/lookup
+       for explanation of get_user call
+    see https://dev.twitter.com/docs/working-with-timelines
+       for explanation of max_id, since_id usage
+    see also:
+       https://dev.twitter.com/docs/error-codes-responses
+       https://dev.twitter.com/docs/rate-limiting
+    """
+
+    if api is None:
+        api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
+    qs_tweeps = TwitterUser.objects.filter(is_active=True, name=name)
+    for tweep in qs_tweeps:
+        if tweep.uid == 0 or force is True:
+            try:
+                user_status = api.get_user(screen_name=name)
+                tweep.uid = user_status['id']
+                tweep.save()
+                print 'updated user \'%s\' uid to %d' % (name, tweep.uid)
+            except tweepy.error.TweepError as e:
+                print 'Failed to find user \'%s\'. Error: %s' % (name, e)
+            finally:
+                time.sleep(set_wait_time(api.last_response))
 
 
 class TwitterUserItem(m.Model):

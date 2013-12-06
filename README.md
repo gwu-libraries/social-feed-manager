@@ -93,6 +93,11 @@ TWITTER_CONSUMER_SECRET
 * to plug in to apache, use sfm/apache.conf and adjust in an 
   /etc/apache/sites-available file as appropriate
 
+* if you are upgrading a database that was created in m1_001,
+  run populate_uids to add user ids to TwitterUser nicks:
+
+        % ./manage.py populate_uids
+
 
 usage
 -----
