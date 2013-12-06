@@ -104,7 +104,7 @@ class TwitterUserSet(m.Model):
 class TwitterUser(m.Model):
     name = m.TextField(db_index=True)
     date_last_checked = m.DateTimeField(db_index=True, auto_now=True)
-    uid = m.BigIntegerField(default=0)
+    uid = m.BigIntegerField(default=0, help_text='Leave uid as 0 to allow SFM to look up the Twitter uid.')
     former_names = m.TextField(default='{}', blank=True)
     is_active = m.BooleanField(default=True)
     sets = m.ManyToManyField(TwitterUserSet, blank=True)
