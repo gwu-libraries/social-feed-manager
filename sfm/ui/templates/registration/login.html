@@ -18,20 +18,19 @@
         {% else %}
 
         <p>
-        <button type="button" class="btn btn-default">Log in with
-            <a href="{% url 'socialauth_begin' 'twitter' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">Twitter</a>
-    </button>
+        <a href="{% url 'socialauth_begin' 'twitter' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class='btn btn-default btn-lg active' role='button'>Log in with Twitter</a>
         </p>
 
         <p>
         Note:  your use of data from Twitter is subject to the
-        terms you agreed to when you signed up for Twitter.
+        terms of service you agreed to when you signed up for Twitter.
         </p>
 
         <p>
-        <strong>Please do not republish</strong> data you receive here,
-        We are providing data to you for your personal and research use.
-        Twitter's terms do not allow republishing of data otherwise.
+        <strong>Please do not republish</strong> data you receive here.
+        We provide data to you for your personal and research use.
+        Twitter's terms of service do not allow republishing of full 
+        datasets.
         </p>
         {% endif %}
     </div>
