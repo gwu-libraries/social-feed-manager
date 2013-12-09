@@ -6,7 +6,7 @@
         <title>sfm: {{ title }}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% block stylesheet %}
-        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet" />
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" />
         <link href="{{ STATIC_URL }}css/libheader7_lite.css" rel="stylesheet" />
         <link href="{{ STATIC_URL }}css/libheader7_lite_bootswatch.css" rel="stylesheet" />
         <!--[if lt IE 9]>
@@ -38,8 +38,8 @@
                         <form method="get" action="{% url 'search' %}" class="navbar-search pull-left">
                             <input type="text" name="q" class="search-query" placeholder="find users" {% if q %}value="{{ q }}"{% endif %} />
                         </form>
-                        {% if user.is_authenticated %}
-                            {% if user.is_staff %}
+                        {% if request.user.is_authenticated %}
+                            {% if request.user.is_staff or request.user.is_administrator%}
                             <li><a href="/admin/">admin</a></li>
                             <div class="bullet" style="">&bull;</div>
                             {% endif %}
