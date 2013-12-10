@@ -147,7 +147,7 @@ def twitter_user_csv(request, name=''):
         'attachment; filename="%s.csv"' % name 
     time.sleep(3)
     loadingtime = time.time() - start
-    print "loading time: %s" %loadingtime
+    print "loading time using streaming: %s" %loadingtime
     return response
 
 
