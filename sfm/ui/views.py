@@ -1,13 +1,14 @@
 import codecs
 import cStringIO
 import csv
+import time
 
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db import connection
-from django.http import HttpResponse
+from django.http import StreamingHttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import TwitterUser, TwitterUserItem
@@ -132,16 +133,21 @@ def twitter_user_csv(request, name=''):
                   'followers_count', 'friends_count', 'retweet_count',
                   'hashtags', 'in_reply_to_screen_name', 'mentions',
                   'twitter_url', 'is_retweet_strict', 'is_retweet', 'text',
-                  'url1', 'url1_expanded', 'url2', 'url2_expanded']
+                  'url1', 'url1_expanded', 'url2', 'url2_expanded'] 
+    start = time.time()
+    print "start time: %s" %start
     user = get_object_or_404(TwitterUser, name=name)
     qs_tweets = user.items.order_by('-date_published')
     csvwriter = UnicodeCSVWriter()
     csvwriter.writerow(fieldnames)
     for t in qs_tweets:
         csvwriter.writerow(t.csv)
-    response = HttpResponse(csvwriter.out(), content_type='text/csv')
+    response = StreamingHttpResponse(csvwriter.out(), content_type='text/csv')
     response['Content-Disposition'] = \
-        'attachment; filename="%s.csv"' % name
+        'attachment; filename="%s.csv"' % name 
+    time.sleep(3)
+    loadingtime = time.time() - start
+    print "loading time: %s" %loadingtime
     return response
 
 
