@@ -191,19 +191,11 @@ LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('home')
 LOGOUT_REDIRECT_URL = reverse_lazy('home')
 
-
-# BEGIN non-django-standard settings specific to sfm
-
 # A directory in which to store streams using "pullstream"
 DATA_DIR = 'data'
 
 # How often to save polled data to the DATA_DIR
 SAVE_INTERVAL_SECONDS = 60 * 15 # 15 minutes
-
-# Location of twitter's free "spritzer" or sample stream
-TWITTER_SAMPLE_URL = 'https://stream.twitter.com/1/statuses/sample.json'
-TWITTER_USERNAME = ''
-TWITTER_PASSWORD = ''
 
 # Be sure to create your own 'local_settings.py' file as described in README
 try:
