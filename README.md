@@ -50,7 +50,7 @@ or ask a friendly sysadmin for help:
         postgres=# create user YOURSFMDBUSERNAME with createdb password 'YOURSFMDBPASSWORD';
         CREATE ROLE
         postgres=# \q
-        (postgres)% createdb -U YOURSFMDBUSERNAME sfm -W
+        (postgres)% createdb -O YOURSFMDBUSERNAME sfm -W
         Password: YOURSFMDBPASSWORD
         (postgres)% (ctrl-d to log out of postgres acct)
 
