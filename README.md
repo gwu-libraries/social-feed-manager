@@ -62,10 +62,16 @@ or ask a friendly sysadmin for help:
 ALLOWED_HOSTS as appropriate
 
         % cd sfm
+        
+* note that at this point you should have an ```sfm``` directory 
+inside another ```sfm``` directory - the settings files are in this
+second-level sfm directory:
+
         % cp sfm/local_settings.py.template sfm/local_settings.py
 
-* Set TWITTER_DEFAULT_USERNAME to the twitter account username that you
-would like the application to use to register other users.
+* edit ```sfm/local_settings.py``` to set TWITTER_DEFAULT_USERNAME
+to the twitter account username that you would like the application to use
+to register other users.
 
 * Using the twitter account you designated as your TWITTER_DEFAULT_USERNAME,
 log in to:
