@@ -43,7 +43,7 @@ or ask a friendly sysadmin for help:
 
         % sudo service postgresql restart
     
-* create a postgresql user and database:
+* su to the ```postgres``` account to create a postgresql user and database:
     
         % sudo su - postgres
         (postgres)% psql
@@ -52,6 +52,7 @@ or ask a friendly sysadmin for help:
         postgres=# \q
         (postgres)% createdb -U YOURSFMDBUSERNAME sfm -W
         Password: YOURSFMDBPASSWORD
+        (postgres)% (ctrl-d to log out of postgres acct)
 
 * install requirements
 
