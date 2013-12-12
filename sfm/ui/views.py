@@ -3,6 +3,7 @@ import cStringIO
 import csv
 
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db import connection
@@ -23,6 +24,7 @@ def _paginate(request, paginator):
     return page, items
 
 
+@login_required
 def home(request):
     qs_users = TwitterUser.objects.all()
     qs_users_alpha = qs_users.order_by('?')
@@ -30,11 +32,12 @@ def home(request):
     try:
         cursor = connection.cursor()
         cursor.execute("""
-        SELECT DATE_TRUNC('day', date_published) AS day, COUNT(*) AS item_count
-        FROM ui_twitteruseritem
-        WHERE date_published > NOW() - INTERVAL '1 month'
-        GROUP BY 1
-        LIMIT 31 OFFSET 1;
+            SELECT DATE_TRUNC('day', date_published) AS day,
+                   COUNT(*) AS item_count
+            FROM ui_twitteruseritem
+            WHERE date_published > NOW() - INTERVAL '1 month'
+            GROUP BY 1
+            LIMIT 31 OFFSET 1;
             """)
         daily_counts = [[row[0].strftime('%Y-%m-%d'), int(row[1])]
                         for row in cursor.fetchall()]
@@ -55,6 +58,7 @@ def home(request):
     })
 
 
+@login_required
 def search(request):
     q = request.GET.get('q', '')
     title = ''
@@ -70,6 +74,7 @@ def search(request):
     })
 
 
+@login_required
 def tweets(request):
     qs_tweets = TwitterUserItem.objects.order_by('-date_published')
     paginator = Paginator(qs_tweets, 50)
@@ -82,6 +87,7 @@ def tweets(request):
     })
 
 
+@login_required
 def users_alpha(request):
     qs_users = TwitterUser.objects.all()
     qs_users = qs_users.extra(select={'lower_name': 'lower(name)'})
@@ -96,6 +102,7 @@ def users_alpha(request):
     })
 
 
+@login_required
 def twitter_user(request, name=''):
     user = get_object_or_404(TwitterUser, name=name)
     qs_tweets = user.items.order_by('-date_published')
@@ -119,6 +126,7 @@ def twitter_user(request, name=''):
     })
 
 
+@login_required
 def twitter_user_csv(request, name=''):
     fieldnames = ['sfm_id', 'created_at', 'twitter_id', 'screen_name',
                   'followers_count', 'friends_count', 'retweet_count',
@@ -132,15 +140,18 @@ def twitter_user_csv(request, name=''):
     for t in qs_tweets:
         csvwriter.writerow(t.csv)
     response = HttpResponse(csvwriter.out(), content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="%s.csv"' % name
+    response['Content-Disposition'] = \
+        'attachment; filename="%s.csv"' % name
     return response
 
 
+@login_required
 def twitter_item(request, id=0):
     item = get_object_or_404(TwitterUserItem, id=int(id))
     return HttpResponse(item.item_json, content_type='application/json')
 
 
+@login_required
 def twitter_item_links(request, id=0):
     item = get_object_or_404(TwitterUserItem, id=int(id))
     unshortened = [item.unshorten(l) for l in item.links]
