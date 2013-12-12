@@ -48,6 +48,7 @@ def home(request):
         item_count = int(cursor.fetchone()[0])
     except:
         daily_counts = []
+        item_count = 0
     return render(request, 'home.html', {
         'title': 'home',
         'users': qs_users,
