@@ -145,9 +145,9 @@ def twitter_user_csv(request, name=''):
     response = StreamingHttpResponse(csvwriter.out(), content_type='text/csv')
     response['Content-Disposition'] = \
         'attachment; filename="%s.csv"' % name 
-    time.sleep(3)
+#    time.sleep(3)
     loadingtime = time.time() - start
-    print "loading time using streaming: %s" %loadingtime
+    print "loading time with streaming: %s" %loadingtime
     return response
 
 
