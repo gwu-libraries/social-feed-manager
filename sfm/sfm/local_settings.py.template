@@ -32,6 +32,11 @@ CACHES = {
     }   
 }   
 
+if DEBUG is True:
+    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (
+        'ui.middleware.memory.MemoryUsageMiddleware',
+    )
+
 TEMPLATE_DIRS = (
 )
 
