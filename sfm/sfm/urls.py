@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
@@ -6,14 +7,15 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login',
+        kwargs={'extra_context': {'branding': settings.BRANDING}}),
 )
 
 urlpatterns += patterns('ui.views',
     url(r'^$', 'home', name='home'),
     url(r'^logout/$', 'logout', name='logout'),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'),
-        name='about'),
+        name='about', kwargs={'branding': settings.BRANDING}),
 
     # twitter data patterns
     url(r'^search/$', 'search', name='search'),
