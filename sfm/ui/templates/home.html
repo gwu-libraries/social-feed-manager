@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load url from future %}
 {% load humanize %}
+{% load twitterize %}
 
 {% block javascript_extra %}
 <script type='text/javascript' src="http://d3js.org/d3.v3.min.js"></script>
@@ -152,7 +153,7 @@
                     <td><a href='{% url "twitter_user" item.twitter_user.name %}'>{{ item.twitter_user.name }}</a></td>
                     <td>{{ item.date_published|date:"H:i:s" }}</td>
                     <td>{{ item.tweet.retweet_count }}</td>
-                    <td>{{ item.tweet.text }}</td>
+                    <td>{{ item.tweet.text|twitterize }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
