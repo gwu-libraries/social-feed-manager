@@ -32,6 +32,22 @@ CACHES = {
     }   
 }   
 
+# TODO: Find a more clever way to avoid including this in both
+# settings and local_settings
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    # Uncomment the next line for simple clickjacking protection:
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+if DEBUG is True:
+    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (
+        'ui.middleware.memory.MemoryUsageMiddleware',
+    )
+
 TEMPLATE_DIRS = (
 )
 

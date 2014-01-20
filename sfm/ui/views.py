@@ -1,13 +1,15 @@
 import codecs
 import cStringIO
 import csv
+import time
 
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db import connection
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import TwitterUser, TwitterUserItem
@@ -140,9 +142,15 @@ def twitter_user_csv(request, name=''):
     csvwriter.writerow(fieldnames)
     for t in qs_tweets:
         csvwriter.writerow(t.csv)
-    response = HttpResponse(csvwriter.out(), content_type='text/csv')
+    if settings.DEBUG is True:
+        start = time.time()
+        print "start time: %s" % start
+    response = StreamingHttpResponse(csvwriter.out(), content_type='text/csv')
     response['Content-Disposition'] = \
         'attachment; filename="%s.csv"' % name
+    if settings.DEBUG is True:
+        loadingtime = time.time() - start
+        print "loading time with streaming: %s" % loadingtime
     return response
 
 
