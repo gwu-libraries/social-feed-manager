@@ -230,6 +230,8 @@ class TwitterUserItem(m.Model):
         r = [str(self.id),
              datetime.datetime.strftime(self.date_published,
                                         '%Y-%m-%dT%H:%M:%SZ'),
+             datetime.datetime.strftime(self.date_published,
+                                        '%m/%d/%Y'),
              self.tweet['id_str'],
              self.tweet['user']['screen_name'],
              str(self.tweet['user']['followers_count']),
