@@ -116,6 +116,10 @@ class TwitterUser(m.Model):
     def counts(self):
         return ','.join([str(dc.num_tweets) for dc in self.daily_counts.all()])
 
+    def save(self, *args, **kwargs):
+        self.name = self.name.lstrip("@")
+        super(TwitterUser, self).save(*args, **kwargs)
+
 
 @receiver(post_save, sender=TwitterUser)
 def uid_update(sender, instance, **kwargs):
