@@ -40,7 +40,11 @@ class Command(BaseCommand):
         qs_tweeps = TwitterUser.objects.filter(is_active=True)
         if options.get('user', None):
             qs_tweeps = qs_tweeps.filter(name=options.get('user'))
-        qs_tweeps = qs_tweeps.order_by('date_last_checked')
+        else:
+            # NOTE: randomizing here might be healthier when considering
+            # possibility of multiple parallel jobs running and competing
+            # for api calls but this is an instinctual call, not data-driven
+            qs_tweeps = qs_tweeps.order_by('?')
         for tweep in qs_tweeps:
             print 'user: %s' % tweep.name
             # can't do this unless we have a twitter user_id stored
