@@ -117,7 +117,8 @@ class TwitterUser(m.Model):
         return ','.join([str(dc.num_tweets) for dc in self.daily_counts.all()])
 
     def save(self, *args, **kwargs):
-        self.name = self.name.lstrip("@")
+        # remove left whitespace, leading '@', and right whitespace
+        self.name = self.name.lstrip().lstrip("@").rstrip()
         super(TwitterUser, self).save(*args, **kwargs)
 
 
