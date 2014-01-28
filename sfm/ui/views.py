@@ -37,6 +37,7 @@ def home(request):
             FROM ui_twitteruseritem
             WHERE date_published > NOW() - INTERVAL '1 month'
             GROUP BY 1
+            ORDER BY day
             LIMIT 31 OFFSET 1;
             """)
         daily_counts = [[row[0].strftime('%Y-%m-%d'), int(row[1])]
