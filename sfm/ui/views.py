@@ -165,7 +165,6 @@ def twitter_item_links(request, id=0):
     return render(request, 'twitter_item_links.html', {
         'item': item,
         'unshortened': unshortened,
-        'branding': settings.BRANDING,
     })
 
 
