@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 continue
             try:
                 user_status = api.get_user(id=tweep.uid)
-                if user_status['screen_name'] != tweep.name:
+                if user_status['screen_name'].lower() != tweep.name.lower():
                     print ' -- updating screen name to %s' % \
                         user_status['screen_name']
                     former_names = tweep.former_names
