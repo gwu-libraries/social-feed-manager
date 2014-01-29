@@ -11,6 +11,7 @@ from tweepy.streaming import StreamListener
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models as m
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -104,7 +105,7 @@ class TwitterUserSet(m.Model):
 class TwitterUser(m.Model):
     name = m.TextField(db_index=True)
     date_last_checked = m.DateTimeField(db_index=True, auto_now=True)
-    uid = m.BigIntegerField(default=0, help_text='Leave uid as 0 to allow SFM to look up the Twitter uid.')
+    uid = m.BigIntegerField(unique=True)
     former_names = m.TextField(default='{}', blank=True)
     is_active = m.BooleanField(default=True)
     sets = m.ManyToManyField(TwitterUserSet, blank=True)
@@ -116,15 +117,23 @@ class TwitterUser(m.Model):
     def counts(self):
         return ','.join([str(dc.num_tweets) for dc in self.daily_counts.all()])
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         # remove left whitespace, leading '@', and right whitespace
         self.name = self.name.lstrip().lstrip("@").rstrip()
-        super(TwitterUser, self).save(*args, **kwargs)
+        # look up user
+        try:
+            api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
+        except tweepy.error.TweepError as e:
+            raise ValidationError('Could not connect to Twitter API using default user. Error: %s' % e)
+        try:
+            user_status = api.get_user(screen_name=self.name)
+        except tweepy.error.TweepError as e:
+            raise ValidationError('Twitter screen name \'%s\' was not found.'
+                                  % self.name)
 
-
-@receiver(post_save, sender=TwitterUser)
-def uid_update(sender, instance, **kwargs):
-    populate_uid(instance.name)
+        self.uid = user_status['id']
+        # use the screen name from twitter (may be capitalized differently)
+        self.name = user_status['screen_name']
 
 
 def populate_uid(name, force=False, api=None):
