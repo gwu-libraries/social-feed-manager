@@ -1,4 +1,6 @@
-{% load url from future %}
+a% load url from future %}
+{% load sfm_extras %}
+{% assign_settings_value "BRANDING" as branding %}
 <!doctype html>
 <html>
     <head>
@@ -66,7 +68,7 @@
                 <div id="libfooter" class="container" style="">
                     <div class="libfooter-text" style="">
                         <span class="address">
-                            <a href="http://library.gwu.edu" target="_blank" title="GW Libraries Website">GW Libraries</a>
+                            <a href="{{ branding.URL }}" target="_blank" title="{{ branding.institution}} Website">{{ branding.institution }}</a>
                             {% for addrline in branding.address %}
                             &#8226; {{ addrline }}
                             {% endfor %}
