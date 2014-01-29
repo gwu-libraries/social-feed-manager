@@ -2,6 +2,7 @@ import codecs
 import cStringIO
 import csv
 
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -57,6 +58,7 @@ def home(request):
         'items': qs_items[:10],
         'item_count': item_count,
         'daily_counts': daily_counts,
+        'branding': settings.BRANDING,
     })
 
 
@@ -72,7 +74,8 @@ def search(request):
     return render(request, 'search.html', {
         'title': title,
         'users': qs_users,
-        'q': q
+        'q': q,
+        'branding': settings.BRANDING,
     })
 
 
@@ -86,6 +89,7 @@ def tweets(request):
         'tweets': tweets,
         'paginator': paginator,
         'page': page,
+        'branding': settings.BRANDING,
     })
 
 
@@ -101,6 +105,7 @@ def users_alpha(request):
         'users': users,
         'paginator': paginator,
         'page': page,
+        'branding': settings.BRANDING,
     })
 
 
@@ -125,6 +130,7 @@ def twitter_user(request, name=''):
         'recent_tweet': recent_tweet,
         'paginator': paginator,
         'page': page,
+        'branding': settings.BRANDING,
     })
 
 

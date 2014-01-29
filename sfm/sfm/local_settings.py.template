@@ -40,3 +40,15 @@ DATA_DIR = '/PATH/TO/YOUR/DATA/DIR'
 TWITTER_DEFAULT_USERNAME = 'MY FANCY USERNAME'
 TWITTER_CONSUMER_KEY = 'ITS CONSUMER KEY'
 TWITTER_CONSUMER_SECRET = 'ITS CONSUMER SECRET'
+
+BRANDING = {
+    # Required:
+    'institution': '',
+    'URL': '',
+    # Optional:
+    #   address may contain any number of elements
+    'address': ['', '', ''],
+    'email': '',
+    #   logofile should be placed in static/img
+    'logofile': '',
+}
