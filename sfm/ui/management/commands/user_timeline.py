@@ -24,6 +24,7 @@ import tweepy
 
 from ui.models import authenticated_api, dt_aware_from_created_at
 from ui.models import TwitterUser, TwitterUserItem
+from ui.models import TwitterUserTimelineJob, TwitterUserTimelineError
 from ui.utils import set_wait_time
 
 
@@ -37,6 +38,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
+        job = TwitterUserTimelineJob()
+        job.save()
         qs_tweeps = TwitterUser.objects.filter(is_active=True)
         if options.get('user', None):
             qs_tweeps = qs_tweeps.filter(name=options.get('user'))
@@ -101,7 +104,11 @@ class Command(BaseCommand):
                             print 'skip: id %s' % item.id
                     except IntegrityError as ie:
                         print 'ERROR: %s' % ie
+                        error = TwitterUserTimelineError(job=job, user=tweep,
+                                                         error=ie)
+                        error.save()
                 print 'saved: %s item(s)' % new_status_count
+                job.num_added += new_status_count
                 # max new statuses per call is 200, so check for less than
                 # a reasonable fraction of that to see if we should stop
                 if new_status_count < 150:
@@ -115,7 +122,11 @@ class Command(BaseCommand):
                 response_status = api.last_response.status
                 if response_status >= 400:
                     print 'error:', api.last_response.getheader('status')
+                    error = TwitterUserTimelineError(job=job, user=tweep,
+                                                     error=e)
+                    error.save()
                     stop = True
+                job.save()
                 # wait before next call no matter what
                 time.sleep(set_wait_time(api.last_response))
                 if stop:

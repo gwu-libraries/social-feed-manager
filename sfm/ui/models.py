@@ -257,6 +257,21 @@ class TwitterUserItem(m.Model):
         return r
 
 
+class TwitterUserTimelineJob(m.Model):
+    date_started = m.DateTimeField(db_index=True, auto_now_add=True)
+    date_finished = m.DateTimeField(db_index=True, auto_now=True)
+    num_added = m.IntegerField(default=0)
+
+    def __unicode__(self):
+        return '<TwitterUserTimelineJob %s>' % self.id
+
+
+class TwitterUserTimelineError(m.Model):
+    job = m.ForeignKey(TwitterUserTimelineJob, related_name="errors")
+    user = m.ForeignKey(TwitterUser)
+    error = m.TextField(blank=True)
+
+
 class Rule(m.Model):
     user = m.ForeignKey(User)
     name = m.CharField(max_length=255, unique=True)
