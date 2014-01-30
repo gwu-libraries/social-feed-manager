@@ -11,7 +11,7 @@ class Migration(SchemaMigration):
         # Adding model 'TwitterUserTimelineError'
         db.create_table(u'ui_twitterusertimelineerror', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('job', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['ui.TwitterUserTimelineJob'])),
+            ('job', self.gf('django.db.models.fields.related.ForeignKey')(related_name='errors', to=orm['ui.TwitterUserTimelineJob'])),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['ui.TwitterUser'])),
             ('error', self.gf('django.db.models.fields.TextField')(blank=True)),
         ))
@@ -90,7 +90,7 @@ class Migration(SchemaMigration):
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'name': ('django.db.models.fields.TextField', [], {'db_index': 'True'}),
             'sets': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['ui.TwitterUserSet']", 'symmetrical': 'False', 'blank': 'True'}),
-            'uid': ('django.db.models.fields.BigIntegerField', [], {'default': '0'})
+            'uid': ('django.db.models.fields.BigIntegerField', [], {'unique': 'True'})
         },
         u'ui.twitteruseritem': {
             'Meta': {'object_name': 'TwitterUserItem'},
@@ -114,7 +114,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'TwitterUserTimelineError'},
             'error': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'job': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['ui.TwitterUserTimelineJob']"}),
+            'job': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'errors'", 'to': u"orm['ui.TwitterUserTimelineJob']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['ui.TwitterUser']"})
         },
         u'ui.twitterusertimelinejob': {

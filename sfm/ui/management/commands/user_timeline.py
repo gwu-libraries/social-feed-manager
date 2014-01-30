@@ -52,9 +52,12 @@ class Command(BaseCommand):
             print 'user: %s' % tweep.name
             # can't do this unless we have a twitter user_id stored
             if tweep.uid == 0:
-                print 'uid has not been set yet - skipping this user.  ' + \
-                      'May need to run populate_uids if this is an old ' + \
-                      'database.'
+                skipmsg = 'uid has not been set yet - skipping this ' + \
+                          'user.  May need to run populate_uids if this ' + \
+                          'is an old database.'
+                error = TwitterUserTimelineError(job=job, user=tweep,
+                                                 error=skipmsg)
+                error.save()
                 continue
             # now move on to determining first tweet id to get
             since_id = 1
@@ -80,6 +83,9 @@ class Command(BaseCommand):
                                                      count=200)
                 except tweepy.error.TweepError as e:
                     print 'ERROR: %s' % e
+                    error = TwitterUserTimelineError(job=job, user=tweep,
+                                                     error=e)
+                    error.save()
                     timeline = []
                 if len(timeline) == 0:
                     # Nothing new; stop for this user
