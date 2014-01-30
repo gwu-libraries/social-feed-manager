@@ -15,6 +15,7 @@ class TwitterUserAdmin(admin.ModelAdmin):
                     'date_last_checked']
     list_filter = ['is_active']
     search_fields = ['name', 'former_names', 'uid']
+    readonly_fields = ['uid', 'former_names', 'date_last_checked']
 admin.site.register(m.TwitterUser, TwitterUserAdmin)
 
 
