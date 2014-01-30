@@ -55,6 +55,7 @@ class Command(BaseCommand):
                 skipmsg = 'uid has not been set yet - skipping this ' + \
                           'user.  May need to run populate_uids if this ' + \
                           'is an old database.'
+                print skipmsg
                 error = TwitterUserTimelineError(job=job, user=tweep,
                                                  error=skipmsg)
                 error.save()
