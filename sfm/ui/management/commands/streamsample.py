@@ -2,10 +2,21 @@ from optparse import make_option
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
 
-import requests
+import tweepy
+from tweepy.streaming import StreamListener
 
 from ui.models import RotatingFile
+
+class StdOutListener(StreamListener):
+
+    def on_data(self, data):
+        print data
+        return True
+
+    def on_error(self, status):
+        print status
 
 class Command(BaseCommand):
     help = 'Show or save the Twitter sample/spritzer feed'
@@ -22,17 +33,17 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        resp = requests.get(settings.TWITTER_SAMPLE_URL,
-            auth=(settings.TWITTER_USERNAME, settings.TWITTER_PASSWORD))
-        if options.get('save', False):
-            rfp = RotatingFile(stream=resp, 
-                    filename_prefix='sample',
-                    save_interval_seconds=options['interval'],
-                    data_dir=options['dir'])
-            rfp.handle()
+        user = User.objects.get(username=settings.TWITTER_DEFAULT_USERNAME)
+        sa = user.social_auth.all()[0]
+        auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY, settings.TWITTER_CONSUMER_SECRET)
+        auth.set_access_token(sa.tokens['oauth_token'],sa.tokens['oauth_token_secret'])
+        if options.get('save', True):
+           listener = RotatingFile(filename_prefix='sample',
+                   save_interval_seconds=options['interval'],
+                   data_dir=options['dir'])
+           stream = tweepy.Stream(auth, listener)
+           stream.sample()
         else:
-            for line in resp.iter_lines():
-                if line:
-                    print line
-
-
+           listener = StdOutListener()
+           stream = tweepy.Stream(auth, listener)
+           StdOutListener(stream.sample())
