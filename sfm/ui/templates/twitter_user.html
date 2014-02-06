@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% load url from future %}
 {% load humanize %}
+{% load twitterize %}
 
 {% block javascript_extra %}
 <script type='text/javascript'>
@@ -56,7 +56,7 @@ function unshorten(id) {
                 </td>
                 <td>{{ item.tweet.retweet_count }}</td>
                 <td>
-                    {{ item.text|urlize }}
+                    {{ item.text|twitterize }}
                     {% if item.links %}
                     <div id='links-{{ item.id }}'>
                         <i class='icon-resize-full'></i>

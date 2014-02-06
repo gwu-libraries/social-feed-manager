@@ -20,12 +20,37 @@ article {
     }
 }
 
+svg { 
+    width: 700px;
+    height: 360px;
+}
+
+#vizcontainer.span8 {
+    height: 360px;
+}
+
 .chart rect {
     fill: steelblue;
     stroke: white;
 }
+
+.chart rect:hover {
+    fill: brown;
+}
+
 .rule {
     font-size: small;
+}
+
+.axis text {
+    font: 11px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
 }
 
 /* tweaks to libheader7_lite.css */

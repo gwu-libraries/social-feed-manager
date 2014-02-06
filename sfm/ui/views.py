@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db import connection
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import TwitterUser, TwitterUserItem
@@ -37,6 +37,7 @@ def home(request):
             FROM ui_twitteruseritem
             WHERE date_published > NOW() - INTERVAL '1 month'
             GROUP BY 1
+            ORDER BY day
             LIMIT 31 OFFSET 1;
             """)
         daily_counts = [[row[0].strftime('%Y-%m-%d'), int(row[1])]
@@ -129,18 +130,18 @@ def twitter_user(request, name=''):
 
 @login_required
 def twitter_user_csv(request, name=''):
-    fieldnames = ['sfm_id', 'created_at', 'twitter_id', 'screen_name',
-                  'followers_count', 'friends_count', 'retweet_count',
-                  'hashtags', 'in_reply_to_screen_name', 'mentions',
-                  'twitter_url', 'is_retweet_strict', 'is_retweet', 'text',
-                  'url1', 'url1_expanded', 'url2', 'url2_expanded']
+    fieldnames = ['sfm_id', 'created_at', 'created_at_date', 'twitter_id',
+                  'screen_name', 'followers_count', 'friends_count',
+                  'retweet_count', 'hashtags', 'in_reply_to_screen_name',
+                  'mentions', 'twitter_url', 'is_retweet_strict', 'is_retweet',
+                  'text', 'url1', 'url1_expanded', 'url2', 'url2_expanded']
     user = get_object_or_404(TwitterUser, name=name)
     qs_tweets = user.items.order_by('-date_published')
     csvwriter = UnicodeCSVWriter()
     csvwriter.writerow(fieldnames)
     for t in qs_tweets:
         csvwriter.writerow(t.csv)
-    response = HttpResponse(csvwriter.out(), content_type='text/csv')
+    response = StreamingHttpResponse(csvwriter.out(), content_type='text/csv')
     response['Content-Disposition'] = \
         'attachment; filename="%s.csv"' % name
     return response
@@ -183,4 +184,4 @@ class UnicodeCSVWriter:
             self.writerow(row)
 
     def out(self):
-        return self.queue.getvalue()
+        return cStringIO.StringIO(self.queue.getvalue())

@@ -15,6 +15,7 @@ class TwitterUserAdmin(admin.ModelAdmin):
                     'date_last_checked']
     list_filter = ['is_active']
     search_fields = ['name', 'former_names', 'uid']
+    readonly_fields = ['uid', 'former_names', 'date_last_checked']
 admin.site.register(m.TwitterUser, TwitterUserAdmin)
 
 
@@ -29,3 +30,16 @@ class TwitterUserSetAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'name', 'notes']
     search_fields = ['user', 'name']
 admin.site.register(m.TwitterUserSet, TwitterUserSetAdmin)
+
+
+class TwitterUserTimelineJobAdmin(admin.ModelAdmin):
+    list_display = ['id', 'date_started', 'date_finished', 'num_added']
+    list_filter = ['date_started']
+    search_fields = ['id']
+admin.site.register(m.TwitterUserTimelineJob, TwitterUserTimelineJobAdmin)
+
+
+class TwitterUserTimelineErrorAdmin(admin.ModelAdmin):
+    list_display = ['id', 'job', 'user', 'error']
+    search_fields = ['job', 'user']
+admin.site.register(m.TwitterUserTimelineError, TwitterUserTimelineErrorAdmin)
