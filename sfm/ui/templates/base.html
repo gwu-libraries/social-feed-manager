@@ -1,3 +1,5 @@
+{% load sfm_extras %}
+{% assign_settings_value "BRANDING" as branding %}
 <!doctype html>
 <html>
     <head>
@@ -25,11 +27,13 @@
         <header class="navbar navbar-fixed-top">
             <div id="libheader-container" class="navbar-inner" style="">
                 <div id="libheader" class="container">
+                    {% if branding.logofile %}
                     <div class="libheader-logo">
-                        <a href="http://www.gwu.edu" target="_blank" title="GWU website"><img src="{{ STATIC_URL }}img/gwheaderlogo.png" alt="logo: The George Washington University" /></a>
+                        <a href="{{ branding.URL }}" target="_blank" title="{{ branding.institution }} website"><img src="{{ STATIC_URL }}img/{{ branding.logofile }}" alt="logo: {{ branding.institution }}" /></a>
                     </div>
+                    {% endif %}
                     <div class="libheader-liblink">
-                        <a href="http://library.gwu.edu" target="_blank" title="GW Libraries website">GW Libraries</a>
+                        <a href="{{ branding.URL }}" target="_blank" title="{{ branding.institution }}">{{ branding.institution }}</a>
                     </div>
                     <ul class="nav hide-med">
                         <li><a class="brand" href="{% url 'home' %}">social feed manager</a></li>
@@ -63,13 +67,15 @@
                 <div id="libfooter" class="container" style="">
                     <div class="libfooter-text" style="">
                         <span class="address">
-                            <a href="http://library.gwu.edu" target="_blank" title="GW Libraries Website">GW Libraries</a>
-                            &#8226; 2130 H Street NW &#8226; Washington DC 20052
+                            <a href="{{ branding.URL }}" target="_blank" title="{{ branding.institution}} Website">{{ branding.institution }}</a>
+                            {% for addrline in branding.address %}
+                            &#8226; {{ addrline }}
+                            {% endfor %}
                         </span>
+                        {% if branding.email %}
                         &#8226;
-                        <span class="tel">202.994.6558</span>
-                        &#8226;
-                        <a href="mailto:refdesk@gwu.edu" target="_blank" title="">refdesk@gwu.edu</a>
+                        <a href="mailto:{{ branding.email }}" target="_blank" title="">{{ branding.email }}</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -19,7 +19,7 @@ urlpatterns += patterns('ui.views',
     url(r'^search/$', 'search', name='search'),
     url(r'^tweets/$', 'tweets', name='tweets'),
     url(r'^users/alpha/$', 'users_alpha', name='users_alpha'),
-    url(r'^twitter-user/(?P<name>[a-zA-Z0-9_]+)/$', 'twitter_user', 
+    url(r'^twitter-user/(?P<name>[a-zA-Z0-9_]+)/$', 'twitter_user',
         name='twitter_user'),
     url(r'^twitter-user/(?P<name>[a-zA-Z0-9_]+).csv$', 'twitter_user_csv',
         name='twitter_user_csv'),
@@ -30,4 +30,3 @@ urlpatterns += patterns('ui.views',
 
     url(r'', include('social_auth.urls')),
 )
-

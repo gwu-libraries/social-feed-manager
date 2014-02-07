@@ -72,7 +72,7 @@ def search(request):
     return render(request, 'search.html', {
         'title': title,
         'users': qs_users,
-        'q': q
+        'q': q,
     })
 
 
