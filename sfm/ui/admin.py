@@ -3,11 +3,11 @@ from django.contrib import admin
 from ui import models as m
 
 
-class RuleAdmin(admin.ModelAdmin):
+class TwitterFilterAdmin(admin.ModelAdmin):
     list_display = ['id', 'is_active', 'words', 'people', 'locations']
     list_filter = ['is_active']
     search_fields = ['words', 'people']
-admin.site.register(m.Rule, RuleAdmin)
+admin.site.register(m.TwitterFilter, TwitterFilterAdmin)
 
 
 class TwitterUserAdmin(admin.ModelAdmin):

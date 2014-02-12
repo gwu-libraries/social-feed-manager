@@ -281,7 +281,7 @@ class TwitterUserTimelineError(m.Model):
     error = m.TextField(blank=True)
 
 
-class Rule(m.Model):
+class TwitterFilter(m.Model):
     user = m.ForeignKey(User)
     name = m.CharField(max_length=255, unique=True)
     is_active = m.BooleanField(default=False)
