@@ -16,7 +16,6 @@ from ui.models import RotatingFile, TwitterFilter
 # variable name "twitter_filter" throughout to avoid possible confusion
 # http://docs.python.org/2/library/functions.html#filter
 
-
 class StdOutListener(StreamListener):
 
     def on_data(self, data):
@@ -43,8 +42,8 @@ class Command(BaseCommand):
                     default=settings.SAVE_INTERVAL_SECONDS, dest='interval',
                     help='how often to save data (default=%s)'
                     % settings.SAVE_INTERVAL_SECONDS),
-        make_option('--tfilter', action='store', type='string',
-                    default=None, dest='tfilter',
+        make_option('--tfilter', action='store',
+                    default=None,
                     help='specify the twitter filter name')
     )
 
@@ -76,6 +75,22 @@ class Command(BaseCommand):
                                        settings.TWITTER_CONSUMER_SECRET)
             auth.set_access_token(sa.tokens['oauth_token'],
                                   sa.tokens['oauth_token_secret'])
+            if options.get('tfilter', None):
+                twitter_filters = TwitterFilter.objects.filter(name = options.get('tfilter'))
+                for rule in twitter_filters:
+                    if rule.is_active is True and options.get('save', True):
+                        listener = RotatingFile(
+                            filename_prefix='filter',
+                            save_interval_seconds=options['interval'],
+                            data_dir=options['dir'])
+                        stream = tweepy.Stream(auth, listener)
+                        stream.filter(
+                            track=words, follow=people, locations=locations)
+                    else:
+                        listener = StdOutListener()
+                        stream = tweepy.Stream(auth, listener)
+                        StdOutListener(stream.filter(
+                            track=words, follow=people, locations=locations))
             if options.get('save', True):
                 listener = RotatingFile(
                     filename_prefix='filter',
@@ -88,23 +103,6 @@ class Command(BaseCommand):
                 stream = tweepy.Stream(auth, listener)
                 StdOutListener(stream.filter(
                     track=words, follow=people, locations=locations))
-            if options.get('tfilter', None):
-                twitter_filters = Twitterfilter.objects.filter(
-                    name = options.get('tfilter'))
-                for rule in twitter_filters:
-                    twitter_filters = Twitterfilter.objects.filter(is_active=True)
-                    if rule.id != 0 and options.get('save', True):
-                        listener = RotatingListener(
-                            filename_prefix='filter',
-                            save_interval_seconds=options['interval'],
-                            data_dir=options['dir'])
-                        stream = tweepy.Stream(auth, listener)
-                        stream.filter(
-                            track=words, follow=people, locations=locations)
-                    else:
-                        stream = tweepy.Stream(auth, listener)
-                        StdOutListener(stream.filter(
-                            track=words, follow=people, locations=locations))
         except Exception, e:
             if options.get('verbose', False):
                 print 'Disconnected from twitter:', e
