@@ -76,7 +76,8 @@ class Command(BaseCommand):
             auth.set_access_token(sa.tokens['oauth_token'],
                                   sa.tokens['oauth_token_secret'])
             if options.get('tfilter', None):
-                twitter_filters = TwitterFilter.objects.filter(name = options.get('tfilter'))
+                twitter_filters = TwitterFilter.objects.filter(
+                    name=options.get('tfilter'))
                 for rule in twitter_filters:
                     if rule.is_active is True and options.get('save', True):
                         listener = RotatingFile(
