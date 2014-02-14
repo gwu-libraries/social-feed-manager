@@ -16,7 +16,7 @@ on ubuntu lts 12.04; your mileage may vary.
 
 * install ubuntu package dependencies:
         
-        % sudo apt-get install git apache2 python-dev python-virtualenv postgresql libxml2-dev libxslt1-dev libpq-dev libapache2-mod-wsgi
+        % sudo apt-get install git apache2 python-dev python-virtualenv postgresql libxml2-dev libxslt1-dev libpq-dev libapache2-mod-wsgi supervisor
 
 * get this code:
 
@@ -119,6 +119,37 @@ TWITTER_CONSUMER_SECRET
   run populate_uids to add user ids to TwitterUser nicks:
 
         % ./manage.py populate_uids
+
+
+optional setup for streamsample (Twitter sample/spritzer feed)
+--------------------------------------------------------------
+
+* edit local_settings.py to set DATA_DIR to the directory where you want
+  streamsample output stored.  You may wish to adjust SAVE_INTERVAL_SETTINGS,
+  which controls how often sfm will save data.
+
+* edit sfm/streamsample.conf to use the path to your sfm project
+
+* copy sfm/streamsample.conf to /etc/supervisor/conf.d
+
+        % sudo cp sfm/streamsample.conf /etc/supervisor/conf.d
+
+* to verify that supervisord detected the new configuration file and
+  started the process, run supervisorctl:
+
+        % sudo supervisorctl
+
+* if you don't see a line that reads something like:
+
+        streamsample                     RUNNING    pid 889, uptime 21:45:25
+
+  then at the supervisor prompt, run 'update' to reload the config files:
+
+        supervisor> update
+
+  and start streamsample
+
+        supervisor> start streamsample
 
 
 usage
