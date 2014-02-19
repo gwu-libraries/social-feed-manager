@@ -13,13 +13,6 @@ article {
     padding-bottom: 60px;
 }
 
-@media screen and (max-width:970px) {
-    article {
-        padding-top: inherit;
-        padding-bottom: inherit;
-    }
-}
-
 svg { 
     width: 700px;
     height: 360px;
@@ -66,10 +59,22 @@ svg {
     font-size: 1.6em;
 }
 
+@media screen and (max-width:1100px) {
+    .navbar-search {
+        display: none;
+        visibility: hidden;
+    }
+}
 @media screen and (max-width:860px) {
     .hide-med {
         display: none;
         visibility: hidden;
+    }
+}
+@media screen and (max-width:970px) {
+    article {
+        padding-top: inherit;
+        padding-bottom: inherit;
     }
 }
 
@@ -77,4 +82,7 @@ svg {
 
 .navbar-search {
     margin-top: .125em; /* from .2em */
+}
+.navbar .nav {
+    float: right;
 }
