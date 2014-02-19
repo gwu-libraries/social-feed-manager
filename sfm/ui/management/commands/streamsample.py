@@ -34,7 +34,7 @@ class Command(BaseCommand):
                     default=settings.SAVE_INTERVAL_SECONDS, dest='interval',
                     help='how often to save data (default=%s)'
                     % settings.SAVE_INTERVAL_SECONDS),
-        )
+    )
 
     def handle(self, *args, **options):
         user = User.objects.get(username=settings.TWITTER_DEFAULT_USERNAME)
