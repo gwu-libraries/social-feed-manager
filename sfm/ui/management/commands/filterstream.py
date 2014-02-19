@@ -42,7 +42,7 @@ class Command(BaseCommand):
                     default=settings.SAVE_INTERVAL_SECONDS, dest='interval',
                     help='how often to save data (default=%s)'
                     % settings.SAVE_INTERVAL_SECONDS),
-        make_option('--tfilter', action='store',
+        make_option('--tfilterid', action='store',
                     default=None,
                     help='specify the twitter filter name')
     )
@@ -75,9 +75,9 @@ class Command(BaseCommand):
                                        settings.TWITTER_CONSUMER_SECRET)
             auth.set_access_token(sa.tokens['oauth_token'],
                                   sa.tokens['oauth_token_secret'])
-            if options.get('tfilter', None):
+            if options.get('tfilterid', None):
                 twitter_filters = TwitterFilter.objects.filter(
-                    name=options.get('tfilter'))
+                    name=options.get('tfilterid'))
                 for rule in twitter_filters:
                     if rule.is_active is True and options.get('save', True):
                         listener = RotatingFile(
