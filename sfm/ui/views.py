@@ -117,12 +117,30 @@ def twitter_user(request, name=''):
         recent_tweet = None
     paginator = Paginator(qs_tweets, 50)
     page, tweets = _paginate(request, paginator)
+    # fetch 90 days' worth of counts
+    try:
+        cursor = connection.cursor()
+        cursor.execute("""
+            SELECT DATE_TRUNC('day', date_published) AS day,
+                   COUNT(*) AS item_count
+                   FROM ui_twitteruseritem
+            WHERE twitter_user_id = %s
+                AND date_published > NOW() - INTERVAL '3 months'
+            GROUP BY 1
+            ORDER BY day
+            LIMIT 91 OFFSET 1;
+        """ % (user.id))
+        daily_counts = [[row[0].strftime('%Y-%m-%d'), int(row[1])]
+                        for row in cursor.fetchall()]
+    except:
+        daily_counts = []
     return render(request, 'twitter_user.html', {
         'title': 'twitter user: %s' % name,
         'user': user,
         'qs_tweets': qs_tweets,
         'tweets': tweets,
         'recent_tweet': recent_tweet,
+        'daily_counts': daily_counts,
         'paginator': paginator,
         'page': page,
     })

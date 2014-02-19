@@ -2,6 +2,21 @@
 {% load humanize %}
 {% load twitterize %}
 
+{% block stylesheet_extra %}
+<style>
+svg {
+    width: 550px;
+    height: 30px;
+}
+.bar {
+    fill: steelblue;
+}
+.bar:hover {
+    fill: brown;
+}
+</style>
+{% endblock stylesheet_extra %}
+
 {% block javascript_extra %}
 <script type='text/javascript'>
 function unshorten(id) {
@@ -11,13 +26,49 @@ function unshorten(id) {
         });
 }
 </script>
+
+<script type='text/javascript' src="http://d3js.org/d3.v3.min.js"></script>
+<script type='text/javascript'>
+var daily_counts = {{ daily_counts|safe }};
+
+var width = 550;
+var height = 30;
+
+var x = d3.time.scale()
+    .range([0, width])
+    .domain([new Date(daily_counts[0][0]), 
+             new Date(daily_counts.slice(-1)[0][0])]);
+
+var y = d3.scale.linear()
+    .range([0, height])
+    .domain([d3.max(daily_counts, function(d) { return d[1]; }), 0]);
+
+var svg = d3.select("#viz").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+svg.selectAll(".bar")
+    .data(daily_counts)
+  .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d, i) { return x(new Date(d[0])); } )
+    .attr("width", (width / 90) - 1)
+    .attr("y", function(d) { return y(d[1]); } )
+    .attr("height", function(d) { return height - y(d[1]); } )
+    .attr("title", function(d) { return d[0]; } );
+
+svg.selectAll("rect").append("svg:title")
+    .text(function(d) { return d[0] + ": " + d[1]; });
+</script>
 {% endblock %}
 
 {% block content %}
 
 <div class='span-6'>
     <h1>{{ user.name }} - 
-        {{ user.items.count|intcomma }} item{{ user.items.count|pluralize }}</h1>
+        {{ user.items.count|intcomma }} item{{ user.items.count|pluralize }}
+    </h1>
+    <div id='viz' width='500' height='30'></div>
     {% if recent_tweet %}
     {% with recent_tweet.tweet as t %}
     <p>
