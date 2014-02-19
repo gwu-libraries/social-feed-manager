@@ -16,6 +16,7 @@ from ui.models import RotatingFile, TwitterFilter
 # variable name "twitter_filter" throughout to avoid possible confusion
 # http://docs.python.org/2/library/functions.html#filter
 
+
 class StdOutListener(StreamListener):
 
     def on_data(self, data):
