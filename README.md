@@ -121,37 +121,6 @@ TWITTER_CONSUMER_SECRET
         % ./manage.py populate_uids
 
 
-optional setup for streamsample (Twitter sample/spritzer feed)
---------------------------------------------------------------
-
-* edit local_settings.py to set DATA_DIR to the directory where you want
-  streamsample output stored.  You may wish to adjust SAVE_INTERVAL_SETTINGS,
-  which controls how often sfm will save data.
-
-* edit sfm/streamsample.conf to use the path to your sfm project
-
-* copy sfm/streamsample.conf to /etc/supervisor/conf.d
-
-        % sudo cp sfm/streamsample.conf /etc/supervisor/conf.d
-
-* to verify that supervisord detected the new configuration file and
-  started the process, run supervisorctl:
-
-        % sudo supervisorctl
-
-* if you don't see a line that reads something like:
-
-        streamsample                     RUNNING    pid 889, uptime 21:45:25
-
-  then at the supervisor prompt, run 'update' to reload the config files:
-
-        supervisor> update
-
-  and start streamsample
-
-        supervisor> start streamsample
-
-
 usage
 -----
 
@@ -201,6 +170,50 @@ familiar with their documentation:
 
     https://dev.twitter.com/docs/streaming-apis
 
+
+optional setup for supervised streamsample (Twitter sample/spritzer feed)
+--------------------------------------------------------------
+
+If you want to capture sample data from Twitter's spritzer feed
+continually, you might want a process supervisor to ensure the process
+remains active and is restarted automatically after system reboots and
+the like.  ```supervisor``` does that for sfm.  These steps will get
+you started.  
+
+*NOTE*:  The sample stream includes something like 0.5-1% of all tweets
+and deletes, which as of February 2014 means roughly three million
+or so items combined.  These files will add up quickly, so consider
+your available disk space, and consider using the ```organizedata```
+management command in a cron job to sort generated files into date-based
+directories regularly.
+
+* edit local_settings.py to set DATA_DIR to the directory where you want
+  streamsample output stored.  You may wish to adjust 
+  SAVE_INTERVAL_SETTINGS, which controls how often sfm will save data.
+
+* copy sfm/streamsample.conf to /etc/supervisor/conf.d/
+
+        % sudo cp sfm/streamsample.conf /etc/supervisor/conf.d/
+
+* edit /etc/supervisor/conf.d/streamsample.conf to use the path to your 
+  sfm project and to use your preferred system user account
+
+* to verify that supervisord detected the new configuration file and
+  started the process, run supervisorctl:
+
+        % sudo supervisorctl
+
+* if you don't see a line that reads something like:
+
+        streamsample                     RUNNING    pid 889, uptime 21:45:25
+
+  then at the supervisor prompt, run 'update' to reload the config files:
+
+        supervisor> update
+
+  and start streamsample
+
+        supervisor> start streamsample
 
 
 development
