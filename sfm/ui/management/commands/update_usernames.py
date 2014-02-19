@@ -54,7 +54,7 @@ class Command(BaseCommand):
                         former_names = '{}'
                     oldnames = json.loads(former_names)
                     oldnames[datetime.datetime.utcnow().strftime(
-                        '%Y-%m-%d %H:%M:%S GMT')] = tweep.name
+                        '%Y-%m-%dT%H:%M:%SZ')] = tweep.name
                     tweep.former_names = json.dumps(oldnames)
                     tweep.name = user_status['screen_name']
                     #TODO: Is this save unnecessary, since it gets saved below?
