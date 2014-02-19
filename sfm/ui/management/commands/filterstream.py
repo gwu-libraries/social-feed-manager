@@ -42,9 +42,9 @@ class Command(BaseCommand):
                     default=settings.SAVE_INTERVAL_SECONDS, dest='interval',
                     help='how often to save data (default=%s)'
                     % settings.SAVE_INTERVAL_SECONDS),
-        make_option('--tfilterid', action='store',
+        make_option('--tfilterid', action='store', dest='tfilterid',
                     default=None,
-                    help='specify the twitter filter name')
+                    help='specify the twitter filter id')
     )
 
     def handle(self, *args, **options):
@@ -76,10 +76,10 @@ class Command(BaseCommand):
             auth.set_access_token(sa.tokens['oauth_token'],
                                   sa.tokens['oauth_token_secret'])
             if options.get('tfilterid', None):
-                twitter_filters = TwitterFilter.objects.filter(
-                    name=options.get('tfilterid'))
-                for rule in twitter_filters:
-                    if rule.is_active is True and options.get('save', True):
+                twitter_filters = twitter_filters.filter(
+                    id=options.get('tfilterid'))
+                for rules in twitter_filters:
+                    if rules.is_active is True and options.get('save', True):
                         listener = RotatingFile(
                             filename_prefix='filter',
                             save_interval_seconds=options['interval'],
@@ -88,6 +88,7 @@ class Command(BaseCommand):
                         stream.filter(
                             track=words, follow=people, locations=locations)
                     else:
+                        print "stdout message"
                         listener = StdOutListener()
                         stream = tweepy.Stream(auth, listener)
                         StdOutListener(stream.filter(
@@ -100,6 +101,7 @@ class Command(BaseCommand):
                 stream = tweepy.Stream(auth, listener)
                 stream.filter(track=words, follow=people, locations=locations)
             else:
+                print " save stdout message"
                 listener = StdOutListener()
                 stream = tweepy.Stream(auth, listener)
                 StdOutListener(stream.filter(
