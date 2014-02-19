@@ -43,8 +43,7 @@ class Command(BaseCommand):
                     help='how often to save data (default=%s)'
                     % settings.SAVE_INTERVAL_SECONDS),
         make_option('--tfilterid', action='store', dest='tfilterid',
-                    default=None,
-                    help='specify the twitter filter id')
+                    default=None, help='specify the twitter filter id')
     )
 
     def handle(self, *args, **options):
@@ -88,7 +87,6 @@ class Command(BaseCommand):
                         stream.filter(
                             track=words, follow=people, locations=locations)
                     else:
-                        print "stdout message"
                         listener = StdOutListener()
                         stream = tweepy.Stream(auth, listener)
                         StdOutListener(stream.filter(
