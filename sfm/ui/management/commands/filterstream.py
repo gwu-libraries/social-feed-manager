@@ -101,7 +101,6 @@ class Command(BaseCommand):
                 stream = tweepy.Stream(auth, listener)
                 stream.filter(track=words, follow=people, locations=locations)
             else:
-                print " save stdout message"
                 listener = StdOutListener()
                 stream = tweepy.Stream(auth, listener)
                 StdOutListener(stream.filter(
