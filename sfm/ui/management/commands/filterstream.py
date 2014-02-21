@@ -49,6 +49,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         twitter_filters = TwitterFilter.objects.filter(is_active=True)
+        if options.get('tfilterid', None):
+            twitter_filters = twitter_filters.filter(
+                id=options.get('tfilterid'))
         if not twitter_filters:
             if options.get('verbose', False):
                 print 'no twitter_filters to filter on'
@@ -75,23 +78,6 @@ class Command(BaseCommand):
                                        settings.TWITTER_CONSUMER_SECRET)
             auth.set_access_token(sa.tokens['oauth_token'],
                                   sa.tokens['oauth_token_secret'])
-            if options.get('tfilterid', None):
-                twitter_filters = twitter_filters.filter(
-                    id=options.get('tfilterid'))
-                for rules in twitter_filters:
-                    if rules.is_active is True and options.get('save', True):
-                        listener = RotatingFile(
-                            filename_prefix='filter',
-                            save_interval_seconds=options['interval'],
-                            data_dir=options['dir'])
-                        stream = tweepy.Stream(auth, listener)
-                        stream.filter(
-                            track=words, follow=people, locations=locations)
-                    else:
-                        listener = StdOutListener()
-                        stream = tweepy.Stream(auth, listener)
-                        StdOutListener(stream.filter(
-                            track=words, follow=people, locations=locations))
             if options.get('save', True):
                 listener = RotatingFile(
                     filename_prefix='filter',
