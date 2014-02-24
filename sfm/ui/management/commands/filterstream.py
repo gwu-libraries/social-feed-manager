@@ -43,10 +43,15 @@ class Command(BaseCommand):
                     default=settings.SAVE_INTERVAL_SECONDS, dest='interval',
                     help='how often to save data (default=%s)'
                     % settings.SAVE_INTERVAL_SECONDS),
+        make_option('--tfilterid', action='store', dest='tfilterid',
+                    default=None, help='specify the twitter filter id')
     )
 
     def handle(self, *args, **options):
         twitter_filters = TwitterFilter.objects.filter(is_active=True)
+        if options.get('tfilterid', None):
+            twitter_filters = twitter_filters.filter(
+                id=options.get('tfilterid'))
         if not twitter_filters:
             if options.get('verbose', False):
                 print 'no twitter_filters to filter on'
@@ -73,15 +78,18 @@ class Command(BaseCommand):
                                        settings.TWITTER_CONSUMER_SECRET)
             auth.set_access_token(sa.tokens['oauth_token'],
                                   sa.tokens['oauth_token_secret'])
-            if options.get('save', False):
-                listener = StdOutListener()
-            else:
+            if options.get('save', True):
                 listener = RotatingFile(
                     filename_prefix='filter',
                     save_interval_seconds=options['interval'],
                     data_dir=options['dir'])
-            stream = tweepy.Stream(auth, listener)
-            stream.filter(track=words, follow=people, locations=locations)
+                stream = tweepy.Stream(auth, listener)
+                stream.filter(track=words, follow=people, locations=locations)
+            else:
+                listener = StdOutListener()
+                stream = tweepy.Stream(auth, listener)
+                StdOutListener(stream.filter(
+                    track=words, follow=people, locations=locations))
         except Exception, e:
             if options.get('verbose', False):
                 print 'Disconnected from twitter:', e
