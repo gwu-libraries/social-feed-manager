@@ -104,7 +104,10 @@ class TwitterUserSet(m.Model):
 
 class TwitterUser(m.Model):
     name = m.TextField(db_index=True)
-    date_last_checked = m.DateTimeField(db_index=True, auto_now=True)
+    date_last_checked = m.DateTimeField(db_index=True, auto_now=True,
+                                        help_text='Date twitter uid was \
+                                                   last checked for \
+                                                   username changes')
     uid = m.BigIntegerField(unique=True)
     former_names = m.TextField(default='{}', blank=True)
     is_active = m.BooleanField(default=True)
@@ -285,9 +288,24 @@ class TwitterFilter(m.Model):
     user = m.ForeignKey(User)
     name = m.CharField(max_length=255, unique=True)
     is_active = m.BooleanField(default=False)
-    people = m.TextField(blank=True)
-    words = m.TextField(blank=True)
-    locations = m.TextField(blank=True)
+    people = m.TextField(blank=True,
+                         help_text="""A comma-separated list of user IDs, \
+indicating the users to return statuses for in the stream. See the \
+<a href="https://dev.twitter.com/docs/streaming-apis/parameters#follow" \
+onclick="window.open(this.href); return false;">follow parameter \
+documentation</a> for more information.""")
+    words = m.TextField(blank=True,
+                        help_text="""Keywords to track. Phrases of keywords \
+are specified by a comma-separated list. See \
+<a href="https://dev.twitter.com/docs/streaming-apis/parameters#track" \
+onclick="window.open(this.href); return false;">the track parameter \
+documentation</a> for more information.""")
+    locations = m.TextField(blank=True,
+                            help_text="""
+Specifies a set of bounding boxes to track. See the \
+<a href="https://dev.twitter.com/docs/streaming-apis/parameters#locations" \
+onclick="window.open(this.href); return false;">locations parameter \
+documentation</a> for more information.""")
 
     def __unicode__(self):
         return '%s' % self.id
