@@ -4,7 +4,8 @@ from ui import models as m
 
 
 class TwitterFilterAdmin(admin.ModelAdmin):
-    list_display = ['id', 'is_active', 'words', 'people', 'locations']
+    list_display = ['id', 'name', 'user', 'is_active', 'words', 'people',
+                    'locations']
     list_filter = ['is_active']
     search_fields = ['words', 'people']
 admin.site.register(m.TwitterFilter, TwitterFilterAdmin)
