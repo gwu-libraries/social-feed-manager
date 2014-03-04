@@ -285,8 +285,10 @@ class TwitterUserTimelineError(m.Model):
 
 
 class TwitterFilter(m.Model):
-    user = m.ForeignKey(User)
-    name = m.CharField(max_length=255, unique=True)
+    name = m.CharField(max_length=255, unique=True,
+                       help_text="Name of this TwitterFilter")
+    user = m.ForeignKey(User,
+                        help_text="Account to use for authentication")
     is_active = m.BooleanField(default=False)
     people = m.TextField(blank=True,
                          help_text="""A comma-separated list of user IDs, \
