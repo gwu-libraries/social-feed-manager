@@ -52,6 +52,8 @@ class Command(BaseCommand):
         if options.get('tfilterid', None):
             twitter_filters = twitter_filters.filter(
                 id=options.get('tfilterid'))
+            for rule in twitter_filters:
+                filename_new_prefix = 'twitter-filterid-%s' % rule.id
         if not twitter_filters:
             if options.get('verbose', False):
                 print 'no twitter_filters to filter on'
@@ -78,6 +80,13 @@ class Command(BaseCommand):
                                        settings.TWITTER_CONSUMER_SECRET)
             auth.set_access_token(sa.tokens['oauth_token'],
                                   sa.tokens['oauth_token_secret'])
+            if options.get('tfilterid', True) and options.get('save', True):
+                listener = RotatingFile(
+                    filename_prefix=filename_new_prefix,
+                    save_interval_seconds=options['interval'],
+                    data_dir=options['dir'])
+                stream = tweepy.Stream(auth, listener)
+                stream.filter(track=words, follow=people, locations=locations)
             if options.get('save', True):
                 listener = RotatingFile(
                     filename_prefix='filter',
