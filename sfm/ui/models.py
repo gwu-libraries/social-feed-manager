@@ -12,12 +12,16 @@ from tweepy.streaming import StreamListener
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db import models as m
+from django.core.management import call_command
 from django.db.models.signals import post_save
+from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.db import models as m
 from django.utils import timezone
 
+from ui.utils import delete_conf_file
 from ui.utils import set_wait_time
+#from ui.management.command.createconf import delete_conf_file
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
@@ -309,3 +313,13 @@ documentation</a> for more information.""")
 
     def __unicode__(self):
         return '%s' % self.id
+
+
+@receiver(post_save, sender=TwitterFilter)
+def call_createconf(sender, instance, **kwargs):
+    call_command('createconf', 'tfilterid=instance.id')
+
+
+@receiver(post_delete, sender=TwitterFilter)
+def call_delete_conf(sender, instance, **kwargs):
+    delete_conf_file(instance.id)

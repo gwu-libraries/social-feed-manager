@@ -1,4 +1,11 @@
+import os.path
 import time
+
+#from django.core.management import call_command
+#from django.db.models.signals import post_save
+#from django.dispatch import receiver
+
+#from ui.models import TwitterFilter
 
 # A little added cushion
 WAIT_BUFFER_SECONDS = 2
@@ -24,3 +31,10 @@ def set_wait_time(last_response):
     while wait_time < WAIT_BUFFER_SECONDS:
         wait_time += WAIT_BUFFER_SECONDS
     return wait_time
+
+
+def delete_conf_file(tfilterid):
+    filename = "sfm-twitter-rule#%s-filter.conf" % tfilterid
+    file_path = "<PATH TO SUPERVISOR CONF FILES>/%s" % filename
+    if os.path.exists(file_path):
+        os.remove(file_path)
