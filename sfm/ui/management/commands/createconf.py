@@ -33,7 +33,7 @@ class Command(BaseCommand):
                        "stderr_logfile=/var/log/filterstream.err.log" + '\n' \
                        "stdout_logfile=/var/log/filterstream.out.log"
         filename = "sfm-twitter-rule#%s-filter.conf" % filterid.id
-        file_path = "<PATH TO SUPERVISOR CONF>/%s" % filename
+        file_path = "/home/anksharm/social-feed-manager/sfm/conf/%s" % filename
         if os.path.exists(file_path):
             update_conf_file(file_path, filterid.id)
         else:
@@ -44,3 +44,17 @@ class Command(BaseCommand):
 def update_conf_file(file_path, filterid):
     os.remove(file_path)
     call_command('createconf', 'tfilterid=filterid')
+
+'''
+def check_stream_conflict(tfilterid):
+    if filterstream is running and samplestream is running :
+        raise Tweepyerror( " conflicting streams")
+    else:
+        write /work
+
+    twitter_filters = TwitterFilter.objects.filter(is_active=True)
+    sample_filters = TwitterFilter.objects.filter(is
+    if options.get('tfilterid', None):
+        twitter_filters = twitter_filters.filter(id=options.get('tfilterid'))
+        for filterid in twitter_filters:
+'''
