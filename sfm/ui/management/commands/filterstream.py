@@ -89,7 +89,7 @@ class Command(BaseCommand):
                 stream.filter(track=words, follow=people, locations=locations)
             if options.get('save', True):
                 listener = RotatingFile(
-                    filename_prefix='filter',
+                    filename_prefix='twitter-filter-all',
                     save_interval_seconds=options['interval'],
                     data_dir=options['dir'])
                 stream = tweepy.Stream(auth, listener)
