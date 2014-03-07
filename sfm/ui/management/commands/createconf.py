@@ -1,4 +1,4 @@
-import os.path
+import os
 from optparse import make_option
 
 from django.core.management.base import BaseCommand
@@ -44,17 +44,3 @@ class Command(BaseCommand):
 def update_conf_file(file_path, filterid):
     os.remove(file_path)
     call_command('createconf', 'tfilterid=filterid')
-
-'''
-def check_stream_conflict(tfilterid):
-    if filterstream is running and samplestream is running :
-        raise Tweepyerror( " conflicting streams")
-    else:
-        write /work
-
-    twitter_filters = TwitterFilter.objects.filter(is_active=True)
-    sample_filters = TwitterFilter.objects.filter(is
-    if options.get('tfilterid', None):
-        twitter_filters = twitter_filters.filter(id=options.get('tfilterid'))
-        for filterid in twitter_filters:
-'''
