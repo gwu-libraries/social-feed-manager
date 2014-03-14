@@ -290,17 +290,17 @@ class TwitterFilter(m.Model):
     user = m.ForeignKey(User,
                         help_text="Account to use for authentication")
     is_active = m.BooleanField(default=False)
-    people = m.TextField(blank=True,
-                         help_text="""A comma-separated list of user IDs, \
-indicating the users to return statuses for in the stream. See the \
-<a href="https://dev.twitter.com/docs/streaming-apis/parameters#follow" \
-onclick="window.open(this.href); return false;">follow parameter \
-documentation</a> for more information.""")
     words = m.TextField(blank=True,
                         help_text="""Keywords to track. Phrases of keywords \
 are specified by a comma-separated list. See \
 <a href="https://dev.twitter.com/docs/streaming-apis/parameters#track" \
 onclick="window.open(this.href); return false;">the track parameter \
+documentation</a> for more information.""")
+    people = m.TextField(blank=True,
+                         help_text="""A comma-separated list of user IDs, \
+indicating the users to return statuses for in the stream. See the \
+<a href="https://dev.twitter.com/docs/streaming-apis/parameters#follow" \
+onclick="window.open(this.href); return false;">follow parameter \
 documentation</a> for more information.""")
     locations = m.TextField(blank=True,
                             help_text="""
