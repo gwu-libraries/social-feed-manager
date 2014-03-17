@@ -13,18 +13,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
-#from django.db.models import signals
-from django.db.models.signals import post_delete
-from django.db.models.signals import post_save
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.db import models as m
 from django.utils import timezone
 
-from ui.utils import delete_conf_file
-from ui.utils import check_stream_conflict
-from ui.utils import set_wait_time
-#from ui.management.command.createconf import delete_conf_file
+from ui.utils import check_stream_conflict, delete_conf_file, set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')

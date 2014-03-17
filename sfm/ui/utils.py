@@ -4,9 +4,7 @@ import time
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-#from django.core.management import call_command
 
-#from ui.models import TwitterFilter
 
 # A little added cushion
 WAIT_BUFFER_SECONDS = 2
