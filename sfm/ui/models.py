@@ -13,7 +13,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
-from django.db.models import signals
+#from django.db.models import signals
 from django.db.models.signals import post_delete
 from django.db.models.signals import post_save
 from django.db.models.signals import pre_save
@@ -22,7 +22,7 @@ from django.db import models as m
 from django.utils import timezone
 
 from ui.utils import delete_conf_file
-#from ui.utils import check_stream_conflict
+from ui.utils import check_stream_conflict
 from ui.utils import set_wait_time
 #from ui.management.command.createconf import delete_conf_file
 
@@ -320,17 +320,13 @@ documentation</a> for more information.""")
 
 @receiver(pre_save, sender=TwitterFilter)
 def call_stream_conflict(sender, instance, **kwargs):
-    sample_userid = User.objects.get(username=
-                                     settings.TWITTER_DEFAULT_USERNAME)
-    filters_userid = User.objects.get(username=instance.user)
-    if filters_userid == sample_userid:
-        print " same Oauth cannot proceed"
-        return
+    if instance.is_active:
+        check_stream_conflict(instance.user)
+    return
 
 
 @receiver(post_save, sender=TwitterFilter)
 def call_create_conf(sender, instance, **kwargs):
-    print "filterid passed is %s" % instance.id
     call_command('createconf', 'tfilterid=instance.id')
 
 

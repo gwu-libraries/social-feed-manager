@@ -1,9 +1,9 @@
 import os.path
 import time
 
-
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 #from django.core.management import call_command
 
 #from ui.models import TwitterFilter
@@ -35,8 +35,8 @@ def set_wait_time(last_response):
 
 
 def delete_conf_file(tfilterid):
-    filename = "sfm-twitter-rule#%s-filter.conf" % tfilterid
-    file_path = "/home/anksharm/social-feed-manager/sfm/conf/%s" % filename
+    filename = "sfm-twitter-filter-%s.conf" % tfilterid
+    file_path = "%s/%s" % (settings.FILEPATH, filename)
     if os.path.exists(file_path):
         os.remove(file_path)
 
@@ -45,6 +45,6 @@ def check_stream_conflict(username):
     sample_userid = User.objects.get(username=
                                      settings.TWITTER_DEFAULT_USERNAME)
     filters_userid = User.objects.get(username=username)
-    if filters_userid == sample_userid:
-        print " same Oauth cannot proceed"
-    return
+    if filters_userid.id == sample_userid.id:
+        raise ValidationError('same Oauth for filterstream ' +
+                              'and samplestream')
