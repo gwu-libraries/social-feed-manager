@@ -53,7 +53,7 @@ class Command(BaseCommand):
             twitter_filters = twitter_filters.filter(
                 id=options.get('tfilterid'))
             for rule in twitter_filters:
-                filename_new_prefix = 'twitter-filterid-%s' % rule.id
+                filename_new_prefix = 'twitter-filter-%s' % rule.id
         if not twitter_filters:
             if options.get('verbose', False):
                 print 'no twitter_filters to filter on'
