@@ -204,8 +204,16 @@ directories regularly.
 
         % sudo chmod +w supervisor-sfm-conf
 
-* edit supervisor-sfm-conf/streamsample.conf to use the path to your 
-  sfm project and to use your preferred system user account
+* copy supervisor-sfm-conf/streamsample.conf.template to
+  supervisor-sfm-conf/streamsample.conf 
+
+        % cd supervisor-sfm-conf
+        % cp streamsample.conf.template streamsample.conf
+
+  and edit streamsample.conf  to use the path to your sfm project, the value
+  of the PATH environment variable set within your virtualenv, and to use your
+  preferred system user account (to avoid having the output files owned by
+  root).
 
 * to verify that supervisord detected the new configuration file and
   started the process, run supervisorctl:
