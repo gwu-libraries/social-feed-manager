@@ -1,4 +1,5 @@
 import os
+import stat
 from optparse import make_option
 
 from django.conf import settings
@@ -41,6 +42,11 @@ class Command(BaseCommand):
             else:
                 fp = open(file_path, "wb")
                 fp.write(contents)
+                filestatus = os.stat(file_path)
+                # do a chmod +w
+                os.chmod(file_path, filestatus.st_mode | stat.S_IXUSR |
+                         stat.S_IXGRP | stat.S_IXOTH)
+                fp.close()
 
 
 def update_conf_file(file_path, filterid):
