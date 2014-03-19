@@ -13,8 +13,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models as m
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils import timezone
 
 from ui.utils import set_wait_time
@@ -108,7 +106,7 @@ class TwitterUser(m.Model):
                                         help_text='Date twitter uid was \
                                                    last checked for \
                                                    username changes')
-    uid = m.BigIntegerField(unique=True)
+    uid = m.BigIntegerField(unique=True, blank=True, null=True)
     former_names = m.TextField(default='{}', blank=True)
     is_active = m.BooleanField(default=True)
     sets = m.ManyToManyField(TwitterUserSet, blank=True)
@@ -123,16 +121,43 @@ class TwitterUser(m.Model):
     def clean(self):
         # remove left whitespace, leading '@', and right whitespace
         self.name = self.name.lstrip().lstrip("@").rstrip()
+
+        # check to prevent duplicates
+        dups = TwitterUser.objects.filter(name=self.name)
+        if dups:
+            raise ValidationError('TwitterUser names must be unique. %s \
+                                   is already present.' % self.name)
+
+        # if is_active is (or is being changed to) False,
+        # then skip the validation of the Twitter username,
+        # We want to allow un-chcking is_active in cases where, e.g.
+        # the Twitter account (and id) may have been deleted
+        if self.is_active is False:
+            return
+
         # look up user
         try:
             api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
+        # TODO: Verify whether this try/except is even necessary, given that
+        # most of authenticated_api swallows its own exceptions (but will
+        # return None, which is the basis for the "if api is None" clause
+        # that follows.
         except tweepy.error.TweepError as e:
-            raise ValidationError('Could not connect to Twitter API using default user. Error: %s' % e)
+            raise ValidationError('Could not connect to Twitter \
+                                   API using configured credentials. \
+                                   Error: %s' % e)
+        if api is None:
+            raise ValidationError('Could not connect to Twitter \
+                                   API using configured credentials.')
         try:
             user_status = api.get_user(screen_name=self.name)
         except tweepy.error.TweepError as e:
-            raise ValidationError('Twitter screen name \'%s\' was not found.'
-                                  % self.name)
+            if "'code': 34" in e.reason:
+                raise ValidationError('Twitter screen name \'%s\' was not \
+                                      found.' % self.name)
+            if "'code': 32" in e.reason:
+                raise ValidationError('Could not connect to Twitter \
+                                       API using configured credentials.')
 
         self.uid = user_status['id']
         # use the screen name from twitter (may be capitalized differently)
