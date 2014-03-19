@@ -8,6 +8,7 @@ class TwitterFilterAdmin(admin.ModelAdmin):
                     'locations']
     list_filter = ['is_active']
     search_fields = ['name', 'words', 'people', 'locations']
+    fields = ('name', 'user', 'is_active', 'words', 'people', 'locations')
 admin.site.register(m.TwitterFilter, TwitterFilterAdmin)
 
 
