@@ -80,16 +80,13 @@ class Command(BaseCommand):
                                        settings.TWITTER_CONSUMER_SECRET)
             auth.set_access_token(sa.tokens['oauth_token'],
                                   sa.tokens['oauth_token_secret'])
-            if options.get('tfilterid', True) and options.get('save', True):
-                listener = RotatingFile(
-                    filename_prefix=filename_new_prefix,
-                    save_interval_seconds=options['interval'],
-                    data_dir=options['dir'])
-                stream = tweepy.Stream(auth, listener)
-                stream.filter(track=words, follow=people, locations=locations)
+            if options.get('tfilterid', True):
+                filename_prefix = filename_new_prefix
+            else:
+                filename_prefix = 'twitter-filter-all'
             if options.get('save', True):
                 listener = RotatingFile(
-                    filename_prefix='twitter-filter-all',
+                    filename_prefix=filename_prefix,
                     save_interval_seconds=options['interval'],
                     data_dir=options['dir'])
                 stream = tweepy.Stream(auth, listener)

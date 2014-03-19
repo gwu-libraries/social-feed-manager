@@ -21,28 +21,28 @@ class Command(BaseCommand):
             twitter_filters = twitter_filters.filter(
                 id=options.get('tfilterid'))
         for filterid in twitter_filters:
-            contents = "[program:filterstream]" + '\n' + \
-                       "command=%s/manage.py " % settings.SFMPATH + \
+            contents = "[program:filterstream-%s]" % filterid.id + '\n' + \
+                       "command=%s/manage.py " % settings.SFM_LOCATION + \
                        "filterstream "  \
                        "--tfilterid=%s --save" % filterid.id + '\n' \
                        "environment=PATH=" \
-                       "'%s/bin'" % settings.SFMENV + '\n' \
-                       "user=%s (defaults to root otherwise)" \
-                       % settings.USER + '\n' \
+                       "'%s/bin'" % settings.SFM_ENV_PATH + '\n' \
+                       "user=%s" % settings.SUPERVISOR_PROCESS_USER + '\n' \
                        "autostart=true" + '\n' \
                        "autorestart=true" + '\n' \
-                       "stderr_logfile=/var/log/filterstream.err.log" + '\n' \
-                       "stdout_logfile=/var/log/filterstream.out.log"
-        filename = "sfm-twitter-filter-%s.conf" % filterid.id
-        file_path = "%s/%s" % (settings.FILEPATH, filename)
-        if os.path.exists(file_path):
-            update_conf_file(file_path, filterid.id)
-        else:
-            fp = open(file_path, "wb")
-            fp.write(contents)
+                       "stderr_logfile=/var/log/filterstream/" \
+                       "filterstream-%s.err.log" % filterid.id + '\n' \
+                       "stdout_logfile=/var/log/filterstream/" \
+                       "filterstream.out.log"
+            filename = "sfm-twitter-filter-%s.conf" % filterid.id
+            file_path = "%s/%s" % (settings.FILEPATH, filename)
+            if os.path.exists(file_path):
+                update_conf_file(file_path, filterid.id)
+            else:
+                fp = open(file_path, "wb")
+                fp.write(contents)
 
 
 def update_conf_file(file_path, filterid):
-    if os.path.exists(file_path):
-        os.remove(file_path)
-    call_command('createconf', 'tfilterid=filterid')
+    os.remove(file_path)
+    call_command('createconf', tfilterid=filterid)

@@ -1,9 +1,7 @@
-import os.path
+import os
 import time
 
 from django.conf import settings
-from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 
 
 # A little added cushion
@@ -37,12 +35,3 @@ def delete_conf_file(tfilterid):
     file_path = "%s/%s" % (settings.FILEPATH, filename)
     if os.path.exists(file_path):
         os.remove(file_path)
-
-
-def check_stream_conflict(username):
-    sample_userid = User.objects.get(username=
-                                     settings.TWITTER_DEFAULT_USERNAME)
-    filters_userid = User.objects.get(username=username)
-    if filters_userid.id == sample_userid.id:
-        raise ValidationError('same Oauth for filterstream ' +
-                              'and samplestream')

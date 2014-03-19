@@ -13,12 +13,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
-from django.db.models.signals import post_delete, post_save, pre_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.db import models as m
 from django.utils import timezone
 
-from ui.utils import check_stream_conflict, delete_conf_file, set_wait_time
+from ui.utils import delete_conf_file, set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
@@ -128,7 +128,8 @@ class TwitterUser(m.Model):
         try:
             api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
         except tweepy.error.TweepError as e:
-            raise ValidationError('Could not connect to Twitter API using default user. Error: %s' % e)
+            raise ValidationError('Could not connect to Twitter API using'
+                                  'default user. Error: %s' % e)
         try:
             user_status = api.get_user(screen_name=self.name)
         except tweepy.error.TweepError as e:
@@ -311,17 +312,18 @@ documentation</a> for more information.""")
     def __unicode__(self):
         return '%s' % self.id
 
-
-@receiver(pre_save, sender=TwitterFilter)
-def call_stream_conflict(sender, instance, **kwargs):
-    if instance.is_active:
-        check_stream_conflict(instance.user)
-    return
+    def clean(self):
+        if str(self.user) == str(settings.TWITTER_DEFAULT_USERNAME):
+            raise ValidationError('Oops! The Streamsample is configured'
+                                  ' under same OAuth username %s' % self.user)
 
 
 @receiver(post_save, sender=TwitterFilter)
 def call_create_conf(sender, instance, **kwargs):
-    call_command('createconf', 'tfilterid=instance.id')
+    if instance.is_active is True:
+        call_command('createconf', tfilterid=instance.id)
+    else:
+        delete_conf_file(instance.id)
 
 
 @receiver(post_delete, sender=TwitterFilter)
