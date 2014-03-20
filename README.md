@@ -232,6 +232,25 @@ directories regularly.
 
         supervisor> start streamsample
 
+* Supervisor can also be used to manage filterstream processes.  As you [create/modify
+  and] activate TwitterFilters using the admin UI, SFM creates supervisor
+  a configuration file for each TwitterFilter.  It will also delete a configuration
+  file when you mark a TwitterFilter as inactive.
+
+  However, if you have pre-existing, active TwitterFilters which were created prior to
+  SFM release m4_001, you will need to run the ```createconf``` command to create
+  supervisor configuration files for your active TwitterFilters.  With your virtualenv
+  activated (see above), execute:
+
+        % ./manage.py createconf
+
+* IMPORTANT: Currently supervisor does not appear to automatically detect 
+  additions/deletions/changes to the filterstream configuration files that occur
+  when you run createconf and/or make changes to TwitterFilter.  To "refresh"
+  supervisor, execute:
+
+        % sudo supervisorctl update
+
 
 development
 -----------
