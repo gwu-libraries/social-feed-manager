@@ -4,13 +4,13 @@ from optparse import make_option
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.core.management import call_command
 
 from ui.models import TwitterFilter
 
 
 class Command(BaseCommand):
-    help = "command to save the process config files for supervisord"
+    help = "command to create/update filterstream process config files \
+            for supervisord"
     option_list = BaseCommand.option_list + (
         make_option('--tfilterid', action='store', default=None,
                     dest='tfilterid', help='specify the filter rule id'),
@@ -21,34 +21,37 @@ class Command(BaseCommand):
         if options.get('tfilterid', None):
             twitter_filters = twitter_filters.filter(
                 id=options.get('tfilterid'))
-        for filterid in twitter_filters:
-            contents = "[program:filterstream-%s]" % filterid.id + '\n' + \
-                       "command=%s/manage.py " % settings.SFM_LOCATION + \
+        for tfilter in twitter_filters:
+            contents = "[program:filterstream-%s]" % tfilter.id + '\n' + \
+                       "command=%s/sfm/manage.py " % settings.SFM_LOCATION + \
                        "filterstream "  \
-                       "--tfilterid=%s --save" % filterid.id + '\n' \
+                       "--tfilterid=%s --save" % tfilter.id + '\n' \
                        "environment=PATH=" \
-                       "'%s/bin'" % settings.SFM_ENV_PATH + '\n' \
+                       "'%s'" % settings.SFM_ENV_PATH + '\n' \
                        "user=%s" % settings.SUPERVISOR_PROCESS_USER + '\n' \
                        "autostart=true" + '\n' \
                        "autorestart=true" + '\n' \
-                       "stderr_logfile=/var/log/filterstream/" \
-                       "filterstream-%s.err.log" % filterid.id + '\n' \
-                       "stdout_logfile=/var/log/filterstream/" \
-                       "filterstream.out.log"
-            filename = "sfm-twitter-filter-%s.conf" % filterid.id
-            file_path = "%s/%s" % (settings.FILEPATH, filename)
+                       "stderr_logfile=/var/log/" \
+                       "sfm-filterstream-%s.err.log" % tfilter.id + '\n' \
+                       "stdout_logfile=/var/log/" \
+                       "sfm-filterstream-%s.out.log" % tfilter.id
+            filename = "sfm-twitter-filter-%s.conf" % tfilter.id
+            file_path = "%s/supervisor-sfm-conf/%s" % (settings.SFM_LOCATION,
+                                                       filename)
+            # Remove any existing config file
+            # we don't assume that the contents are up-to-date
+            # (PATH settings may have changed, etc.)
             if os.path.exists(file_path):
-                update_conf_file(file_path, filterid.id)
-            else:
-                fp = open(file_path, "wb")
-                fp.write(contents)
-                filestatus = os.stat(file_path)
-                # do a chmod +w
-                os.chmod(file_path, filestatus.st_mode | stat.S_IXUSR |
-                         stat.S_IXGRP | stat.S_IXOTH)
-                fp.close()
+                os.remove(file_path)
+                print "Removed old configuration file for TwitterFilter %d" % \
+                    tfilter.id
 
-
-def update_conf_file(file_path, filterid):
-    os.remove(file_path)
-    call_command('createconf', tfilterid=filterid)
+            fp = open(file_path, "wb")
+            fp.write(contents)
+            filestatus = os.stat(file_path)
+            # do a chmod +x
+            os.chmod(file_path, filestatus.st_mode | stat.S_IXUSR |
+                     stat.S_IXGRP | stat.S_IXOTH)
+            fp.close()
+            print "Created configuration file for TwitterFilter %d" % \
+                  tfilter.id
