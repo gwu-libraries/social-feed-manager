@@ -32,6 +32,7 @@ def set_wait_time(last_response):
 
 def delete_conf_file(tfilterid):
     filename = "sfm-twitter-filter-%s.conf" % tfilterid
-    file_path = "%s/%s" % (settings.FILEPATH, filename)
+    file_path = "%s/supervisor-sfm-conf/%s" % (settings.SFM_LOCATION,
+                                               filename)
     if os.path.exists(file_path):
         os.remove(file_path)
