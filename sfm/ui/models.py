@@ -313,9 +313,27 @@ documentation</a> for more information.""")
         return '%s' % self.id
 
     def clean(self):
-        if str(self.user) == str(settings.TWITTER_DEFAULT_USERNAME):
-            raise ValidationError('Oops! The Streamsample is configured'
-                                  ' under same OAuth username %s' % self.user)
+        # if it's inactive, then do no validation
+        if self.is_active is False:
+            return
+
+        # check against TWITTER_DEFAULT_USERNAME
+        if self.user.username == settings.TWITTER_DEFAULT_USERNAME:
+            raise ValidationError('''Streamsample is also configured to
+                                     authenticate as \'%s\'.  Please select
+                                     a different user or mark this filter as
+                                     inactive.''' % self.user.username)
+
+        # check against other active TwitterFilters' user.usernames
+        conflicting_tfs = \
+            TwitterFilter.objects.exclude(id=self.id).\
+            filter(is_active=True, user__username=self.user.username)
+        if conflicting_tfs:
+            raise ValidationError('''Filter %d is active and is configured
+                                     to authenticate as \'%s\'.
+                                     Please select a different user or mark
+                                     this filter as inactive.''' %
+                                  (conflicting_tfs[0].id, self.user.username))
 
 
 @receiver(post_save, sender=TwitterFilter)
