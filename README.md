@@ -233,8 +233,8 @@ directories regularly.
         supervisor> start streamsample
 
 * Supervisor can also be used to manage filterstream processes.  As you [create/modify
-  and] activate TwitterFilters using the admin UI, SFM creates supervisor
-  a configuration file for each TwitterFilter.  It will also delete a configuration
+  and] activate TwitterFilters using the admin UI, SFM creates a supervisor
+  configuration file for each TwitterFilter.  It will also delete a configuration
   file when you mark a TwitterFilter as inactive.
 
   However, if you have pre-existing, active TwitterFilters which were created prior to
