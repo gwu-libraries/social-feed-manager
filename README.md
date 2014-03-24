@@ -106,7 +106,9 @@ TWITTER_CONSUMER_SECRET
         % ./manage.py syncdb
 
     This will prompt you to create a superuser for administrating the
-    running app.  Create one and remember your account info.
+    running app (do not use the same username as a twitter account, or
+    the usernames will conflict and require an extra configuration step).
+    Create one and remember your account info.
 
 * run migrations for social_auth and ui
 
