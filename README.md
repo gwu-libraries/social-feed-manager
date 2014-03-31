@@ -35,11 +35,11 @@ or ask a friendly sysadmin for help:
 
         http://www.postgresql.org/docs/9.1/static/auth-pg-hba-conf.html
 
-        For example, you could add a line like this:
+  For example, you could add a line like this:
 
-        ```local   all             all                     md5```
+        local   all             all                     md5
 
-        Restart postgres when this is done.
+  Restart postgres when this is done.
 
         % sudo service postgresql restart
     
