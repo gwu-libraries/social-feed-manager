@@ -1,4 +1,8 @@
+import os
 import time
+
+from django.conf import settings
+
 
 # A little added cushion
 WAIT_BUFFER_SECONDS = 2
@@ -24,3 +28,11 @@ def set_wait_time(last_response):
     while wait_time < WAIT_BUFFER_SECONDS:
         wait_time += WAIT_BUFFER_SECONDS
     return wait_time
+
+
+def delete_conf_file(tfilterid):
+    filename = "sfm-twitter-filter-%s.conf" % tfilterid
+    file_path = "%s/supervisor-sfm-conf/%s" % (settings.SFM_LOCATION,
+                                               filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)

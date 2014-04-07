@@ -36,7 +36,7 @@ TEMPLATE_DIRS = (
 )
 
 DATA_DIR = '/PATH/TO/YOUR/DATA/DIR'
- 
+
 TWITTER_DEFAULT_USERNAME = 'MY FANCY USERNAME'
 TWITTER_CONSUMER_KEY = 'ITS CONSUMER KEY'
 TWITTER_CONSUMER_SECRET = 'ITS CONSUMER SECRET'
@@ -52,3 +52,20 @@ BRANDING = {
     #   logofile should be placed in static/img
     'logofile': '',
 }
+
+# --------------------------------------------------------
+# Settings used in writing supervisord configuration files
+
+# Should end in /social-feed-manager (no trailing slash)
+SFM_LOCATION = '/PATH/TO/YOUR/SFM/'
+
+# Recommend invoking your sfm virtualenv, executing 'echo $PATH'
+# at the command line, and pasting into SFM_ENV_PATH
+SFM_ENV_PATH = '/PATH/WITHIN/YOUR/VIRTUALENV'
+
+# Recommend configuring this to the system user who owns
+# the sfm files/folders, i.e. whoever you cloned the repo as.
+SUPERVISOR_PROCESS_USER = 'YOUR PREFERRED SYSTEM USER'
+
+# --------------------------------------------------------
+ 
