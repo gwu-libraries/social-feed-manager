@@ -35,11 +35,11 @@ or ask a friendly sysadmin for help:
 
         http://www.postgresql.org/docs/9.1/static/auth-pg-hba-conf.html
 
-        For example, you could add a line like this:
+  For example, you could add a line like this:
 
-        ```local   all             all                     md5```
+        local   all             all                     md5
 
-        Restart postgres when this is done.
+  Restart postgres when this is done.
 
         % sudo service postgresql restart
     
@@ -106,7 +106,9 @@ TWITTER_CONSUMER_SECRET
         % ./manage.py syncdb
 
     This will prompt you to create a superuser for administrating the
-    running app.  Create one and remember your account info.
+    running app (do not use the same username as a twitter account, or
+    the usernames will conflict and require an extra configuration step).
+    Create one and remember your account info.
 
 * run migrations for social_auth and ui
 
@@ -149,10 +151,10 @@ it under /sfm (spells out virtualenv-based paths, adjust as necessary):
 
         5 */2 * * * cd /sfm/social-feed-manager && /sfm/social-feed-manager/ENV/bin/python /sfm/social-feed-manager/sfm/manage.py user_timeline
 
-* use the admin UI to add a Rule, which specifies follow, track, or locations
-to use to poll from twitter's statuses/filter function. then you can poll
-with the filterstream command, which will write out gzipped files at intervals
-you can specify:
+* use the admin UI to add a TwitterFilter, which specifies follow, track, or
+locations to use to poll from twitter's statuses/filter function. then you can
+poll with the filterstream command, which will write out gzipped files at
+intervals you can specify:
 
         % ./manage.py filterstream
 
