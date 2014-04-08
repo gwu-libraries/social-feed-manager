@@ -31,6 +31,40 @@ class TwitterUserItemAdmin(admin.ModelAdmin):
 admin.site.register(m.TwitterUserItem, TwitterUserItemAdmin)
 
 
+class DurationMicrosecondsFilter(admin.SimpleListFilter):
+    title = 'duration (ms)'
+    parameter_name = 'duration_microseconds'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('lt-0.25', '<= 0.25'),
+            ('0.25-0.5', '0.25 - 0.5'),
+            ('0.5-2', '0.5 - 2'),
+            ('gt-2', '>= 2'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'lt-0.25':
+            return queryset.filter(duration_microseconds__lte=0.25)
+        if self.value() == '0.25-0.5':
+            return queryset.filter(duration_microseconds__gt=0.25,
+                                   duration_microseconds__lte=0.5)
+        if self.value() == '0.5-2':
+            return queryset.filter(duration_microseconds__gt=0.5,
+                                   duration_microseconds__lte=2)
+        if self.value() == 'gt-2':
+            return queryset.filter(duration_microseconds__gt=2)
+
+
+class TwitterUserItemUrlAdmin(admin.ModelAdmin):
+    list_display = ['id', 'item', 'final_status', 'duration_microseconds',
+                    'expanded_url', 'final_url']
+    list_filter = ['date_checked', 'final_status', DurationMicrosecondsFilter]
+    search_fields = ['id', 'start_url', 'expanded_url', 'final_url']
+    readonly_fields = ['item']
+admin.site.register(m.TwitterUserItemUrl, TwitterUserItemUrlAdmin)
+
+
 class TwitterUserSetAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'name', 'notes']
     search_fields = ['user', 'name']
