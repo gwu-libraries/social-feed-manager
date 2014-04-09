@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 outstream.write(json_value)
             except tweepy.error.TweepError as e:
                 if options.get('outputfile', True):
-                    logfile = outfile.replace('.txt', '.log')
+                    logfile = infile + '.log'
                     flog = open(logfile, 'a')
                     content = 'Error: %s for the tweetid: %s' \
                               % (e, tweetidline) + '\n'
