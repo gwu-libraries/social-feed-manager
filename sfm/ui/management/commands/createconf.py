@@ -23,7 +23,8 @@ class Command(BaseCommand):
                 id=options.get('tfilterid'))
         for tfilter in twitter_filters:
             contents = "[program:filterstream-%s]" % tfilter.id + '\n' + \
-                       "command=%s/sfm/manage.py " % settings.SFM_LOCATION + \
+                       "command=%s/manage.py " % \
+                       os.path.abspath(os.path.dirname(__name__)) + \
                        "filterstream "  \
                        "--tfilterid=%s --save" % tfilter.id + '\n' \
                        "environment=PATH=" \
@@ -36,8 +37,8 @@ class Command(BaseCommand):
                        "stdout_logfile=/var/log/" \
                        "sfm-filterstream-%s.out.log" % tfilter.id
             filename = "sfm-twitter-filter-%s.conf" % tfilter.id
-            file_path = "%s/supervisor-sfm-conf/%s" % (settings.SFM_LOCATION,
-                                                       filename)
+            file_path = "%s/sfm/supervisor-sfm-conf/%s" % \
+                (os.path.abspath(os.path.dirname(__name__)), filename)
             # Remove any existing config file
             # we don't assume that the contents are up-to-date
             # (PATH settings may have changed, etc.)

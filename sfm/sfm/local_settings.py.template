@@ -56,9 +56,6 @@ BRANDING = {
 # --------------------------------------------------------
 # Settings used in writing supervisord configuration files
 
-# Should end in /social-feed-manager (no trailing slash)
-SFM_LOCATION = '/PATH/TO/YOUR/SFM/'
-
 # Recommend invoking your sfm virtualenv, executing 'echo $PATH'
 # at the command line, and pasting into SFM_ENV_PATH
 SFM_ENV_PATH = '/PATH/WITHIN/YOUR/VIRTUALENV'
