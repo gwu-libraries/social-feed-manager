@@ -106,7 +106,7 @@ class TwitterUser(m.Model):
                                         help_text='Date twitter uid was \
                                                    last checked for \
                                                    username changes')
-    uid = m.BigIntegerField(unique=True, blank=True, null=True)
+    uid = m.BigIntegerField(unique=True)
     former_names = m.TextField(default='{}', blank=True)
     is_active = m.BooleanField(default=True)
     sets = m.ManyToManyField(TwitterUserSet, blank=True)
@@ -119,29 +119,20 @@ class TwitterUser(m.Model):
         return ','.join([str(dc.num_tweets) for dc in self.daily_counts.all()])
 
     def clean(self):
+        # if we are updating an existing TwitterUser
+        # AND is_active=False
+        if self.id is not None and self.is_active is False:
+            return
+        # else proceed because:
+        #     either we are creating rather than updating
+        #     OR we are updating with active=True
+
         # remove left whitespace, leading '@', and right whitespace
         self.name = self.name.lstrip().lstrip("@").rstrip()
-
-        # check to prevent duplicates
-        dups = TwitterUser.objects.filter(name=self.name)
-        if dups:
-            raise ValidationError('TwitterUser names must be unique. %s \
-                                   is already present.' % self.name)
-
-        # if is_active is (or is being changed to) False,
-        # then skip the validation of the Twitter username,
-        # We want to allow un-chcking is_active in cases where, e.g.
-        # the Twitter account (and id) may have been deleted
-        if self.is_active is False:
-            return
-
         # look up user
         try:
-            api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
-        # TODO: Verify whether this try/except is even necessary, given that
-        # most of authenticated_api swallows its own exceptions (but will
-        # return None, which is the basis for the "if api is None" clause
-        # that follows.
+            api = authenticated_api(
+                username=settings.TWITTER_DEFAULT_USERNAME)
         except tweepy.error.TweepError as e:
             raise ValidationError('Could not connect to Twitter \
                                    API using configured credentials. \
@@ -153,11 +144,23 @@ class TwitterUser(m.Model):
             user_status = api.get_user(screen_name=self.name)
         except tweepy.error.TweepError as e:
             if "'code': 34" in e.reason:
-                raise ValidationError('Twitter screen name \'%s\' was not \
-                                      found.' % self.name)
-            if "'code': 32" in e.reason:
+                raise ValidationError('Twitter screen name \'%s\' was \
+                                      not found.' % self.name)
+            elif "'code': 32" in e.reason:
                 raise ValidationError('Could not connect to Twitter \
                                        API using configured credentials.')
+            else:
+                raise ValidationError('Twitter returned the following \
+                                      error: %s' % e.message)
+
+        # check to prevent duplicates
+        dups = TwitterUser.objects.filter(uid=user_status['id'])
+        if self.id is not None:
+            # if updating (vs. creating), remove myself
+            dups.exclude(id=self.id)
+        if dups:
+            raise ValidationError('TwitterUser uids must be unique. %s \
+                                   is already present.' % user_status['id'])
 
         self.uid = user_status['id']
         # use the screen name from twitter (may be capitalized differently)
