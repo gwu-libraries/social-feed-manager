@@ -19,7 +19,7 @@ class Migration(SchemaMigration):
             ('final_url', self.gf('django.db.models.fields.TextField')(db_index=True)),
             ('final_status', self.gf('django.db.models.fields.IntegerField')(default=200, db_index=True)),
             ('final_headers', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('duration_microseconds', self.gf('django.db.models.fields.FloatField')(default=0)),
+            ('duration_seconds', self.gf('django.db.models.fields.FloatField')(default=0)),
         ))
         db.send_create_signal(u'ui', ['TwitterUserItemUrl'])
 
@@ -100,7 +100,7 @@ class Migration(SchemaMigration):
         u'ui.twitteruseritemurl': {
             'Meta': {'object_name': 'TwitterUserItemUrl'},
             'date_checked': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'duration_microseconds': ('django.db.models.fields.FloatField', [], {'default': '0'}),
+            'duration_seconds': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'expanded_url': ('django.db.models.fields.TextField', [], {'db_index': 'True'}),
             'final_headers': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'final_status': ('django.db.models.fields.IntegerField', [], {'default': '200', 'db_index': 'True'}),

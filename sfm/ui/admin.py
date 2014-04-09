@@ -31,9 +31,9 @@ class TwitterUserItemAdmin(admin.ModelAdmin):
 admin.site.register(m.TwitterUserItem, TwitterUserItemAdmin)
 
 
-class DurationMicrosecondsFilter(admin.SimpleListFilter):
-    title = 'duration (ms)'
-    parameter_name = 'duration_microseconds'
+class DurationSecondsFilter(admin.SimpleListFilter):
+    title = 'duration (s)'
+    parameter_name = 'duration_seconds'
 
     def lookups(self, request, model_admin):
         return (
@@ -45,21 +45,21 @@ class DurationMicrosecondsFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'lt-0.25':
-            return queryset.filter(duration_microseconds__lte=0.25)
+            return queryset.filter(duration_seconds__lte=0.25)
         if self.value() == '0.25-0.5':
-            return queryset.filter(duration_microseconds__gt=0.25,
-                                   duration_microseconds__lte=0.5)
+            return queryset.filter(duration_seconds__gt=0.25,
+                                   duration_seconds__lte=0.5)
         if self.value() == '0.5-2':
-            return queryset.filter(duration_microseconds__gt=0.5,
-                                   duration_microseconds__lte=2)
+            return queryset.filter(duration_seconds__gt=0.5,
+                                   duration_seconds__lte=2)
         if self.value() == 'gt-2':
-            return queryset.filter(duration_microseconds__gt=2)
+            return queryset.filter(duration_seconds__gt=2)
 
 
 class TwitterUserItemUrlAdmin(admin.ModelAdmin):
-    list_display = ['id', 'item', 'final_status', 'duration_microseconds',
+    list_display = ['id', 'item', 'final_status', 'duration_seconds',
                     'expanded_url', 'final_url']
-    list_filter = ['date_checked', 'final_status', DurationMicrosecondsFilter]
+    list_filter = ['date_checked', 'final_status', DurationSecondsFilter]
     search_fields = ['id', 'start_url', 'expanded_url', 'final_url']
     readonly_fields = ['item']
 admin.site.register(m.TwitterUserItemUrl, TwitterUserItemUrlAdmin)

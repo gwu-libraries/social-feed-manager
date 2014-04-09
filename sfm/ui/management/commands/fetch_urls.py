@@ -118,7 +118,7 @@ class Command(BaseCommand):
                     final_url=r.url,
                     final_status=r.status_code,
                     final_headers=json.dumps(dict(r.headers)),
-                    duration_microseconds=r.elapsed.total_seconds())
+                    duration_seconds=r.elapsed.total_seconds())
                 tuiu.save()
             count += 1
             if options['limit']:

@@ -271,7 +271,7 @@ class TwitterUserItemUrl(m.Model):
     final_url = m.TextField(db_index=True)
     final_status = m.IntegerField(default=200, db_index=True)
     final_headers = m.TextField(blank=True)
-    duration_microseconds = m.FloatField(default=0)
+    duration_seconds = m.FloatField(default=0)
 
     def __unicode__(self):
         return '<TwitterUserItemUrl %s>' % self.id
