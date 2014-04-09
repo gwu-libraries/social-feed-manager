@@ -60,8 +60,8 @@ BRANDING = {
 # at the command line, and pasting into SFM_ENV_PATH
 SFM_ENV_PATH = '/PATH/WITHIN/YOUR/VIRTUALENV'
 
-# Recommend configuring this to the system user who owns
-# the sfm files/folders, i.e. whoever you cloned the repo as.
+# Optional. If not specified, the supervisor configuration files
+# will use the owner of the sfm app process.
 SUPERVISOR_PROCESS_USER = 'YOUR PREFERRED SYSTEM USER'
 
 # --------------------------------------------------------

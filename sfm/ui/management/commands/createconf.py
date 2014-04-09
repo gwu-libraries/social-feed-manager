@@ -1,3 +1,4 @@
+import getpass
 import os
 import stat
 from optparse import make_option
@@ -21,15 +22,19 @@ class Command(BaseCommand):
         if options.get('tfilterid', None):
             twitter_filters = twitter_filters.filter(
                 id=options.get('tfilterid'))
+        projectroot = os.path.abspath(os.path.dirname(__name__))
+        if settings.SUPERVISOR_PROCESS_USER:
+            processowner = settings.SUPERVISOR_PROCESS_USER
+        else:
+            processowner = getpass.getuser()
         for tfilter in twitter_filters:
             contents = "[program:filterstream-%s]" % tfilter.id + '\n' + \
-                       "command=%s/manage.py " % \
-                       os.path.abspath(os.path.dirname(__name__)) + \
+                       "command=%s/manage.py " % projectroot + \
                        "filterstream "  \
                        "--tfilterid=%s --save" % tfilter.id + '\n' \
                        "environment=PATH=" \
                        "'%s'" % settings.SFM_ENV_PATH + '\n' \
-                       "user=%s" % settings.SUPERVISOR_PROCESS_USER + '\n' \
+                       "user=%s" % processowner + '\n' \
                        "autostart=true" + '\n' \
                        "autorestart=true" + '\n' \
                        "stderr_logfile=/var/log/" \
@@ -37,8 +42,8 @@ class Command(BaseCommand):
                        "stdout_logfile=/var/log/" \
                        "sfm-filterstream-%s.out.log" % tfilter.id
             filename = "sfm-twitter-filter-%s.conf" % tfilter.id
-            file_path = "%s/sfm/supervisor-sfm-conf/%s" % \
-                (os.path.abspath(os.path.dirname(__name__)), filename)
+            file_path = "%s/sfm/supervisor-sfm-conf/%s" % (projectroot,
+                                                           filename)
             # Remove any existing config file
             # we don't assume that the contents are up-to-date
             # (PATH settings may have changed, etc.)
