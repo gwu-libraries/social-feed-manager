@@ -191,7 +191,7 @@ directories regularly.
 
 * edit local_settings.py to set DATA_DIR to the directory where you want
   streamsample output stored.  You may wish to adjust 
-  SAVE_INTERVAL_SETTINGS, which controls how often sfm will save data.
+  SAVE_INTERVAL_SECONDS, which controls how often sfm will save data.
 
 * copy sfm/streamsample.conf to /etc/supervisor/conf.d/
 
