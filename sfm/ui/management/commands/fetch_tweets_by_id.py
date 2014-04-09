@@ -21,34 +21,34 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        if options.get('inputfile', True) is None:
+        if options['inputfile'] is None:
             print 'Please specify a valid input file using --inputfile'
             return
 
         infile = options['inputfile']
         fin = open(infile, 'r+')
-        if options.get('outputfile', True):
+        logfile = infile + '.log'
+        flog = open(logfile, 'w')
+        if options['outputfile']:
             outfile = options['outputfile']
-            outstream = open(outfile, "a")
+            outstream = open(outfile, 'w')
         else:
             outstream = sys.stdout
         api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
+        errors_occurred = False
         for tweetidline in fin:
             try:
                 status = api.get_status(id=tweetidline)
                 json_value = json.dumps(status) + '\n\n'
                 outstream.write(json_value)
             except tweepy.error.TweepError as e:
-                if options.get('outputfile', True):
-                    logfile = infile + '.log'
-                    flog = open(logfile, 'a')
-                    content = 'Error: %s for the tweetid: %s' \
-                              % (e, tweetidline) + '\n'
-                    flog.write(content)
-                    flog.close()
-                    print 'Error: Please view the log file for details'
-                else:
-                    print 'Error: %s for the tweetid: %s' % (e, tweetidline)
+                content = 'Error: %s for the tweetid: %s' \
+                          % (e, tweetidline) + '\n'
+                flog.write(content)
+                errors_occurred = True
         fin.close()
+        flog.close()
         if options.get('outputfile', True):
             outstream.close()
+        if errors_occurred:
+            print 'Completed with errors. Please view the log file for details'
