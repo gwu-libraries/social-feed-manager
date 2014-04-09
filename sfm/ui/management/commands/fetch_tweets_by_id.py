@@ -27,7 +27,6 @@ class Command(BaseCommand):
 
         infile = options['inputfile']
         fin = open(infile, 'r+')
-        #outstream = None
         if options.get('outputfile', True):
             outfile = options['outputfile']
             outstream = open(outfile, "a")
