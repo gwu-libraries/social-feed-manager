@@ -131,8 +131,7 @@ class TwitterUser(m.Model):
         self.name = self.name.lstrip().lstrip("@").rstrip()
         # look up user
         try:
-            api = authenticated_api(
-                username=settings.TWITTER_DEFAULT_USERNAME)
+            api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
         except tweepy.error.TweepError as e:
             raise ValidationError('Could not connect to Twitter \
                                    API using configured credentials. \
