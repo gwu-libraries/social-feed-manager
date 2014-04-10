@@ -187,11 +187,11 @@ your available disk space, and consider using the ```organizedata```
 management command in a cron job to sort generated files into date-based
 directories regularly.
 
-* edit /etc/supervisor/supervisord.conf and add supervisor-sfm-conf/*.conf
+* edit /etc/supervisor/supervisord.conf and add supervisor.d/*.conf
   to the [include] files.  Use a space to separate it from the existing value
   of ```files``` by a space:
 
-       files = /etc/supervisor/conf.d/*.conf <PATH_TO_YOUR_SFM>/supervisor-sfm-conf/*.conf
+       files = /etc/supervisor/conf.d/*.conf <PATH_TO_YOUR_SFM>/sfm/sfm/supervisor.d/*.conf
 
 * edit local_settings.py to set DATA_DIR to the directory where you want
   streamsample output stored.  You may wish to adjust 
