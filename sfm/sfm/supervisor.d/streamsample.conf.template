@@ -1,6 +1,5 @@
 [program:streamsample]
-command=<LOCATION OF SFM>/sfm/manage.py streamsample --save
-environment=PATH='<PATH WITHIN YOUR VIRTUALENV>'
+command=<LOCATION OF SFM>/ENV/bin/python <LOCATION OF SFM>/sfm/manage.py streamsample --save
 user=<USERNAME THAT SUPERVISOR WILL RUN THE STREAMSAMPLE PROCESS AS>
 autostart=true
 autorestart=true

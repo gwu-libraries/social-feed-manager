@@ -193,9 +193,10 @@ LOGOUT_REDIRECT_URL = reverse_lazy('home')
 
 # A directory in which to store streams using "pullstream"
 DATA_DIR = 'data'
+SFM_ROOT = dirname(__file__)[:-8]
 
 # How often to save polled data to the DATA_DIR
-SAVE_INTERVAL_SECONDS = 60 * 15 # 15 minutes
+SAVE_INTERVAL_SECONDS = 60 * 15  # 15 minutes
 
 # Be sure to create your own 'local_settings.py' file as described in README
 try:
