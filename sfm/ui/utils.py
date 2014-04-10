@@ -1,4 +1,6 @@
+import os
 import time
+
 
 # A little added cushion
 WAIT_BUFFER_SECONDS = 2
@@ -24,3 +26,11 @@ def set_wait_time(last_response):
     while wait_time < WAIT_BUFFER_SECONDS:
         wait_time += WAIT_BUFFER_SECONDS
     return wait_time
+
+
+def delete_conf_file(tfilterid):
+    filename = "sfm-twitter-filter-%s.conf" % tfilterid
+    projectroot = os.path.join(os.path.dirname(__file__), '..')
+    file_path = "%s/sfm/supervisor-sfm-conf/%s" % (projectroot, filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
