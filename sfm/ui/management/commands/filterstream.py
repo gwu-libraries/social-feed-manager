@@ -74,8 +74,7 @@ class Command(BaseCommand):
             print 'locations:', locations
 
         try:
-            user = User.objects.get(username=settings.TWITTER_DEFAULT_USERNAME)
-            sa = user.social_auth.all()[0]
+            sa = twitter_filter.user.social_auth.all()[0]
             auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,
                                        settings.TWITTER_CONSUMER_SECRET)
             auth.set_access_token(sa.tokens['oauth_token'],
