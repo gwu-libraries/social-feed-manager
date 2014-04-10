@@ -2,7 +2,7 @@ from optparse import make_option
 import traceback
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
 
 import tweepy
@@ -43,31 +43,27 @@ class Command(BaseCommand):
                     default=settings.SAVE_INTERVAL_SECONDS, dest='interval',
                     help='how often to save data (default=%s)'
                     % settings.SAVE_INTERVAL_SECONDS),
-        make_option('--tfilterid', action='store', dest='tfilterid',
-                    default=None, help='specify the twitter filter id')
     )
 
     def handle(self, *args, **options):
-        twitter_filters = TwitterFilter.objects.filter(is_active=True)
-        if options.get('tfilterid', None):
-            twitter_filters = twitter_filters.filter(
-                id=options.get('tfilterid'))
-            for rule in twitter_filters:
-                filename_new_prefix = 'twitter-filter-%s' % rule.id
-        if not twitter_filters:
-            if options.get('verbose', False):
-                print 'no twitter_filters to filter on'
-            return
+        if len(args) != 1:
+            raise CommandError("one argument is required: twitterfilter id") 
+        try:
+            twitter_filter = TwitterFilter.objects.get(id=int(args[0]))
+        except:
+            raise CommandError("unable to load that TwitterFilter") 
+        if twitter_filter.is_active is False:
+            raise CommandError("TwitterFilter is not active")
+
         words = set()
         people = set()
         locations = set()
-        for twitter_filter in twitter_filters:
-            words.update(twitter_filter.words.strip().split(' ')
-                         if twitter_filter.words else [])
-            people.update(twitter_filter.people.strip().split(' ')
-                          if twitter_filter.people else [])
-            locations.update(twitter_filter.locations.strip().split(' ')
-                             if twitter_filter.locations else [])
+        words.update(twitter_filter.words.strip().split(' ')
+                     if twitter_filter.words else [])
+        people.update(twitter_filter.people.strip().split(' ')
+                      if twitter_filter.people else [])
+        locations.update(twitter_filter.locations.strip().split(' ')
+                         if twitter_filter.locations else [])
         if options.get('verbose', False):
             print 'track:', words
             print 'follow:', people
@@ -79,10 +75,7 @@ class Command(BaseCommand):
                                        settings.TWITTER_CONSUMER_SECRET)
             auth.set_access_token(sa.tokens['oauth_token'],
                                   sa.tokens['oauth_token_secret'])
-            if options.get('tfilterid', True):
-                filename_prefix = filename_new_prefix
-            else:
-                filename_prefix = 'twitter-filter-all'
+            filename_prefix = 'twitterfilter-%s' % args[0]
             if options.get('save', True):
                 listener = RotatingFile(
                     filename_prefix=filename_prefix,
