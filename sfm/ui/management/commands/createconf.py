@@ -10,8 +10,7 @@ from ui.models import TwitterFilter
 
 
 class Command(BaseCommand):
-    help = "command to create/update filterstream process config files \
-            for supervisord"
+    help = "create/update filterstream process config files for supervisord"
     option_list = BaseCommand.option_list + (
         make_option('--tfilterid', action='store', default=None,
                     dest='tfilterid', help='specify the filter rule id'),
