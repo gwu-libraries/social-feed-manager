@@ -291,14 +291,13 @@ class TwitterFilter(m.Model):
     name = m.CharField(max_length=255, unique=True)
     is_active = m.BooleanField(default=False)
     people = m.TextField(blank=True,
-                         help_text="""A comma-separated list of user IDs, \
-indicating the users to return statuses for in the stream. See the \
+                         help_text="""Space-separated list of user IDs \
+for which tweets, retweets, and mentions will be captured. See the \
 <a href="https://dev.twitter.com/docs/streaming-apis/parameters#follow" \
 onclick="window.open(this.href); return false;">follow parameter \
 documentation</a> for more information.""")
     words = m.TextField(blank=True,
-                        help_text="""Keywords to track. Phrases of keywords \
-are specified by a comma-separated list. See \
+                        help_text="""Space-separated keywords to track. See \
 <a href="https://dev.twitter.com/docs/streaming-apis/parameters#track" \
 onclick="window.open(this.href); return false;">the track parameter \
 documentation</a> for more information.""")
