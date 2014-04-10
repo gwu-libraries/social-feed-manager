@@ -41,8 +41,7 @@ class Command(BaseCommand):
                        "stdout_logfile=/var/log/" \
                        "sfm-filterstream-%s.out.log" % tfilter.id
             filename = "sfm-twitter-filter-%s.conf" % tfilter.id
-            file_path = "%s/sfm/supervisor-sfm-conf/%s" % (projectroot,
-                                                           filename)
+            file_path = "%s/sfm/supervisor.d/%s" % (projectroot, filename)
             # Remove any existing config file
             # we don't assume that the contents are up-to-date
             # (PATH settings may have changed, etc.)
