@@ -187,27 +187,27 @@ your available disk space, and consider using the ```organizedata```
 management command in a cron job to sort generated files into date-based
 directories regularly.
 
-* edit /etc/supervisor/supervisord.conf and add supervisor-sfm-conf/*.conf
+* edit /etc/supervisor/supervisord.conf and add supervisor.d/*.conf
   to the [include] files.  Use a space to separate it from the existing value
   of ```files``` by a space:
 
-       files = /etc/supervisor/conf.d/*.conf <PATH_TO_YOUR_SFM>/supervisor-sfm-conf/*.conf
+       files = /etc/supervisor/conf.d/*.conf <PATH_TO_YOUR_SFM>/sfm/sfm/supervisor.d/*.conf
 
 * edit local_settings.py to set DATA_DIR to the directory where you want
   streamsample output stored.  You may wish to adjust 
   SAVE_INTERVAL_SETTINGS, which controls how often sfm will save data.
 
-* set the permissions on the supervisor-sfm-conf directory to allow the
+* set the permissions on the sfm/sfm/supervisor.d directory to allow the
   sfm process owner to write to it.  Since the sfm process may be running
   as a different user than the owner of the directory, set it to allow
   writing by any user:
 
-        % sudo chmod +w supervisor-sfm-conf
+        % sudo chmod +w sfm/sfm/supervisor.d
 
-* copy supervisor-sfm-conf/streamsample.conf.template to
-  supervisor-sfm-conf/streamsample.conf 
+* copy supervisor.d/streamsample.conf.template to
+  supervisor.d/streamsample.conf 
 
-        % cd supervisor-sfm-conf
+        % cd sfm/sfm/supervisor.d
         % cp streamsample.conf.template streamsample.conf
 
   and edit streamsample.conf  to use the path to your sfm project, the value
