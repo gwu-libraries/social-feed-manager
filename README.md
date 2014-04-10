@@ -197,17 +197,17 @@ directories regularly.
   streamsample output stored.  You may wish to adjust 
   SAVE_INTERVAL_SETTINGS, which controls how often sfm will save data.
 
-* set the permissions on the supervisor-sfm-conf directory to allow the
+* set the permissions on the sfm/sfm/supervisor.d directory to allow the
   sfm process owner to write to it.  Since the sfm process may be running
   as a different user than the owner of the directory, set it to allow
   writing by any user:
 
-        % sudo chmod +w supervisor-sfm-conf
+        % sudo chmod +w sfm/sfm/supervisor.d
 
-* copy supervisor-sfm-conf/streamsample.conf.template to
-  supervisor-sfm-conf/streamsample.conf 
+* copy supervisor.d/streamsample.conf.template to
+  supervisor.d/streamsample.conf 
 
-        % cd supervisor-sfm-conf
+        % cd sfm/sfm/supervisor.d
         % cp streamsample.conf.template streamsample.conf
 
   and edit streamsample.conf  to use the path to your sfm project, the value
