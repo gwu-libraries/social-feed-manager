@@ -21,7 +21,6 @@ class Command(BaseCommand):
         if options.get('tfilterid', None):
             twitter_filters = twitter_filters.filter(
                 id=options.get('tfilterid'))
-        #projectroot = os.path.join(os.path.dirname(__file__), '..', '..', '..')
         projectroot = settings.SFM_ROOT
         if settings.SUPERVISOR_PROCESS_USER:
             processowner = settings.SUPERVISOR_PROCESS_USER
