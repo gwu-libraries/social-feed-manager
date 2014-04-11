@@ -187,9 +187,9 @@ your available disk space, and consider using the ```organizedata```
 management command in a cron job to sort generated files into date-based
 directories regularly.
 
-* edit /etc/supervisor/supervisord.conf and add supervisor.d/*.conf
-  to the [include] files.  Use a space to separate it from the existing value
-  of ```files``` by a space:
+* edit /etc/supervisor/supervisord.conf.  Look for the ```[include]``` section
+  (in a new instance of supervisor, this is usually at the bottom) and add
+  supervisor.d/*.conf to the space-separated list of ```files```:
 
        files = /etc/supervisor/conf.d/*.conf <PATH_TO_YOUR_SFM>/sfm/sfm/supervisor.d/*.conf
 
