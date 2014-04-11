@@ -205,13 +205,28 @@ directories regularly.
 
 * set the permissions on the sfm/sfm/supervisor.d directory to allow the
   sfm process owner to write to it.  Since the sfm process may be running
-  as a different user than the owner of the directory, set it to allow
-  writing by any user:
+  as a different user than the owner of the directory, we're going to create
+  a new 'sfm' group:
 
-        % sudo chmod +w sfm/sfm/supervisor.d
+        % sudo groupadd sfm
 
-* copy supervisor.d/streamsample.conf.template to
-  supervisor.d/streamsample.conf 
+  and add the sfm process owner to this group.  Edit /etc/group:
+  
+        % sudo vi /etc/group
+        
+  You should see a new line at the end that looks something like this:
+  
+        sfm:x:<a group number>:
+
+  Add the process owner, and optionally add your own user to this group:
+  
+        sfm:x:<a group number>:www-data,<your user name>
+
+  Now change the group of the supervisor.d directory to sfm:
+
+        % sudo chgrp sfm sfm/sfm/supervisor.d
+
+* copy supervisor.d/streamsample.conf.template to supervisor.d/streamsample.conf 
 
         % cd sfm/sfm/supervisor.d
         % cp streamsample.conf.template streamsample.conf
