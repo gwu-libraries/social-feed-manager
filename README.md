@@ -193,8 +193,14 @@ directories regularly.
 
        files = /etc/supervisor/conf.d/*.conf <PATH_TO_YOUR_SFM>/sfm/sfm/supervisor.d/*.conf
 
+* create a /var/log/sfm directory.  The supervisor-supervised processes will
+  write log files to this directory.
+
+        % sudo mkdir /var/log/sfm
+
 * edit local_settings.py to set DATA_DIR to the directory where you want
-  streamsample output stored.  You may wish to adjust 
+  streamsample output stored.  Set SUPERVISOR_PROCESS_OWNER to a user who
+  has rights to write to /var/log/sfm.  You may optionally wish to adjust 
   SAVE_INTERVAL_SETTINGS, which controls how often sfm will save data.
 
 * set the permissions on the sfm/sfm/supervisor.d directory to allow the
@@ -232,15 +238,11 @@ directories regularly.
 
         supervisor> start streamsample
 
-* Supervisor can also be used to manage filterstream processes.  As you [create/modify
-  and] activate TwitterFilters using the admin UI, SFM creates a supervisor
-  configuration file for each TwitterFilter.  It will also delete a configuration
-  file when you mark a TwitterFilter as inactive.
+Supervisor can also be used to manage filterstream processes.  As you [create/modify and] activate TwitterFilters using the admin UI, SFM creates a supervisor configuration file for each TwitterFilter.  It will also delete a configuration file when you mark a TwitterFilter as inactive.
 
-  However, if you have pre-existing, active TwitterFilters which were created prior to
-  SFM release m4_001, you will need to run the ```createconf``` command to create
-  supervisor configuration files for your active TwitterFilters.  With your virtualenv
-  activated (see above), execute:
+However, if you have pre-existing, active TwitterFilters which were created prior to SFM release m4_001, you will need to run the ```createconf``` command to create supervisor configuration files for your active TwitterFilters.
+
+* With your virtualenv activated (see above), execute:
 
         % ./manage.py createconf
 

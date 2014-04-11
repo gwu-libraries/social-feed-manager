@@ -22,23 +22,23 @@ class Command(BaseCommand):
             twitter_filters = twitter_filters.filter(
                 id=options.get('twitterfilter'))
         projectroot = settings.SFM_ROOT
-        if settings.SUPERVISOR_PROCESS_USER:
+        if hasattr(settings, 'SUPERVISOR_PROCESS_USER'):
             processowner = settings.SUPERVISOR_PROCESS_USER
         else:
             processowner = getpass.getuser()
         for tf in twitter_filters:
-            contents = "[program:filterstream-%s]" % tf.id + '\n' + \
+            contents = "[program:twitterfilter-%s]" % tf.id + '\n' + \
                        "command=%s/ENV/bin/python " % projectroot + \
                        "%s/sfm/manage.py " % projectroot + \
                        "filterstream %s --save" % tf.id + '\n' \
                        "user=%s" % processowner + '\n' \
                        "autostart=true" + '\n' \
                        "autorestart=true" + '\n' \
-                       "stderr_logfile=/var/log/" \
-                       "sfm-filterstream-%s.err.log" % tf.id + '\n' \
-                       "stdout_logfile=/var/log/" \
-                       "sfm-filterstream-%s.out.log" % tf.id + '\n'
-            filename = "sfm-twitter-filter-%s.conf" % tf.id
+                       "stderr_logfile=/var/log/sfm/" \
+                       "twitterfilter-%s.err.log" % tf.id + '\n' \
+                       "stdout_logfile=/var/log/sfm/" \
+                       "twitterfilter-%s.out.log" % tf.id + '\n'
+            filename = "twitterfilter-%s.conf" % tf.id
             file_path = "%s/sfm/sfm/supervisor.d/%s" % (projectroot, filename)
             # Remove any existing config file
             # we don't assume that the contents are up-to-date
