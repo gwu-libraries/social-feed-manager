@@ -35,11 +35,11 @@ or ask a friendly sysadmin for help:
 
         http://www.postgresql.org/docs/9.1/static/auth-pg-hba-conf.html
 
-        For example, you could add a line like this:
+  For example, you could add a line like this:
 
-        ```local   all             all                     md5```
+        local   all             all                     md5
 
-        Restart postgres when this is done.
+  Restart postgres when this is done.
 
         % sudo service postgresql restart
     
@@ -106,7 +106,9 @@ TWITTER_CONSUMER_SECRET
         % ./manage.py syncdb
 
     This will prompt you to create a superuser for administrating the
-    running app.  Create one and remember your account info.
+    running app (do not use the same username as a twitter account, or
+    the usernames will conflict and require an extra configuration step).
+    Create one and remember your account info.
 
 * run migrations for social_auth and ui
 
@@ -199,7 +201,7 @@ to sort generated files into date-based directories regularly.
         % sudo mkdir /var/log/sfm
 
 * edit local_settings.py to set DATA_DIR to the directory where you want
-  streamsample output stored.  Set SUPERVISOR_PROCESS_OWNER to a user who
+  stream output stored.  Set SUPERVISOR_PROCESS_OWNER to a user who
   has rights to write to ```/var/log/sfm```.  You may also wish to adjust 
   SAVE_INTERVAL_SETTINGS, which controls how often sfm will save data to a
   new file (default is every 15 minutes, specified in ```settings.py```).
