@@ -28,8 +28,8 @@ on ubuntu lts 12.04; your mileage may vary.
         % virtualenv --no-site-packages ENV
         % source ENV/bin/activate
     
-* prep postgres: first, update /etc/postgresql/9.1/main/pg_hba.conf to
-enable local database connections or otherwise as you prefer.  note: 
+* prep postgres: first, update ```/etc/postgresql/9.1/main/pg_hba.conf```
+to enable local database connections or otherwise as you prefer.  note: 
 there's more than one way to do this, so if this is new to you, read this,
 or ask a friendly sysadmin for help:
 
