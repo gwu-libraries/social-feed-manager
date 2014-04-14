@@ -171,46 +171,47 @@ familiar with their documentation:
     https://dev.twitter.com/docs/streaming-apis
 
 
-optional setup for supervised streamsample (Twitter sample/spritzer feed)
+optional setup for streams (filters, samples)
 --------------------------------------------------------------
 
-If you want to capture sample data from Twitter's spritzer feed
-continually, you might want a process supervisor to ensure the process
-remains active and is restarted automatically after system reboots and
-the like.  ```supervisor``` does that for sfm.  These steps will get
-you started.  
+If you want to capture streams of filtered queries or sample data from
+Twitter's spritzer feed continually, you might want a process supervisor
+to ensure the process remains active and is restarted automatically
+after system reboots and the like.  ```supervisor``` does that for sfm.
+These steps will get you started.
 
 *NOTE*:  The sample stream includes something like 0.5-1% of all tweets
-and deletes, which as of February 2014 means roughly three million
-or so items combined.  These files will add up quickly, so consider
-your available disk space, and consider using the ```organizedata```
-management command in a cron job to sort generated files into date-based
-directories regularly.
+and deletes, which as of February 2014 means roughly three million or so
+items combined.  Filters can create a similarly large amount of data.
+These files add up quickly, so consider your available disk space, and
+consider using the ```organizedata``` management command in a cron job
+to sort generated files into date-based directories regularly.
 
-* edit /etc/supervisor/supervisord.conf.  Look for the ```[include]``` section
-  (in a new instance of supervisor, this is usually at the bottom) and add
-  supervisor.d/*.conf to the space-separated list of ```files```:
+* edit ```/etc/supervisor/supervisord.conf```.  Look for the ```[include]``` 
+  section (in a new instance of supervisor, this is usually at the bottom) 
+  and add ```supervisor.d/*.conf``` to the space-separated list of ```files```:
 
        files = /etc/supervisor/conf.d/*.conf <PATH_TO_YOUR_SFM>/sfm/sfm/supervisor.d/*.conf
 
-* create a /var/log/sfm directory.  The supervisor-supervised processes will
-  write log files to this directory.
+* create a ```/var/log/sfm``` directory.  The supervisor-supervised processes
+  will write log files to this directory.
 
         % sudo mkdir /var/log/sfm
 
 * edit local_settings.py to set DATA_DIR to the directory where you want
   streamsample output stored.  Set SUPERVISOR_PROCESS_OWNER to a user who
-  has rights to write to /var/log/sfm.  You may optionally wish to adjust 
-  SAVE_INTERVAL_SETTINGS, which controls how often sfm will save data.
+  has rights to write to ```/var/log/sfm```.  You may also wish to adjust 
+  SAVE_INTERVAL_SETTINGS, which controls how often sfm will save data to a
+  new file (default is every 15 minutes, specified in ```settings.py```).
 
-* set the permissions on the sfm/sfm/supervisor.d directory to allow the
+* set the permissions on the ```sfm/sfm/supervisor.d``` directory to allow the
   sfm process owner to write to it.  Since the sfm process may be running
   as a different user than the owner of the directory, we're going to create
   a new 'sfm' group:
 
         % sudo groupadd sfm
 
-  and add the sfm process owner to this group.  Edit /etc/group:
+  and add the sfm process owner to this group.  Edit ```/etc/group```:
   
         % sudo vi /etc/group
         
@@ -222,11 +223,12 @@ directories regularly.
   
         sfm:x:<a group number>:www-data,<your user name>
 
-  Now change the group of the supervisor.d directory to sfm:
+  Now change the group of the ```supervisor.d``` directory to sfm:
 
         % sudo chgrp sfm sfm/sfm/supervisor.d
 
-* copy supervisor.d/streamsample.conf.template to supervisor.d/streamsample.conf 
+* copy ```supervisor.d/streamsample.conf.template``` to 
+  ```supervisor.d/streamsample.conf```
 
         % cd sfm/sfm/supervisor.d
         % cp streamsample.conf.template streamsample.conf
@@ -253,9 +255,16 @@ directories regularly.
 
         supervisor> start streamsample
 
-Supervisor can also be used to manage filterstream processes.  As you [create/modify and] activate TwitterFilters using the admin UI, SFM creates a supervisor configuration file for each TwitterFilter.  It will also delete a configuration file when you mark a TwitterFilter as inactive.
+Supervisor can also be used to manage filterstream processes.  As you
+create, modify, activate, and deactivate TwitterFilters using the
+admin UI, SFM creates or deletes a supervisor configuration file for
+each TwitterFilter.  It will also delete a configuration file when you
+mark a TwitterFilter as inactive.
 
-However, if you have pre-existing, active TwitterFilters which were created prior to SFM release m4_001, you will need to run the ```createconf``` command to create supervisor configuration files for your active TwitterFilters.
+However, if you have pre-existing, active TwitterFilters which
+were created prior to SFM release m4_001, you will need to run the
+```createconf``` command manually to create supervisor configuration
+files for your active TwitterFilters.
 
 * With your virtualenv activated (see above), execute:
 
