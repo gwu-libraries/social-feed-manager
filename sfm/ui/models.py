@@ -22,16 +22,6 @@ from ui.utils import delete_conf_file, set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
-RE_TWEET_ID = re.compile(r'.*statuses/([0-9]+)$')
-RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
-
-DAY = datetime.timedelta(days=1)
-dt = datetime.datetime(2012, 1, 1)
-dt_end = datetime.datetime.today()
-DATES = []
-while dt < dt_end:
-    DATES.append(dt)
-    dt += DAY
 
 
 def authenticated_api(username, api_root=None, parser=None):
@@ -128,12 +118,11 @@ class TwitterUser(m.Model):
         try:
             api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
         except tweepy.error.TweepError as e:
-            raise ValidationError('Could not connect to Twitter API using'
-                                  'default user. Error: %s' % e)
+            raise ValidationError("Couldn't connect to API: %s" % e)
         try:
             user_status = api.get_user(screen_name=self.name)
         except tweepy.error.TweepError as e:
-            raise ValidationError('Twitter screen name \'%s\' was not found.'
+            raise ValidationError("Twitter screen name '%s' was not found."
                                   % self.name)
 
         self.uid = user_status['id']
@@ -183,7 +172,7 @@ class TwitterUserItem(m.Model):
     source = m.TextField(default='', blank=True)
 
     def __unicode__(self):
-        return 'useritem (%s) %s' % (self.id, self.twitter_id)
+        return '<useritem (%s)>' % (self.id)
 
     @property
     def twitter_url(self):
@@ -215,6 +204,9 @@ class TwitterUserItem(m.Model):
 
     @property
     def links(self):
+        """A list of bare urls from tweet text, including twitpic etc.
+        Note that TwitterUserItem.urls should return a manager for
+        related TwitterUserItemUrls"""
         return RE_LINKS.findall(self.text)
 
     def is_retweet(self, strict=True):
@@ -269,6 +261,21 @@ class TwitterUserItem(m.Model):
         for url in self.tweet['entities']['urls'][:2]:
             r.extend([url['url'], url['expanded_url']])
         return r
+
+
+class TwitterUserItemUrl(m.Model):
+    item = m.ForeignKey(TwitterUserItem, related_name='urls')
+    date_checked = m.DateTimeField(auto_now_add=True)
+    start_url = m.TextField(db_index=True)
+    expanded_url = m.TextField(db_index=True)
+    history = m.TextField(default='{}', blank=True)
+    final_url = m.TextField(db_index=True)
+    final_status = m.IntegerField(default=200, db_index=True)
+    final_headers = m.TextField(blank=True)
+    duration_seconds = m.FloatField(default=0)
+
+    def __unicode__(self):
+        return '<TwitterUserItemUrl %s>' % self.id
 
 
 class TwitterUserTimelineJob(m.Model):
