@@ -347,7 +347,7 @@ documentation</a> for more information.""")
 @receiver(post_save, sender=TwitterFilter)
 def call_create_conf(sender, instance, **kwargs):
     if instance.is_active is True:
-        call_command('createconf', tfilterid=instance.id)
+        call_command('createconf', twitterfilter=instance.id)
     else:
         delete_conf_file(instance.id)
 

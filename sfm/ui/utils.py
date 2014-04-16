@@ -46,8 +46,8 @@ def make_date_aware(date_str):
         return None
 
 
-def delete_conf_file(tfilterid):
-    filename = "twitterfilter-%s.conf" % tfilterid
+def delete_conf_file(twitterfilter):
+    filename = "twitterfilter-%s.conf" % twitterfilter
     file_path = "%s/sfm/sfm/supervisor.d/%s" % (settings.SFM_ROOT, filename)
     if os.path.exists(file_path):
         os.remove(file_path)
