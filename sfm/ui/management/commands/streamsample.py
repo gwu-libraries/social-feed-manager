@@ -45,7 +45,7 @@ class Command(BaseCommand):
                               sa.tokens['oauth_token_secret'])
         if options.get('save', True):
             listener = RotatingFile(
-                filename_prefix='sample',
+                filename_prefix='streamsample',
                 save_interval_seconds=options['interval'],
                 data_dir=options['dir'])
             stream = tweepy.Stream(auth, listener)
