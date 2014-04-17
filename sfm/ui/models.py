@@ -12,23 +12,16 @@ from tweepy.streaming import StreamListener
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.management import call_command
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 from django.db import models as m
 from django.utils import timezone
 
-from ui.utils import set_wait_time
+from ui.utils import delete_conf_file, set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
-RE_TWEET_ID = re.compile(r'.*statuses/([0-9]+)$')
-RE_USER_NAME = re.compile(r'http://twitter.com/(.*)$')
-
-DAY = datetime.timedelta(days=1)
-dt = datetime.datetime(2012, 1, 1)
-dt_end = datetime.datetime.today()
-DATES = []
-while dt < dt_end:
-    DATES.append(dt)
-    dt += DAY
 
 
 def authenticated_api(username, api_root=None, parser=None):
@@ -208,7 +201,7 @@ class TwitterUserItem(m.Model):
     source = m.TextField(default='', blank=True)
 
     def __unicode__(self):
-        return 'useritem (%s) %s' % (self.id, self.twitter_id)
+        return '<useritem (%s)>' % (self.id)
 
     @property
     def twitter_url(self):
@@ -240,6 +233,9 @@ class TwitterUserItem(m.Model):
 
     @property
     def links(self):
+        """A list of bare urls from tweet text, including twitpic etc.
+        Note that TwitterUserItem.urls should return a manager for
+        related TwitterUserItemUrls"""
         return RE_LINKS.findall(self.text)
 
     def is_retweet(self, strict=True):
@@ -296,6 +292,21 @@ class TwitterUserItem(m.Model):
         return r
 
 
+class TwitterUserItemUrl(m.Model):
+    item = m.ForeignKey(TwitterUserItem, related_name='urls')
+    date_checked = m.DateTimeField(auto_now_add=True)
+    start_url = m.TextField(db_index=True)
+    expanded_url = m.TextField(db_index=True)
+    history = m.TextField(default='{}', blank=True)
+    final_url = m.TextField(db_index=True)
+    final_status = m.IntegerField(default=200, db_index=True)
+    final_headers = m.TextField(blank=True)
+    duration_seconds = m.FloatField(default=0)
+
+    def __unicode__(self):
+        return '<TwitterUserItemUrl %s>' % self.id
+
+
 class TwitterUserTimelineJob(m.Model):
     date_started = m.DateTimeField(db_index=True, auto_now_add=True)
     date_finished = m.DateTimeField(db_index=True, auto_now=True)
@@ -317,17 +328,16 @@ class TwitterFilter(m.Model):
     user = m.ForeignKey(User,
                         help_text="Account to use for authentication")
     is_active = m.BooleanField(default=False)
-    words = m.TextField(blank=True,
-                        help_text="""Keywords to track. Phrases of keywords \
-are specified by a comma-separated list. See \
-<a href="https://dev.twitter.com/docs/streaming-apis/parameters#track" \
-onclick="window.open(this.href); return false;">the track parameter \
-documentation</a> for more information.""")
     people = m.TextField(blank=True,
-                         help_text="""A comma-separated list of user IDs, \
-indicating the users to return statuses for in the stream. See the \
+                         help_text="""Space-separated list of user IDs \
+for which tweets, retweets, and mentions will be captured. See the \
 <a href="https://dev.twitter.com/docs/streaming-apis/parameters#follow" \
 onclick="window.open(this.href); return false;">follow parameter \
+documentation</a> for more information.""")
+    words = m.TextField(blank=True,
+                        help_text="""Space-separated keywords to track. See \
+<a href="https://dev.twitter.com/docs/streaming-apis/parameters#track" \
+onclick="window.open(this.href); return false;">the track parameter \
 documentation</a> for more information.""")
     locations = m.TextField(blank=True,
                             help_text="""
@@ -338,3 +348,39 @@ documentation</a> for more information.""")
 
     def __unicode__(self):
         return '%s' % self.id
+
+    def clean(self):
+        # if it's inactive, then do no validation
+        if self.is_active is False:
+            return
+
+        # check against TWITTER_DEFAULT_USERNAME
+        if self.user.username == settings.TWITTER_DEFAULT_USERNAME:
+            raise ValidationError('''Streamsample is also configured to
+                                     authenticate as \'%s\'.  Please select
+                                     a different user or mark this filter as
+                                     inactive.''' % self.user.username)
+
+        # check against other active TwitterFilters' user.usernames
+        conflicting_tfs = \
+            TwitterFilter.objects.exclude(id=self.id).\
+            filter(is_active=True, user__username=self.user.username)
+        if conflicting_tfs:
+            raise ValidationError('''Filter %d is active and is configured
+                                     to authenticate as \'%s\'.
+                                     Please select a different user or mark
+                                     this filter as inactive.''' %
+                                  (conflicting_tfs[0].id, self.user.username))
+
+
+@receiver(post_save, sender=TwitterFilter)
+def call_create_conf(sender, instance, **kwargs):
+    if instance.is_active is True:
+        call_command('createconf', twitterfilter=instance.id)
+    else:
+        delete_conf_file(instance.id)
+
+
+@receiver(post_delete, sender=TwitterFilter)
+def call_delete_conf(sender, instance, **kwargs):
+    delete_conf_file(instance.id)

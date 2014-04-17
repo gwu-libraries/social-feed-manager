@@ -36,7 +36,12 @@ TEMPLATE_DIRS = (
 )
 
 DATA_DIR = '/PATH/TO/YOUR/DATA/DIR'
- 
+
+# If not specified, the supervisor configuration files
+# will use the owner of the sfm app process.  The owner must
+# be able to write to /var/log/sfm
+SUPERVISOR_PROCESS_USER = 'YOUR PREFERRED SYSTEM USER'
+
 TWITTER_DEFAULT_USERNAME = 'MY FANCY USERNAME'
 TWITTER_CONSUMER_KEY = 'ITS CONSUMER KEY'
 TWITTER_CONSUMER_SECRET = 'ITS CONSUMER SECRET'
