@@ -149,7 +149,7 @@ class TwitterUser(m.Model):
         dups = TwitterUser.objects.filter(uid=user_status['id'])
         if self.id is not None:
             # if updating (vs. creating), remove myself
-            dups.exclude(id=self.id)
+            dups = dups.exclude(id=self.id)
         if dups:
             raise ValidationError('TwitterUser uids must be unique. %s \
                                    is already present.' % user_status['id'])
