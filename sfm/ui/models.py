@@ -112,18 +112,47 @@ class TwitterUser(m.Model):
         return ','.join([str(dc.num_tweets) for dc in self.daily_counts.all()])
 
     def clean(self):
+        # if we are updating an existing TwitterUser
+        # AND is_active=False
+        if self.id is not None and self.is_active is False:
+            return
+        # else proceed because:
+        #     either we are creating rather than updating
+        #     OR we are updating with active=True
+
         # remove left whitespace, leading '@', and right whitespace
         self.name = self.name.lstrip().lstrip("@").rstrip()
         # look up user
         try:
             api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
         except tweepy.error.TweepError as e:
-            raise ValidationError("Couldn't connect to API: %s" % e)
+            raise ValidationError('Could not connect to Twitter \
+                                   API using configured credentials. \
+                                   Error: %s' % e)
+        if api is None:
+            raise ValidationError('Could not connect to Twitter \
+                                   API using configured credentials.')
         try:
             user_status = api.get_user(screen_name=self.name)
         except tweepy.error.TweepError as e:
-            raise ValidationError("Twitter screen name '%s' was not found."
-                                  % self.name)
+            if "'code': 34" in e.reason:
+                raise ValidationError('Twitter screen name \'%s\' was \
+                                      not found.' % self.name)
+            elif "'code': 32" in e.reason:
+                raise ValidationError('Could not connect to Twitter \
+                                       API using configured credentials.')
+            else:
+                raise ValidationError('Twitter returned the following \
+                                      error: %s' % e.message)
+
+        # check to prevent duplicates
+        dups = TwitterUser.objects.filter(uid=user_status['id'])
+        if self.id is not None:
+            # if updating (vs. creating), remove myself
+            dups = dups.exclude(id=self.id)
+        if dups:
+            raise ValidationError('TwitterUser uids must be unique. %s \
+                                   is already present.' % user_status['id'])
 
         self.uid = user_status['id']
         # use the screen name from twitter (may be capitalized differently)
