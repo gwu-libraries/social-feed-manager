@@ -3,15 +3,31 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Social Feed Manager's documentation!
-===============================================
+Welcome to Social Feed Manager!
+===============================
+
+Social Feed Manager is... a little bit about SFM goes here.  The code is
+open source, and `available on github`.
+
+.. _available on github: http://github.com/gwu-libraries/social-feed-manager/ 
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
+   Introduction <intro>
+   Installation and Configuration <install>
+   Daily operations <dailyops>
+   Management commands <mgmt_commands>
+   Working with supervisor and streams <supervisor_and_streams>
+   Basic Concepts <concepts>
+   Use Cases <use_cases>
+   Data Dictionary <data_dictionary>
+   Code <code>
    Frequently Asked Questions <faq>
+   Troubleshooting <troubleshooting>
+   Glossary <glossary>
 
 
 
