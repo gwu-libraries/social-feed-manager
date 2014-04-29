@@ -7,7 +7,7 @@ Welcome to Social Feed Manager!
 ===============================
 
 Social Feed Manager is... a little bit about SFM goes here.  The code is
-open source, and `available on github`.
+open source, and `available on github`_.
 
 .. _available on github: http://github.com/gwu-libraries/social-feed-manager/ 
 
