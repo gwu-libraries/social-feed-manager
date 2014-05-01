@@ -1,4 +1,6 @@
+import codecs
 from optparse import make_option
+import sys
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -75,5 +77,10 @@ class Command(BaseCommand):
         if end_dt:
             qs = qs.filter(date_published__lte=end_dt)
 
+        # tweak for python 2.7 to avoid having to set PYTHONIOENCODING=utf8
+        # in environment, see Graham Fawcett's comment/suggestion at:
+        #   nedbatchelder.com/blog/200401/printing_unicode_from_python.html
+        writer_class = codecs.getwriter('utf-8')
+        sys.stdout = writer_class(sys.stdout, 'replace')
         for tui in qs:
             print '\t'.join(tui.csv)
