@@ -29,7 +29,7 @@ def authenticated_api(username, api_root=None, parser=None):
     auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,
                                settings.TWITTER_CONSUMER_SECRET)
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(username__iexact=username)
         sa = user.social_auth.all()[0]
         auth.set_access_token(sa.tokens['oauth_token'],
                               sa.tokens['oauth_token_secret'])
