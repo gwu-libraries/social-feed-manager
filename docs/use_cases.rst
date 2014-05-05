@@ -50,18 +50,26 @@ UID by the username provided.  If:
 
 * the username matches a Twitter account's username, and
 * the Twitter account's UID is not already associated with any TwitterUser
-then SFM will create the TwitterUser.
+then SFM will create the TwitterUser.  The SFM user may create the new
+TwitterUser as either Active or Inactive.
+
 *If the name does not match any Twitter account OR the UID is already
 associated with a TwitterUser, then SFM will
 not create the TwitterUser, even an in Inactive state.*
 
 **Inactivation of Active TwitterUser**  An SFM user marks an Active TwitterUser as Inactive.  This transition is always allowed.
 
-**Activation of Inactive TwitterUser**  An SFM user marks an Inactive TwitterUser as Active.  
+**Activation of Inactive TwitterUser**  An SFM user marks an Inactive
+TwitterUser as Active.  SFM looks up the corresponding Twitter account by
+the UID of the TwitterUser.
+If the UID is valid, it updates the TwitterUser's name if necessary, and
+saves the TwitterUser as Active.
+If the UID is not found, which may occur if the Twitter account has been
+deactivated, then SFM does not allow the TwitterUser to be saved as Active.
 
-**More to come here**
+**Deletion of a TwitterUser**  An SFM administrative user deletes a TwitterUser.  This is always allowed.
 
 Complex Use Cases
 -----------------
 
-**???**
+**
