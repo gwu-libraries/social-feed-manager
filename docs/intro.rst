@@ -35,9 +35,11 @@ Features
 
 Technical and staffing considerations
 -------------------------------------
-Social Feed Manager is locally hosted and requires a system administrator to set up and manage the application in a Linux (Ubuntu 12.04) environment.  Storage requirements vary depending on usage of the application: collecting data account-by-account is less space-consuming than connecting to the streaming APIs, which create large files. 
+Social Feed Manager is locally hosted and requires a system administrator to set up and manage the application in a Linux (Ubuntu 12.04) environment.  Storage requirements vary depending on usage of the application: collecting data account-by-account requires less storage than connecting to the streaming APIs, which accumulates large files. 
 
-Archivists, librarians and other service administrators use a web-based interface to add new users and specify keyword queries. Researchers can directly download user tweets data from the web interface after signing into the site using their own Twitter credentials. Accessing files generated from the streaming APIs requires mediation by a system administrator. 
+Archivists, librarians and other service administrators, as determined by the library, use a web-based interface to add 
+new Twitter users, specify keyword queries, and create sets of accounts. Researchers may directly download user timeline data 
+from the web interface after signing into the site from an institutional IP address and using their own Twitter credentials. Currently, all captured user timeline data is available in the researcher interface and is not separated by researcher account. Accessing files generated from the streaming APIs requires mediation by a system administrator.
 
 Development and community
 -------------------------
@@ -47,10 +49,10 @@ The software is available for use, study, copying, and modification under a free
 
 Resources
 ^^^^^^^^^
-`Software on Github
-<https://github.com/gwu-libraries/social-feed-manager>`_.
+`Social Feed Manager on Github
+<https://github.com/gwu-libraries/social-feed-manager>`_
 
-`Google Group for updates about new releases and discussion of features
-<https://groups.google.com/forum/#!forum/sfm-dev>`_.
+`Google Group (updates about new releases and discussion of features)
+<https://groups.google.com/forum/#!forum/sfm-dev>`_
 
 [1] Institute of Museum and Library Services Grant LG-46-13-0257
