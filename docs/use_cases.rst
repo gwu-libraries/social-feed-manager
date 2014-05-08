@@ -10,8 +10,8 @@ A *TwitterUser* in SFM is the entity used to collect
 tweets tweeted by the corresponding account in Twitter.
 
 The fundamental, unique, unchanging identifier for a Twitter account is
-its numeric UID.  The account owner can change the name of the account,
-but the UID will never change.
+its numeric UID.  The owner of a Twitter account might change the account's
+name, but the UID will never change.
 
 Each TwitterUser is intended to map one-to-one to a Twitter account.
 
@@ -69,7 +69,16 @@ deactivated, then SFM does not allow the TwitterUser to be saved as Active.
 
 **Deletion of a TwitterUser**  An SFM administrative user deletes a TwitterUser.  This is always allowed.
 
+
 Complex Use Cases
 -----------------
 
-**
+**Name change** What if the owner of a Twitter account changes the name of the account?
+If TwitterUser in SFM was created to collect tweets from this Twitter account, it should
+continue to do so, since the UID never changes.  However, the name of the TwitterUser may
+temporarily still show the old name of the Twitter account.  If a cron job has been set up
+to run update_usernames, then the name of the TwitterUser will automatically be updated to
+match the new Twitter account name the next time update_username is run.  When that
+occurs, the old name will be appended to the TwitterUser's *former_names*, along with the
+date and time that the change was detected by update_usernames.
+
