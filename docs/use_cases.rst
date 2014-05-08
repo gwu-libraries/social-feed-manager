@@ -73,7 +73,7 @@ deactivated, then SFM does not allow the TwitterUser to be saved as Active.
 Complex Use Cases
 -----------------
 
-**Name change** What if the owner of a Twitter account changes the name of the account?
+**Name Change** What if the owner of a Twitter account changes the name of the account?
 If the TwitterUser in SFM was created to collect tweets from this Twitter account, it should
 continue to do so, since the UID never changes.  However, the name of the TwitterUser may
 temporarily still show the old name of the Twitter account.  If a cron job has been set up
@@ -82,3 +82,6 @@ match the new Twitter account name the next time update_username is run.  When t
 occurs, the old name will be appended to the TwitterUser's *former_names*, along with the
 date and time that the change was detected by update_usernames.
 
+**Twitter Account Goes Protected** What to expect on the SFM side
+
+**Twitter Account Deletion** What to expect on the SFM side
