@@ -74,7 +74,7 @@ Complex Use Cases
 -----------------
 
 **Name change** What if the owner of a Twitter account changes the name of the account?
-If TwitterUser in SFM was created to collect tweets from this Twitter account, it should
+If the TwitterUser in SFM was created to collect tweets from this Twitter account, it should
 continue to do so, since the UID never changes.  However, the name of the TwitterUser may
 temporarily still show the old name of the Twitter account.  If a cron job has been set up
 to run update_usernames, then the name of the TwitterUser will automatically be updated to
