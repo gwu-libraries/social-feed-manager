@@ -28,8 +28,10 @@ Lifecycle of a TwitterUser
 A TwitterUser in SFM exists in one of three states:
 
 * *Nonexistence (Pre-creation/Post-deletion)*
-* *Active*
-* *Inactive*
+* *Active* - SFM will attempt to collect new tweets for this TwitterUser, every time the
+  *user_timeline* script is run.
+* *Inactive* - The TwitterUser is still in SFM, but no new tweets will be collected while the
+  TwitterUser is inactive.
 
 An account in Twitter exists in one of three states:
 
@@ -37,7 +39,7 @@ An account in Twitter exists in one of three states:
 * *Active/Public* - Tweets are visibile to anyone
 * *Active/Protected* - Tweets are only visible to this account's Twitter followers
 * *Deactivated/Deleted* - If an owner deactivates a Twitter account, Twitter
-  places it on a quque for permanent deletion.
+  places it on a queue to be permanently deleted after 30 days.
 
 
 
@@ -57,31 +59,49 @@ TwitterUser as either Active or Inactive.
 associated with a TwitterUser, then SFM will
 not create the TwitterUser, even an in Inactive state.*
 
-**Inactivation of Active TwitterUser**  An SFM user marks an Active TwitterUser as Inactive.  This transition is always allowed.
+**Inactivation of Active TwitterUser**  An SFM user marks an Active TwitterUser as Inactive.  This transition is always allowed.  Inactive TwitterUsers are still shown on the SFM page listing users,
+and CSV extracts
 
 **Activation of Inactive TwitterUser**  An SFM user marks an Inactive
 TwitterUser as Active.  SFM looks up the corresponding Twitter account by
 the UID of the TwitterUser.
-If the UID is valid, it updates the TwitterUser's name if necessary, and
-saves the TwitterUser as Active.
+If the UID is valid, it updates the TwitterUser's name if differs from the current
+name of the Twitter account, and saves the TwitterUser as Active.
 If the UID is not found, which may occur if the Twitter account has been
 deactivated, then SFM does not allow the TwitterUser to be saved as Active.
 
 **Deletion of a TwitterUser**  An SFM administrative user deletes a TwitterUser.  This is always allowed.
 
+However, deleting a TwitterUser has a number of consequences:
 
-Complex Use Cases
------------------
+- All TwitterItems associated with this TwitterUser will also be deleted.
+- if an SFM user creates a new TwitterUser later with the same UID (i.e. to collect tweets from
+the same Twitter account), then 
+
+For these reasons, it may be preferable to consider deactivating, rather than deleting, any TwitterUser
+that may 
+
+
+Less Common Use Cases
+---------------------
 
 **Name Change** What if the owner of a Twitter account changes the name of the account?
 If the TwitterUser in SFM was created to collect tweets from this Twitter account, it should
 continue to do so, since the UID never changes.  However, the name of the TwitterUser may
 temporarily still show the old name of the Twitter account.  If a cron job has been set up
 to run update_usernames, then the name of the TwitterUser will automatically be updated to
-match the new Twitter account name the next time update_username is run.  When that
-occurs, the old name will be appended to the TwitterUser's *former_names*, along with the
-date and time that the change was detected by update_usernames.
+match the new Twitter account name the next time update_username is run.  When update_username
+observes a name change, the old name will be appended to the TwitterUser's *former_names*,
+along with the date and time that the change was detected by update_usernames.  As an example,
+if a Twitter account named ``NYTimes`` was then changed to ``NewYorkTimes``, then
+the update_usernames script would update the name of the TwitterUser, and would also append
+to *former_names* so it might have a value like ``{"Thu Jan 16 13:48:56 2014": "NYTimes"}``
 
-**Twitter Account Goes Protected** What to expect on the SFM side
+**Twitter Account Goes Protected** What if a the owner of a Twitter account
+marks the account as protected?
+
+Note:  If the Twitter user configured in local_settings is a Twitter account
+which is Following the account in question, then SFM will continue to be able
+to download tweets from that account.
 
 **Twitter Account Deletion** What to expect on the SFM side
