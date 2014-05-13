@@ -9,7 +9,8 @@ Definitions
 A *TwitterUser* in SFM is the entity used to collect
 tweets tweeted by the corresponding account in Twitter.
 
-The fundamental, unique, unchanging identifier for a Twitter account is
+The fundamental, unique, unchanging 
+identifier for a Twitter account is
 its numeric UID.  The owner of a Twitter account might change the account's
 name, but the UID will never change.
 
@@ -70,20 +71,9 @@ name of the Twitter account, and saves the TwitterUser as Active.
 If the UID is not found, which may occur if the Twitter account has been
 deactivated, then SFM does not allow the TwitterUser to be saved as Active.
 
-**Deletion of a TwitterUser**  An SFM administrative user deletes a TwitterUser.  This is always allowed.
+**Deletion of a TwitterUser**  An SFM administrative user deletes a TwitterUser.  This is always allowed.  However, it is important to note that
+*all TwitterItems associated with this TwitterUser will also be deleted.*
 
-However, deleting a TwitterUser has a number of consequences:
-
-- All TwitterItems associated with this TwitterUser will also be deleted.
-- if an SFM user creates a new TwitterUser later with the same UID (i.e. to collect tweets from
-the same Twitter account), then 
-
-For these reasons, it may be preferable to consider deactivating, rather than deleting, any TwitterUser
-that may 
-
-
-Less Common Use Cases
----------------------
 
 **Name Change** What if the owner of a Twitter account changes the name of the account?
 If the TwitterUser in SFM was created to collect tweets from this Twitter account, it should
@@ -97,11 +87,22 @@ if a Twitter account named ``NYTimes`` was then changed to ``NewYorkTimes``, the
 the update_usernames script would update the name of the TwitterUser, and would also append
 to *former_names* so it might have a value like ``{"Thu Jan 16 13:48:56 2014": "NYTimes"}``
 
-**Twitter Account Goes Protected** What if a the owner of a Twitter account
+**Twitter Account Goes Protected** What if the owner of a Twitter account
 marks the account as protected?
 
-Note:  If the Twitter user configured in local_settings is a Twitter account
-which is Following the account in question, then SFM will continue to be able
-to download tweets from that account.
+If the ``TWITTER_DEFAULT_USERNAME`` configured in local_settings.py
+is a Twitter account which is following the protected Twitter account in
+question, then SFM will continue to be able to download tweets from that
+account.
 
-**Twitter Account Deletion** What to expect on the SFM side
+If this is not the case, then user_timeline jobs will
+encounter errors when attempting to retrieve new tweets for the account.
+These errors will be recorded in the TwitterUserTimelineErrors table.
+
+**Twitter Account Deletion** What if the owner of a Twitter account deletes
+the account?
+
+If the owner of a Twitter account deletes the account and there is an
+active TwitterUser mapped to the account, then user_timeline jobs will
+encounter errors when attempting to retrieve new tweets for the account.
+These errors will be recorded in the TwitterUserTimelineErrors table.
