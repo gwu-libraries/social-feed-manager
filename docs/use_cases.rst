@@ -90,7 +90,7 @@ to *former_names* so it might have a value like ``{"Thu Jan 16 13:48:56 2014": "
 **Twitter Account Goes Protected** What if the owner of a Twitter account
 marks the account as protected?
 
-If the ``TWITTER_DEFAULT_USERNAME`` configured in local_settings.py
+If the ``TWITTER_DEFAULT_USERNAME`` configured in *local_settings.py*
 is a Twitter account which is following the protected Twitter account in
 question, then SFM will continue to be able to download tweets from that
 account.
