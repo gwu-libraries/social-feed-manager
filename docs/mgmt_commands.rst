@@ -6,21 +6,22 @@ Social-feed-manager(SFM) has a features which allows you to store the tweets fro
 
 user_timeline
 -------------
-Twitter API allows you to fetch the user timeline for a particular username.SFM uses this API to fetch and then store the tweets of a particular twitter user or a list of twitter users. It is automated to run every two hours to collect tweets. You can run this command manually as well, as mentioned below:
+Twitter API allows you to fetch the user timeline for a particular username.SFM uses this API to fetch and then store the tweets of a particular twitter user or a list of twitter users.For the new twitter users added, it goes in a fetches approximately the last 3000 tweets, then gradually fetches latest tweets.It is automated to run every two hours to collect tweets. You can run this command manually as well, as mentioned below:
 
-To run:     
+To run:
 
 Fetch tweets for all the twitter users present in SFM 
-     ./manage.py user_timeline
+     `./manage.py user_timeline`
 
 Fetch tweets for the specific twitter user
      ./manage.py user_timeline - -user = 'twitter username'
 
 Check more options for user_timeline, use 
-     ./manage user_timeline - -help
+     ./manage.py user_timeline - -help
 
-Detailed API explanation :
-https://dev.twitter.com/docs/api/1/get/statuses/user_timeline
+`Detailed API explanation`_.
+
+.. _Detailed API Explanation: https://dev.twitter.com/docs/api/1/get/statuses/user_timeline
 
 update_usernames
 ----------------
@@ -32,11 +33,11 @@ Verifies and Updates any user-name changed for any twitter users
      ./manage.py update_usernames
 
 Verify and Update user-name for a specific twitter user 
-    ./manage.py update_usernames –user='twitter user-names
+    ./manage.py update_usernames - -user='twitter user-names'
 
 populate_uids
 --------------
-Twitter accounts have a unique uid associated with it. Each twitter user stored in SFM, is populated with its unique uid as well. This command fetches these uids using the twitter user-names.It is automated, and is signaled to execute whenever a new twitter user is added in the system. This command is now deprecated.
+Its a depricated command.Twitter accounts have a unique uid associated with it. Each twitter user stored in SFM, is populated with its unique uid as well. This command fetches these uids using the twitter user-names.It is automated, and is signaled to execute whenever a new twitter user is added in the system.
 
 streamsample
 ------------
@@ -45,7 +46,7 @@ Twitter Api allows to stream samples of public statuses. SFM uses this API,to fe
 To run:
 
 Fetch and save to file samples       
-     ./manage.py streamsample –save
+     ./manage.py streamsample - -save
 
 View samples on console
      ./manage.py streamsample
@@ -53,8 +54,8 @@ View samples on console
 Automated sample fetch
       You need to follow the supervisord installation and configuration settings. (LINK)
 
-Detailed API explanation: 
-https://dev.twitter.com/docs/api/1.1/get/statuses/sample
+`Detailed API explanation`_.
+.. _Detailed API explanation: https://dev.twitter.com/docs/api/1.1/get/statuses/sample
 
 filterstream
 ------------
@@ -69,7 +70,7 @@ Location- Returns public stream in a particular geographic location mentioned in
 
 To run:
 Fetch and save to file       
-     ./manage.py filterstream –save
+     ./manage.py filterstream - -save
 
 View samples on console
      ./manage.py filterstream
@@ -77,8 +78,8 @@ View samples on console
 Automated filter sample fetch
       You need to follow the supervisord installation and configuration settings. (LINK)
 
-Detailed API explanation: 
-https://stream.twitter.com/1.1/statuses/filter.json
+`Detailed API explanation`_.
+.. _Detailed API explanation:  https://stream.twitter.com/1.1/statuses/filter.json
 
 organizedata
 ------------
@@ -94,31 +95,32 @@ fetch_urls
 Fetch_urls is a feature in SFM, which allows you to store the urls in every tweet explicitly.You can view the expanded urls at admin page, under the twitteruseritemurl.
 Fetch_urls also provides you with options to mention as the criteria to fetch these urls. The options available are:
 
-1.Startdate -- The earliest date from where you want to fetch the urls
+* Startdate -- The earliest date from where you want to fetch the urls
 
-2.Enddate -- The latest date, untill which you want to fetch the urls
+* Enddate -- The latest date, untill which you want to fetch the urls
 
-3.twitteruser -- The specific twitter username you want to fetch the url for
+* twitteruser -- The specific twitter username you want to fetch the url for
 
-4.limit -- the limit in integers as to how many urls you will like to fetch
+* limit -- the limit in integers as to how many urls you will like to fetch
 
-5.refetch -- refetch the fetched urls.
+* refetch -- refetch the fetched urls.
 
 To run:
     ./manage.py fetch_urls 
 
 export_csv
 ----------
-SFM allows you to save the tweets from every twitter username, in the form of csv reports.A detailed explanation of the report can be found at the Data Dictionary at the about page in SFM UI http://gwsfm-prod.wrlc.org/about/   
+SFM allows you to save the tweets from every twitter username, in the form of csv reports.A detailed explanation of the report can be found at the Data Dictionary at `about page`
+.. _about page: http://gwsfm-prod.wrlc.org/about/   
 The report can be downloaded from the SFM UI directly, otherwise you can use the command as mentioned below to extract reports.The various options which can be given as the criteria to extract the report are:
 
-1.start-date -- returns the tweets starting from the specified date.
+* start-date -- returns the tweets starting from the specified date.
 
-2.end-date -- returns the tweets ending at the specified date.
+* end-date -- returns the tweets ending at the specified date.
 
-3.twitter-user -- returns all the tweets for the specified date
+* twitter-user -- returns all the tweets for the specified date
 
-4.set-name -- allows you ro customise the file name of the csv report.
+* set-name -- allows you ro customise the file name of the csv report.
 
 To run:
 
@@ -131,7 +133,7 @@ Createconf command is used to create the configuration files.These conf files ar
 
 To run manually:
 
-    ./manage.py createconf --twitter-filter
+    ./manage.py createconf - -twitter-filter
 
 Read more about the superviord conf:
 LINK 
