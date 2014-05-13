@@ -1,8 +1,7 @@
-
 Management Commands
 ====================
 
-Social-feed-manager(SFM) has a features which allows you to store the tweets from users, stream public statues, update their usernames et al. These features are present as management command under SFM, their description and usage is mentioned below:
+Social-feed-manager(SFM) has  features which allows you to store the tweets from users, stream public statues, update their usernames et al. These features are present as management command under SFM, their description and usage is mentioned below:
 
 user_timeline
 -------------
@@ -11,17 +10,36 @@ Twitter API allows you to fetch the user timeline for a particular username.SFM 
 To run:
 
 Fetch tweets for all the twitter users present in SFM 
-     `./manage.py user_timeline`
+       ``./manage.py user_timeline``
 
 Fetch tweets for the specific twitter user
-     ./manage.py user_timeline - -user = 'twitter username'
+       ``./manage.py user_timeline - -user = 'twitter username'``
 
 Check more options for user_timeline, use 
-     ./manage.py user_timeline - -help
+       ``./manage.py user_timeline - -help``
 
-`Detailed API explanation`_.
+Sample output for User_timeline:
 
-.. _Detailed API Explanation: https://dev.twitter.com/docs/api/1/get/statuses/user_timeline
+
+.. code-block:: none
+    
+    user: pinkfloyd
+    since: 1
+    saved: 200 item(s)
+    since: 1
+    max: 326988934884249599
+    saved: 200 item(s)
+    since: 1
+    max: 168992796676591616
+    saved: 199 item(s)
+    since: 1
+    max: 117550550098247679
+    saved: 86 item(s)
+    stop: < 150 new statuses
+
+For more information visit `Twitter API`_.
+
+.. _Twitter API:  https://dev.twitter.com/docs/api/1/get/statuses/user_timeline
 
 update_usernames
 ----------------
@@ -30,14 +48,15 @@ Twitter allows account holders to update their user-name. update_username featur
 To run :
 
 Verifies and Updates any user-name changed for any twitter users 
-     ./manage.py update_usernames
+       ``./manage.py update_usernames``
 
 Verify and Update user-name for a specific twitter user 
-    ./manage.py update_usernames - -user='twitter user-names'
+       ``./manage.py update_usernames - -user='twitter user-names'``
 
 populate_uids
 --------------
-Its a depricated command.Twitter accounts have a unique uid associated with it. Each twitter user stored in SFM, is populated with its unique uid as well. This command fetches these uids using the twitter user-names.It is automated, and is signaled to execute whenever a new twitter user is added in the system.
+Populate_uid is now a depricated command, as it is now executed implicitly.
+Twitter accounts have a unique uid associated with it. Each twitter user stored in SFM, is populated with its unique uid as well. This command fetches these uids using the twitter user-names.It is automated, and is signaled to execute whenever a new twitter user is added in the system.
 
 streamsample
 ------------
@@ -46,16 +65,32 @@ Twitter Api allows to stream samples of public statuses. SFM uses this API,to fe
 To run:
 
 Fetch and save to file samples       
-     ./manage.py streamsample - -save
+       ``./manage.py streamsample - -save``
 
 View samples on console
-     ./manage.py streamsample
+       ``./manage.py streamsample``
 
 Automated sample fetch
       You need to follow the supervisord installation and configuration settings. (LINK)
 
-`Detailed API explanation`_.
-.. _Detailed API explanation: https://dev.twitter.com/docs/api/1.1/get/statuses/sample
+Sample output streamsample:
+
+.. code-block:: none
+
+    {"delete":{"status":{"id":465921613243113473,"user_id":143312522,"id_str":"465921613243113473","user_id_str":"143312522"}}}^M
+     
+     {"created_at":"Mon May 12 18:45:52 +0000 2014","id":465925845312606210,"id_str":"465925845312606210","text":"next weekend is #pride long beach! Finally, cant wait!!!","source":"\u003ca href=\"http:\/\/    twitter.com\/download\/android\" rel=\"nofollow\"\u003eTwitter for Android\u003c\/a\u003e","truncated":false,"in_reply_to_status_id":null,"in_reply_to_status_id_str":null,"in_reply_to_user_id":null,
+     "in_reply_to_user_id_str":null,"in_reply_to_screen_name":null,"user":{"id":2213376380,"id_str":"2213376380","name":"Mona Lefleur","screen_name":"MonaLefleur","location":"Hollywood, California","url":null, "description":"IG @monalefleur","protected":false,"followers_count":62,"friends_count":109,"listed_count":1,"created_at":"Mon Nov 25 02:15:29 +0000 2013","favourites_count":993,"utc_offset":null,
+     "time_zone":null,"geo_enabled":true,"verified":false,"statuses_count":2554,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":         "C0DEED","profile_background_image_url":"http:\/\/pbs.twimg.com\/profile_background_images\/378800000123287236\/fbc8528ea15708a07515a1428d8d350d.jpeg","profile_background_image_url_https":"https:\/\/pbs.
+     twimg.com\/profile_background_images\/378800000123287236\/fbc8528ea15708a07515a1428d8d350d.jpeg","profile_background_tile":true,"profile_image_url":"http:\/\/pbs.twimg.com\/profile_images\/                465724842738593792\/XVBrhbMf_normal.jpeg","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/465724842738593792\/XVBrhbMf_normal.jpeg","profile_banner_url":"https:\/\/pbs.twimg.com\/
+     profile_banners\/2213376380\/1385347154","profile_link_color":"0084B4","profile_sidebar_border_color":"000000","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333",                          "profile_use_background_image":true,"default_profile":false,"default_profile_image":false,"following":null,"follow_request_sent":null,"notifications":null},"geo":null,"coordinates":null,"place":null,
+     "contributors":null,"retweet_count":0,"favorite_count":0,"entities":{"hashtags":[{"text":"pride","indices":[16,22]}],"symbols":[],"urls":[],"user_mentions":[]},"favorited":false,"retweeted":false,         "filter_level":"medium","lang":"en"}^M
+
+
+For more information visit `Twitter samplestream API`_.
+
+.. _Twitter samplestream API:  https://dev.twitter.com/docs/api/1.1/get/statuses/sample
+
 
 filterstream
 ------------
@@ -70,16 +105,17 @@ Location- Returns public stream in a particular geographic location mentioned in
 
 To run:
 Fetch and save to file       
-     ./manage.py filterstream - -save
+       ``./manage.py filterstream - -save``
 
 View samples on console
-     ./manage.py filterstream
+       ``./manage.py filterstream``
 
 Automated filter sample fetch
       You need to follow the supervisord installation and configuration settings. (LINK)
 
-`Detailed API explanation`_.
-.. _Detailed API explanation:  https://stream.twitter.com/1.1/statuses/filter.json
+For more information visit `Twitter filterstream API`_.
+
+.. _Twitter filterstream API:  https://stream.twitter.com/1.1/statuses/filter.json
 
 organizedata
 ------------
@@ -88,7 +124,7 @@ The filterstream and streamsample produces gigs of data in numerous file.Organiz
 To run:
 
 Organize the tons of files in sub-directories:
-    ./manage.py organizedata
+       ``./manage.py organizedata``
 
 fetch_urls
 ----------
@@ -106,7 +142,8 @@ Fetch_urls also provides you with options to mention as the criteria to fetch th
 * refetch -- refetch the fetched urls.
 
 To run:
-    ./manage.py fetch_urls 
+
+      ``./manage.py fetch_urls``
 
 export_csv
 ----------
@@ -125,7 +162,7 @@ The report can be downloaded from the SFM UI directly, otherwise you can use the
 To run:
 
 extract the CSV report
-       ./manage.py export_csv
+       ``./manage.py export_csv``
 
 createconf
 ----------
@@ -133,7 +170,7 @@ Createconf command is used to create the configuration files.These conf files ar
 
 To run manually:
 
-    ./manage.py createconf - -twitter-filter
+      ``./manage.py createconf - -twitter-filter``
 
 Read more about the superviord conf:
 LINK 
