@@ -88,15 +88,32 @@ Sample output for user_timeline:
 
 update_usernames
 ----------------
-Twitter allows account holders to update their user-name. update_username feature enables SFM to update the user-names of twitter users if any user-names have been changed. It is automated to run once everyday to verify and update any twitter users with new updated user-names. You can run it manually as well, as mentioned below:
 
-To run :
+Twitter account owners can, and often do, change the names of their accounts,
+although an account's UID never changes.
 
-Verifies and Updates any user-name changed for any twitter users 
-     ./manage.py update_usernames
+update_usernames looks up the names of the Twitter accounts corresponding to
+all active TwitterUsers.  If a Twitter account's name has changed since SFM
+last verified the account's name, update_usernames will update the name of the
+TwitterUser, and will append the former name (and timestamp) to the TwitterUser's former_names value.  former_names is a json field; an example would be:
 
-Verify and Update user-name for a specific twitter user 
-    ./manage.py update_usernames –user='twitter user-names
+``{"2014-02-19T21:50:56Z": "OldName", "2014-01-16T13:49:02Z": "EvenOlderName"}``
+
+Note that update_username is case sensitive; a change in capitalization *is*
+considered a name change.
+
+To update names of all active TwitterUsers:
+
+.. code-block:: none
+
+   ./manage.py update_usernames
+
+To update names of a specific active TwitterUser, by its current name in SFM:
+
+.. code-block:: none
+
+   ./manage.py update_usernames --user='current TwitterUser name in SFM'
+
 
 populate_uids
 --------------
