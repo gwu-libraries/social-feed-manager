@@ -1,11 +1,11 @@
 Management Commands
 ====================
 
-Social-feed-manager(SFM) has  features which allows you to store the tweets from users, stream public statues, update their usernames et al. These features are present as management command under SFM, their description and usage is mentioned below:
+Social-feed-manager(SFM) has  features which allows you to store the tweets from users, download those tweets,  stream public statues, update their usernames, fetch urls in tweets, filter and capture public statues, collect random samples of twitter data and many more. These features are present as management command under SFM, their description and usage is mentioned below.
 
 user_timeline
 -------------
-Twitter API allows you to fetch the user timeline for a particular username.SFM uses this API to fetch and then store the tweets of a particular twitter user or a list of twitter users.For the new twitter users added, it goes in a fetches approximately the last 3000 tweets, then gradually fetches latest tweets.It is automated to run every two hours to collect tweets. You can run this command manually as well, as mentioned below:
+Twitter API allows you to fetch the user timeline for a particular username.SFM uses this API to fetch and then store the tweets of a particular twitter user or a list of twitter users.For the new twitter users added, it goes in a fetches approximately the last 3200 tweets, then gradually fetches latest tweets.It is automated to run every two hours to collect tweets. You can run this command manually as well, as mentioned below:
 
 To run:
 
@@ -52,6 +52,8 @@ Verifies and Updates any user-name changed for any twitter users
 
 Verify and Update user-name for a specific twitter user 
        ``./manage.py update_usernames - -user='twitter user-names'``
+
+       (Need to add the output)
 
 populate_uids
 --------------
@@ -111,11 +113,24 @@ View samples on console
        ``./manage.py filterstream``
 
 Automated filter sample fetch
-      You need to follow the supervisord installation and configuration settings. (LINK)
+      You need to follow the `supervisord`_ installation and configuration settings. 
+
+.. _supervisord: http://social-feed-manager.readthedocs.org/supervisor_and_streams.html
+
 
 For more information visit `Twitter filterstream API`_.
 
 .. _Twitter filterstream API:  https://stream.twitter.com/1.1/statuses/filter.json
+
+.. code-block:: none
+
+    {"created_at":"Fri May 09 20:15:40 +0000 2014","id":464861280613187584,"id_str":"464861280613187584","text":"http:\/\/t.co\/PptT8rWgm2   \u041c\u0438\u0441\u0442\u0440\u0430                                \u043e\u0431\u0434\u0443\u043c\u0430\u043b\u0430 \u0441\u0432\u043e\u0438 \u0432\u043e\u0437\u043c\u043e\u0436\u043d\u043e\u0441\u0442\u0438. \u0415\u0441\u043b\u0438
+    \u0411\u044d\u0439\u043d              \u0431\u0443\u0434\u0435\u0442  \u043d\u0430\u0441\u0442\u043e\u043b\u044c\u043a\u043e  \u0433\u043b\u0443\u043f,  \u0447\u0442\u043e","source":"web","truncated":false,"in_reply_to_status_id":null,        "in_reply_to_status_id_str":null,"in_reply_to_user_id":null,"in_reply_to_user_id_str":null,"in_reply_to_screen_name":null,"user":{"id":1438364906,"id_str":"1438364906","name":"\u0412\u0430\u0441\u044f
+    \u0411\u0430\u043d\u0434\u0438\u0442","screen_name":"BanditVasya","location":"\u0420\u044f\u0437\u0430\u043d\u044c","url":null,"description":"\u041d\u0435 \u0443\u043c\u0435\u0435\u0448\u044c              \u0440\u0430\u0431\u043e\u0442\u0430\u0442\u044c \u0445\u043e\u0440\u043e\u0448\u043e - \u0440\u0430\u0431\u043e\u0442\u0430\u0439 \u043c\u043d\u043e\u0433\u043e!","protected":false,"followers_count":231,
+    "friends_count":253,"listed_count":0,"created_at":"Sat May 18 13:11:28 +0000 2013","favourites_count":0,"utc_offset":null,"time_zone":null,"geo_enabled":false,"verified":false,"statuses_count":178,"lang": "ru","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"BADFCD","profile_background_image_url":"http:\/\/abs.twimg.com\/images\/themes\/theme12\/
+    bg.gif","profile_background_image_url_https":"https:\/\/abs.twimg.com\/images\/themes\/theme12\/bg.gif","profile_background_tile":false,"profile_image_url":"http:\/\/pbs.twimg.com\/profile_images\/        3676268819\/78932aa21de122b8de65423436626be8_normal.jpeg","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/3676268819\/78932aa21de122b8de65423436626be8_normal.jpeg",
+    "profile_banner_url":"https:\/\/pbs.twimg.com\/profile_banners\/1438364906\/1368882784","profile_link_color":"FF0000","profile_sidebar_border_color":"F2E195","profile_sidebar_fill_color":"FFF7CC",         "profile_text_color":"0C3E53","profile_use_background_image":true,"default_profile":false,"default_profile_image":false,"following":null,"follow_request_sent":null,"notifications":null},"geo":null,
+    "coordinates":null,"place":null,"contributors":null,"retweet_count":0,"favorite_count":0,"entities":{"hashtags":[],"symbols":[],"urls":[{"url":"http:\/\/t.co\/PptT8rWgm2","expanded_url":"http:\/\/         kinoprostotraf.ru\/noj-42\/","display_url":"kinoprostotraf.ru\/noj-42\/","indices":[0,22]}],"user_mentions":[]},"favorited":false,"retweeted":false,"possibly_sensitive":false,"filter_level":"medium",      "lang":"ru"}^M
 
 organizedata
 ------------
@@ -129,7 +144,7 @@ Organize the tons of files in sub-directories:
 fetch_urls
 ----------
 Fetch_urls is a feature in SFM, which allows you to store the urls in every tweet explicitly.You can view the expanded urls at admin page, under the twitteruseritemurl.
-Fetch_urls also provides you with options to mention as the criteria to fetch these urls. The options available are:
+It also provides you with options to mention as the criteria to fetch these urls. The options available are:
 
 * Startdate -- The earliest date from where you want to fetch the urls
 
@@ -151,6 +166,8 @@ SFM allows you to save the tweets from every twitter username, in the form of cs
 .. _about page: http://gwsfm-prod.wrlc.org/about/   
 The report can be downloaded from the SFM UI directly, otherwise you can use the command as mentioned below to extract reports.The various options which can be given as the criteria to extract the report are:
 
+Options--
+
 * start-date -- returns the tweets starting from the specified date.
 
 * end-date -- returns the tweets ending at the specified date.
@@ -162,8 +179,8 @@ The report can be downloaded from the SFM UI directly, otherwise you can use the
 To run:
 
 extract the CSV report
-       ``./manage.py export_csv``
-
+       ``./manage.py export_csv - -[options]``
+    
 createconf
 ----------
 Createconf command is used to create the configuration files.These conf files are the sub-processes picked up by Supervisord.By default, Supervisord is configuired to initiate the streamsample subprocess, while the filtrestream conf files are dynamically added as sub-process under supervisord. This command is signaled to execute when a twitter filter is added to the system. 
@@ -172,5 +189,6 @@ To run manually:
 
       ``./manage.py createconf - -twitter-filter``
 
-Read more about the superviord conf:
-LINK 
+Read more about the `supervisord conf`_.
+
+.. _`supervisord conf`:  http://social-feed-manager.readthedocs.org/supervisor_and_streams.html#Filterstream-setup
