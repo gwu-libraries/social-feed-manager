@@ -33,9 +33,8 @@ No, filterstreams and streamsample can be also be run manually using the
 management commands page.
 
 
-The number of retweets in a TwitterItem is inconsistent with the
-number of retweets shown on the tweet in Twitter.  Why?
--------------------------------------------------------
+The number of retweets in a TwitterItem is inconsistent with the number of retweets shown on the tweet in Twitter.  Why?
+-------------------------------------------------------------------------------------------------------------------------
 
 TwitterItems are created as they appear at the time they are captured
 from Twitter.  However, tweets on Twitter can change afterwards; they
