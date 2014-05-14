@@ -68,6 +68,23 @@ The full specification of user_timeline options can be viewed using --help:
 
    ./manage user_timeline --help
 
+Sample output for user_timeline:
+
+.. code-block:: none
+    
+    user: pinkfloyd
+    since: 1
+    saved: 200 item(s)
+    since: 1
+    max: 326988934884249599
+    saved: 200 item(s)
+    since: 1
+    max: 168992796676591616
+    saved: 199 item(s)
+    since: 1
+    max: 117550550098247679
+    saved: 86 item(s)
+    stop: < 150 new statuses
 
 update_usernames
 ----------------
