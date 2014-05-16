@@ -117,7 +117,9 @@ To update names of a specific active TwitterUser, by its current name in SFM:
 
 populate_uids
 --------------
-Twitter accounts have a unique uid associated with it. Each twitter user stored in SFM, is populated with its unique uid as well. This command fetches these uids using the twitter user-names.It is automated, and is signaled to execute whenever a new twitter user is added in the system. This command is now deprecated.
+
+.. deprecated:: m5_001
+
 
 streamsample
 ------------
