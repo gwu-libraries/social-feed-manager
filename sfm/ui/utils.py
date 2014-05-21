@@ -1,5 +1,7 @@
-import datetime
+import getpass
 import os
+import stat
+import datetime
 from supervisor.xmlrpc import SupervisorTransport
 import time
 import traceback
@@ -46,6 +48,41 @@ def make_date_aware(date_str):
     except:
         print traceback.print_exc()
         return None
+
+
+def create_conf_file(twitterfilter_id):
+    projectroot = settings.SFM_ROOT
+    if hasattr(settings, 'SUPERVISOR_PROCESS_USER'):
+        processowner = settings.SUPERVISOR_PROCESS_USER
+    else:
+        processowner = getpass.getuser()
+
+    contents = "[program:twitterfilter-%s]" % twitterfilter_id + '\n' + \
+               "command=%s/ENV/bin/python " % projectroot + \
+               "%s/sfm/manage.py " % projectroot + \
+               "filterstream %s --save" % twitterfilter_id + '\n' \
+               "user=%s" % processowner + '\n' \
+               "autostart=true" + '\n' \
+               "autorestart=true" + '\n' \
+               "stderr_logfile=/var/log/sfm/" \
+               "twitterfilter-%s.err.log" % twitterfilter_id + '\n' \
+               "stdout_logfile=/var/log/sfm/" \
+               "twitterfilter-%s.out.log" % twitterfilter_id + '\n'
+    filename = "twitterfilter-%s.conf" % twitterfilter_id
+    file_path = "%s/sfm/sfm/supervisor.d/%s" % (projectroot, filename)
+    # Remove any existing config file
+    # we don't assume that the contents are up-to-date
+    # (PATH settings may have changed, etc.)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    # Write the file
+    fp = open(file_path, "wb")
+    fp.write(contents)
+    filestatus = os.stat(file_path)
+    # do a chmod +x
+    os.chmod(file_path, filestatus.st_mode | stat.S_IXUSR |
+             stat.S_IXGRP | stat.S_IXOTH)
+    fp.close()
 
 
 def delete_conf_file(twitterfilter):

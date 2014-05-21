@@ -12,14 +12,13 @@ from tweepy.streaming import StreamListener
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.management import call_command
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.db import models as m
 from django.utils import timezone
 
 import ui.utils
-from ui.utils import delete_conf_file, set_wait_time
+from ui.utils import create_conf_file, delete_conf_file, set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
@@ -377,7 +376,7 @@ documentation</a> for more information.""")
 @receiver(post_save, sender=TwitterFilter)
 def call_create_conf(sender, instance, **kwargs):
     if instance.is_active is True:
-        call_command('createconf', twitterfilter=instance.id)
+        create_conf_file(instance.id)
         ui.utils.add_process_group(instance.id)
     else:
         delete_conf_file(instance.id)
