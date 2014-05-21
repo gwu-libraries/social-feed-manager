@@ -59,7 +59,6 @@ def get_supervisor_proxy():
     proxy = xmlrpclib.ServerProxy(
         'http://127.0.0.1', transport=SupervisorTransport(
             None, None, 'unix://'+settings.SUPERVISOR_UNIX_SOCKET_FILE))
-
     return proxy
 
 
