@@ -18,6 +18,7 @@ from django.dispatch import receiver
 from django.db import models as m
 from django.utils import timezone
 
+import ui.utils
 from ui.utils import delete_conf_file, set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
@@ -29,7 +30,7 @@ def authenticated_api(username, api_root=None, parser=None):
     auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,
                                settings.TWITTER_CONSUMER_SECRET)
     try:
-        user = User.objects.get(username__iexact=username)
+        user = User.objects.get(username=username)
         sa = user.social_auth.all()[0]
         auth.set_access_token(sa.tokens['oauth_token'],
                               sa.tokens['oauth_token_secret'])
@@ -377,10 +378,13 @@ documentation</a> for more information.""")
 def call_create_conf(sender, instance, **kwargs):
     if instance.is_active is True:
         call_command('createconf', twitterfilter=instance.id)
+        ui.utils.add_process_group(instance.id)
     else:
         delete_conf_file(instance.id)
+        ui.utils.remove_process_group(instance.id)
 
 
 @receiver(post_delete, sender=TwitterFilter)
 def call_delete_conf(sender, instance, **kwargs):
     delete_conf_file(instance.id)
+    ui.utils.remove_process_group(instance.id)

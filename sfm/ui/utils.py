@@ -1,7 +1,9 @@
 import datetime
 import os
+from supervisor.xmlrpc import SupervisorTransport
 import time
 import traceback
+import xmlrpclib
 
 from django.utils import timezone
 
@@ -51,3 +53,24 @@ def delete_conf_file(twitterfilter):
     file_path = "%s/sfm/sfm/supervisor.d/%s" % (settings.SFM_ROOT, filename)
     if os.path.exists(file_path):
         os.remove(file_path)
+
+
+def get_supervisor_proxy():
+    proxy = xmlrpclib.ServerProxy(
+        'http://127.0.0.1', transport=SupervisorTransport(
+            None, None, 'unix://'+settings.SUPERVISOR_UNIX_SOCKET_FILE))
+
+    return proxy
+
+
+def add_process_group(filterid):
+    proxy = get_supervisor_proxy()
+    filename = "twitterfilter-%s" % filterid
+    proxy.supervisor.addProcessGroup(filename)
+
+
+def remove_process_group(filterid):
+    proxy = get_supervisor_proxy()
+    filename = "twitterfilter-%s" % filterid
+    proxy.supervisor.stopProcess(filename, True)
+    proxy.supervisor.removeProcessGroup(filename)
