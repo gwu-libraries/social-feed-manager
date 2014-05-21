@@ -41,6 +41,10 @@ DATA_DIR = '/PATH/TO/YOUR/DATA/DIR'
 # will use the owner of the sfm app process.  The owner must
 # be able to write to /var/log/sfm
 SUPERVISOR_PROCESS_USER = 'YOUR PREFERRED SYSTEM USER'
+# path to the supervisor Unix socket file (with no unix:// prefix)
+# e.g. '/tmp/supervisor.sock'.  Note that this must match the Unix
+# socket file specified in supervisor.conf
+SUPERVISOR_UNIX_SOCKET_FILE = ''
 
 TWITTER_DEFAULT_USERNAME = 'MY FANCY USERNAME'
 TWITTER_CONSUMER_KEY = 'ITS CONSUMER KEY'
