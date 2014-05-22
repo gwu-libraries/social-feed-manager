@@ -3,8 +3,10 @@
 Introduction
 ============
 
+Overview
+--------
 Social Feed Manager is open source software for locally capturing public data from Twitter. 
-It makes it possible for scholars, students, archivists, and librarians to:
+It makes it possible for librarians, archivists, scholars, and students to:
 
 - identify, select, collect, and preserve "at risk" social media data
 - gather datasets of tweets in bulk for analysis in other software packages
@@ -49,6 +51,12 @@ and is now being supported by multiple developers and an IMLS Sparks! Innovation
 archives have installed it and are providing feedback to help prioritize development of new features. 
 
 The software is available for use, study, copying, and modification under a free and open source software license (MIT license). We welcome others to become involved in the project and contribute to the code.
+
+Contact us
+^^^^^^^^^^
+
+- `sfm-dev Google Group <https://groups.google.com/forum/#!forum/sfm-dev>`_
+- Developers responsible for the app include Dan Chudnov (@dchud) and Dan Kerchner (@kerchner). 
 
 Resources
 ^^^^^^^^^
