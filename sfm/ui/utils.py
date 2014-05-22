@@ -101,12 +101,18 @@ def get_supervisor_proxy():
 
 def add_process_group(filterid):
     proxy = get_supervisor_proxy()
-    filename = "twitterfilter-%s" % filterid
-    proxy.supervisor.addProcessGroup(filename)
+    processname = "twitterfilter-%s" % filterid
+    proxy.supervisor.addProcessGroup(processname)
 
 
 def remove_process_group(filterid):
     proxy = get_supervisor_proxy()
-    filename = "twitterfilter-%s" % filterid
-    proxy.supervisor.stopProcess(filename, True)
-    proxy.supervisor.removeProcessGroup(filename)
+    processname = "twitterfilter-%s" % filterid
+    proxy.supervisor.stopProcess(processname, True)
+    time.sleep(1)
+    proxy.supervisor.removeProcessGroup(processname)
+
+
+def reload_config():
+    proxy = get_supervisor_proxy()
+    proxy.supervisor.reloadConfig()
