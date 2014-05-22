@@ -377,10 +377,12 @@ documentation</a> for more information.""")
 def call_create_conf(sender, instance, **kwargs):
     if instance.is_active is True:
         create_conf_file(instance.id)
+        time.sleep(1)
+        ui.utils.reload_config()
         ui.utils.add_process_group(instance.id)
     else:
-        delete_conf_file(instance.id)
         ui.utils.remove_process_group(instance.id)
+        delete_conf_file(instance.id)
 
 
 @receiver(post_delete, sender=TwitterFilter)
