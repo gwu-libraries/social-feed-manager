@@ -58,12 +58,15 @@ There are a number of broswer plugins available (JSONovich, JSONView, and
 others) which improve the way that JSON is displayed.
 
 
+Can I set this up on on a Mac?
+------------------------------
+
+We haven't been running this on a Mac, but a colleague we met at Code4Lib 2014
+has done it.  Check out his blog post here: http://dicarve.blogspot.com/2014/04/an-relatively-easy-way-for-installing.html
+
 
 Troubleshooting
 ===============
-
-We'll add items to this section as issues arise.
-
 
 TwitterUserItemUrls is empty.  Why isn't SFM fetching URLS?
 -----------------------------------------------------------
@@ -79,10 +82,3 @@ used in the future, and streamsample authenticates with the Twitter API using
 TWITTER_DEFAULT_USER.  Due to Twitter API's rate limiting, SFM prevents
 the possibility of having multiple streams (in this case, streamsample and a
 filterstream) simultaneously calling the Twitter streaming API with the same Twitter user name.
-
-
-Can I set this up on on a Mac?
-------------------------------
-
-We haven't been running this on a Mac, but a colleague we met at Code4Lib 2014
-has done it.  Check out his blog post here: http://dicarve.blogspot.com/2014/04/an-relatively-easy-way-for-installing.html
