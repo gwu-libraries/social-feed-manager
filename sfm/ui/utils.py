@@ -2,14 +2,13 @@ import datetime
 import getpass
 import os
 import stat
-from supervisor.xmlrpc import SupervisorTransport
+from supervisor import xmlrpc
 import time
 import traceback
 import xmlrpclib
 
-from django.utils import timezone
-
 from django.conf import settings
+from django.utils import timezone
 
 
 # A little added cushion
@@ -94,7 +93,7 @@ def delete_conf_file(twitterfilter):
 
 def get_supervisor_proxy():
     proxy = xmlrpclib.ServerProxy(
-        'http://127.0.0.1', transport=SupervisorTransport(
+        'http://127.0.0.1', transport=xmlrpc.SupervisorTransport(
             None, None, 'unix://'+settings.SUPERVISOR_UNIX_SOCKET_FILE))
     return proxy
 
@@ -102,15 +101,37 @@ def get_supervisor_proxy():
 def add_process_group(filterid):
     proxy = get_supervisor_proxy()
     processname = "twitterfilter-%s" % filterid
-    proxy.supervisor.addProcessGroup(processname)
+    try:
+        proxy.supervisor.addProcessGroup(processname)
+    except xmlrpclib.Fault as e:
+        if e.faultCode != xmlrpc.Faults.ALREADY_ADDED:
+            raise
+        # else ignore - it's already added
+        # but everything else, we want to raise
 
 
 def remove_process_group(filterid):
     proxy = get_supervisor_proxy()
     processname = "twitterfilter-%s" % filterid
-    proxy.supervisor.stopProcess(processname, True)
+    try:
+        proxy.supervisor.stopProcess(processname, True)
+    except xmlrpclib.Fault as e:
+        if e.faultCode == xmlrpc.Faults.BAD_NAME:
+            # process isn't known, so there's nothing to stop
+            # or remove
+            return
+        elif e.faultCode != xmlrpc.Faults.NOT_RUNNING:
+            raise
+        # else ignore and proceed - it's already stopped
+        # nothing to stop
     time.sleep(1)
-    proxy.supervisor.removeProcessGroup(processname)
+    try:
+        proxy.supervisor.removeProcessGroup(processname)
+    except xmlrpclib.Fault as e:
+        if e.faultCode != xmlrpc.Faults.BAD_NAME:
+            raise
+        # else do nothing - no such known process, so there's
+        # nothing to remove
 
 
 def reload_config():
