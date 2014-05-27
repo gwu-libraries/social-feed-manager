@@ -6,7 +6,7 @@ Frequently Asked Questions
 Does Social Feed Manager capture photos and other media embedded in tweets?
 ---------------------------------------------------------------------------
 
-As of version m5, not yet.  But this is something we're looking forward
+As of version m5, no.  But this is something we're looking forward
 to implementing in the near term.
 
 
@@ -21,8 +21,8 @@ will request as many tweets as the Twitter API can provide, i.e. up to 3200.
 Does Social Feed Manager capture the followers list?
 ----------------------------------------------------
 
-No.  However, the Twitter API does provide a way to retrieve an account's
-follower list.
+No. SFM does capture the number of followers at the time the tweet was retrieved. However, the Twitter API does provide a way to retrieve an account's
+follower list. 
 
 
 Do I have to set up supervisord in order to use filterstreams or streamsample?
@@ -39,8 +39,7 @@ The number of retweets in a TwitterItem is inconsistent with the number of retwe
 TwitterItems are created as they appear at the time they are captured
 from Twitter.  However, tweets on Twitter can change afterwards; they
 can be further retweeted, they can be deleted, etc.  In fact, an advantage
-of using SFM is that it takes a snapshot of tweets before, in their
-ephemeral nature, they change or disappear!
+of using SFM is that it takes a snapshot of tweets before they change or disappear!
 
 Currently there is no way to "update" a TwitterItem with any changes that
 may have occurred to the corresponding tweet.  This is something we might
