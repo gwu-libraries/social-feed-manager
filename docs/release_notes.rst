@@ -10,7 +10,8 @@ Final Releases:
 
 .. toctree::
    :maxdepth: 2
-
+   
+   m5_001 release notes <m5_001_release_notes>
    m4_002 release notes <m4_002_release_notes>
    m4_001 release notes <m4_001_release_notes>
    

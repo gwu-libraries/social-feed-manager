@@ -2,8 +2,6 @@
 m4_001 release notes
 ====================
      
-*April 28, 2014*
-
 **m4_002** has changes to manage the process under Supervisord.
 
 

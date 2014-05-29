@@ -2,8 +2,6 @@
 m4_001 release notes
 ====================
      
-*April 28, 2014*
-
 **m4_001** introduces collecting expanded urls in tweets, supervisord to manage multiple process, and enhances organizedata to structure data files. It also fixes the bugs produced due to supervisord and cleans up the twitteruser status and filterstream issues.
 
 **Enhancements**
