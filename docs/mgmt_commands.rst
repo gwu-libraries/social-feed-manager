@@ -123,45 +123,81 @@ populate_uids
 
 streamsample
 ------------
-Twitter Api allows to stream samples of public statuses. SFM uses this API,to fetch streams of these random samples and stores them in files. The location of these output files is configured by the authenticated user at the time of the installation. Streamsample runs constanly, especially when configured with supervisord, hence fetching gigs of data in the files.
 
-To run:
+The Twitter API provides a streaming interface which returns a random sample (approximately 0.5%)
+of all public tweets.  The SFM streamsample management command directs the content of this stream
+to files.  The location of these output files is determined by the DATA_DIR variable in the
+local_settings.py configuration file.  As streamsample is intended to be run as an ongoing,
+streaming process, SFM provides a streamsample.conf.template file in
+<PROJECT ROOT>/sfm/sfm/supervisor.d that can be copied to streamsample.conf and edited to
+include the relevant pathnames, so that it can be run and managed using supervisord.
 
-Fetch and save to file samples       
-     ./manage.py streamsample –save
+Streamsample currently generates around 1 GB worth of tweet data per day, so it is important to
+plan storage capacity accordingly.
 
-View samples on console
+To run manually and view streaming output to the console:
+
+.. code-block:: none
+
      ./manage.py streamsample
 
-Automated sample fetch
-      You need to follow the supervisord installation and configuration settings. (LINK)
+To run manually and direct output to files in DATA_DIR:
 
-Detailed API explanation: 
+.. code-block:: none
+
+     ./manage.py streamsample –save
+
+Information on the Twitter API streamsample resource:
 https://dev.twitter.com/docs/api/1.1/get/statuses/sample
+
 
 filterstream
 ------------
-Twitter API allows to fetch public statues using one or more filter predicates. SFM uses this API to fetch a series of public statues per the parameters mentioned in the filters. The output genertaed by filterstream is stored in files, the path for the output files is mentioned at the time of the installation.The three categories, which can be passed as the parameters for filtering the tweets are :
 
-Words - Returns public statues containing the words mentioned in this parameter.    
+The Twitter API provides a streaming interface which returns tweets that match one or more filter
+predicates.  SFM administrative users can create multiple TwitterFilters, each with its own
+predicate parameters.  The SFM filterstream management command directs the content of 
+one or more active TwitterFilters to files.  The location of these output files is determined by
+the DATA_DIR variable in the local_settings.py configuration file. 
 
-People - Returns public stream on the basis of usernames mentioned in this parameter.
+Filterstream is intended to be run as a set of ongoing, streaming processes; SFM automatically
+generates the necessary supervisord configuration files.  However, generation of these files
+requires the DATA_DIR, SUPERVISOR_PROCESS_USER, and SUPERVISOR_UNIX_SOCKET_FILE settings
+variables to be configured in local_settings.py .
 
-Location- Returns public stream in a particular geographic location mentioned in this parameter.
-          This parameter is not upgraded as yet, hence should not be used.
+Each TwitterFilter may contain the following predicates:
 
-To run:
-Fetch and save to file       
-     ./manage.py filterstream –save
+Words - Keywords to track
 
-View samples on console
+People - Twitter accounts to track
+
+Location - Geographic bonuding boxes to track
+
+To run manually and view streaming output to the console:
+
+.. code-block:: none
+
      ./manage.py filterstream
 
-Automated filter sample fetch
-      You need to follow the supervisord installation and configuration settings. (LINK)
+To run manually and direct output to files in DATA_DIR:
 
-Detailed API explanation: 
+.. code-block:: none
+
+     ./manage.py filterstream –save
+
+Filterstream can also take a parameter corresponding to the number of an individidual
+TwitterFilter, e.g.
+
+.. code-block:: none
+
+     ./manage.py filterstream 4 –save
+
+This will run only TwitterFilter with an id of 4.  If no TwitterFilter number is given,
+filterstream will run for all active TwitterFilters.
+
+Information on the Twitter API filter streaming resource:
 https://stream.twitter.com/1.1/statuses/filter.json
+
 
 organizedata
 ------------
