@@ -132,8 +132,8 @@ streaming process, SFM provides a streamsample.conf.template file in
 <PROJECT ROOT>/sfm/sfm/supervisor.d that can be copied to streamsample.conf and edited to
 include the relevant pathnames, so that it can be run and managed using supervisord.
 
-Streamsample currently generates around 1 GB worth of tweet data per day, so it is important to
-plan storage capacity accordingly.
+Streamsample currently generates 2 GB worth of tweet data per day (roughly 2.2-2.5 million
+tweets), so it is important to plan storage capacity accordingly.
 
 To run manually and view streaming output to the console:
 
@@ -192,8 +192,8 @@ TwitterFilter, e.g.
 
      ./manage.py filterstream 4 –save
 
-This will run only TwitterFilter with an id of 4.  If no TwitterFilter number is given,
-filterstream will run for all active TwitterFilters.
+This will run filterstream only for the TwitterFilter with an id of 4.
+If no TwitterFilter number is given, filterstream will run for all active TwitterFilters.
 
 Information on the Twitter API filter streaming resource:
 https://stream.twitter.com/1.1/statuses/filter.json
@@ -201,12 +201,29 @@ https://stream.twitter.com/1.1/statuses/filter.json
 
 organizedata
 ------------
-The filterstream and streamsample produces gigs of data in numerous file.Organizedata is a feature in SFM which enhances the directory structure for storing these files.The nomenclature of the output files contains the date and day timestamp for each file.This timestamp is then utilized to form a directory structure such that, each file is organized in directories per their type, year, month and then date.
 
-To run:
+Filterstream and streamsample produce sets of data files in the directory determined by DATA_DIR
+as configured in local_settings.py .  The data files are written as rotating files; periodically
+(as determined by SAVE_INTERVAL_SECONDS in local_settings.py) each file is closed and subsequent
+data is written to a new file.  The naming scheme for each data files includes a timestamp.
+Over time, this can create many files in the DATA_DIR directory.
 
-Organize the tons of files in sub-directories:
+The organizedata command organizes these files by creating subdirectories named "sample" to
+data files from streamsample, and "twitterfilter-*n*" for data files from filterstream, for
+each TwitterFilter.
+
+Within <DATA_DIR>/sample and each <DATA_DIR>/twitterfilter-*n* directory, organizedata creates
+a tree with a subdirectory for each year; within each year directory, it creates a subdirectory
+for each month; within each of these, a subdirectory for each day.
+
+gigs of data in numerous file.Organizedata is a feature in SFM which enhances the directory structure for storing these files.The nomenclature of the output files contains the date and day timestamp for each file.This timestamp is then utilized to form a directory structure such that, each file is organized in directories per their type, year, month and then date.
+
+To run organizedata:
+
+.. code-block:: none
+
     ./manage.py organizedata
+
 
 fetch_urls
 ----------
