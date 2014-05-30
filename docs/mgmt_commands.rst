@@ -224,23 +224,45 @@ To run organizedata:
 
     ./manage.py organizedata
 
+    
+fetch_tweets_by_id
+--------------------
+Each tweet has an 18-digit unique numerical ID associated with it, called the twitterID.Fetch_tweets_by_id command collects tweets per this twitterID, therefore collecting tweets for any account in Twitter, irrespective of its presence in SFM.It works with inputfile as an option and produces output of tweets in JSON format.
+
+To run:
+
+.. code-block:: none
+
+    ./manage.py fetch_tweets_by_id --inputfile='<PATH TO YOUR INPUT FILE>'
+
+This will produce the output and an error log, if any, at the console.
+
+.. code-block:: none
+
+   ./manage.py fetch_tweets_by_id --inputfile='<PATH TO YOUR INPUT FILE>' --outputfile='<PATH TO YOUR OUTPUT FILE>'
+
+This will save the output in the specified output file and save the error log, if any, in a log file at the specified output file path.The log file uses the same nomenclature as the outputfile, it just saves it as .log file.
+
 
 fetch_urls
 ----------
-Fetch_urls is a feature in SFM, which allows you to store the urls in every tweet explicitly.You can view the expanded urls at admin page, under the twitteruseritemurl.
+Fetch_urls is a command in SFM, which allows you to store the urls in every tweet explicitly.You can view the expanded urls at admin page, under the twitteruseritemurl.
 Fetch_urls also provides you with options to mention as the criteria to fetch these urls. The options available are:
 
-1.Startdate -- The earliest date from where you want to fetch the urls
+* startdate -- The earliest date from where you want to fetch the urls
 
-2.Enddate -- The latest date, untill which you want to fetch the urls
+* enddate -- The latest date, untill which you want to fetch the urls
 
-3.twitteruser -- The specific twitter username you want to fetch the url for
+* twitteruser -- The specific twitter username you want to fetch the url for
 
-4.limit -- the limit in integers as to how many urls you will like to fetch
+* limit -- the limit in integers as to how many urls you will like to fetch
 
-5.refetch -- refetch the fetched urls.
+* refetch -- refetch the fetched urls.
 
 To run:
+
+.. code-block:: none
+
     ./manage.py fetch_urls 
 
 export_csv
@@ -248,17 +270,20 @@ export_csv
 SFM allows you to save the tweets from every twitter username, in the form of csv reports.A detailed explanation of the report can be found at the Data Dictionary at the about page in SFM UI http://gwsfm-prod.wrlc.org/about/   
 The report can be downloaded from the SFM UI directly, otherwise you can use the command as mentioned below to extract reports.The various options which can be given as the criteria to extract the report are:
 
-1.start-date -- returns the tweets starting from the specified date.
+* start-date -- returns the tweets starting from the specified date.
 
-2.end-date -- returns the tweets ending at the specified date.
+* end-date -- returns the tweets ending at the specified date.
 
-3.twitter-user -- returns all the tweets for the specified date
+* twitter-user -- returns all the tweets for the specified date
 
-4.set-name -- allows you ro customise the file name of the csv report.
+* set-name -- allows you ro customise the file name of the csv report.
 
 To run:
 
 extract the CSV report
+
+.. code-block:: none
+
        ./manage.py export_csv
 
 createconf
@@ -267,7 +292,9 @@ Createconf command is used to create the configuration files.These conf files ar
 
 To run manually:
 
-    ./manage.py createconf --twitter-filter
+.. code-block:: none
+    
+     ./manage.py createconf --twitter-filter
 
 Read more about the superviord conf:
 LINK 
