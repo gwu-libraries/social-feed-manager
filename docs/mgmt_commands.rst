@@ -227,21 +227,25 @@ To run organizedata:
     
 fetch_tweets_by_id
 --------------------
-Each tweet has an 18-digit unique numerical ID associated with it, called the twitterID.Fetch_tweets_by_id command collects tweets per this twitterID, therefore collecting tweets for any account in Twitter, irrespective of its presence in SFM.It works with inputfile as an option and produces output of tweets in JSON format.
 
-To run:
+Each tweet in Twitter has a unique numerical ID.  The *fetch_tweets_by_id* management
+command takes a file consisting of a list of tweet IDs (one per line), and fetches the associated
+tweets as JSON.
+
+Errors are logged to a file given the same name as the input file (specified by `--inputfile`) with
+an appended extension of .log (e.g. myinputfile.log)
+
+To fetch tweets and output to the console:
 
 .. code-block:: none
 
     ./manage.py fetch_tweets_by_id --inputfile='<PATH TO YOUR INPUT FILE>'
 
-This will produce the output and an error log, if any, at the console.
+To fetch tweets and write to an output file:
 
 .. code-block:: none
 
    ./manage.py fetch_tweets_by_id --inputfile='<PATH TO YOUR INPUT FILE>' --outputfile='<PATH TO YOUR OUTPUT FILE>'
-
-This will save the output in the specified output file and save the error log, if any, in a log file at the specified output file path.The log file uses the same nomenclature as the outputfile, it just saves it as .log file.
 
 
 fetch_urls
