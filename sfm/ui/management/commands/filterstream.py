@@ -45,12 +45,6 @@ class Command(BaseCommand):
                     % settings.SAVE_INTERVAL_SECONDS),
     )
 
-    @classmethod
-    def usage(self, *args):
-        usage = 'Usage: ./manage.py filterstream [twitterfilterid] ' + \
-                '[options]' + '\n' + '\n' + self.help
-        return usage
-
     def handle(self, *args, **options):
         if len(args) != 1:
             raise CommandError("one argument is required: twitterfilter id")
@@ -98,3 +92,10 @@ class Command(BaseCommand):
             if options.get('verbose', False):
                 print 'Disconnected from twitter:', e
                 print traceback.print_exc()
+
+    #The help message will display the [twitterfilterid] as an arg
+    @classmethod
+    def usage(self, *args):
+        usage = 'Usage: ./manage.py filterstream [twitterfilterid] ' + \
+                '[options]' + '\n' + '\n' + self.help
+        return usage
