@@ -2,6 +2,7 @@ import datetime
 import gzip
 import json
 import re
+import reversion
 import time
 
 import requests
@@ -158,6 +159,12 @@ class TwitterUser(m.Model):
         # use the screen name from twitter (may be capitalized differently)
         self.name = user_status['screen_name']
 
+#    @transaction.atomic()
+    @reversion.create_revision()
+    def TwitterUser_save(self):
+        TwitterUser.save()
+        print " in heres... success for id %s" % self.id
+#        print version_list
 
 def populate_uid(name, force=False, api=None):
     """
@@ -389,3 +396,5 @@ def call_create_conf(sender, instance, **kwargs):
 def call_delete_conf(sender, instance, **kwargs):
     delete_conf_file(instance.id)
     ui.utils.remove_process_group(instance.id)
+
+reversion.register(TwitterUser)

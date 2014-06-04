@@ -1,9 +1,10 @@
 from django.contrib import admin
+import reversion
 
 from ui import models as m
 
 
-class TwitterFilterAdmin(admin.ModelAdmin):
+class TwitterFilterAdmin(reversion.VersionAdmin):
     list_display = ['id', 'name', 'user', 'is_active', 'words', 'people',
                     'locations']
     list_filter = ['is_active']
@@ -12,7 +13,7 @@ class TwitterFilterAdmin(admin.ModelAdmin):
 admin.site.register(m.TwitterFilter, TwitterFilterAdmin)
 
 
-class TwitterUserAdmin(admin.ModelAdmin):
+class TwitterUserAdmin(reversion.VersionAdmin):
     list_display = ['id', 'is_active', 'uid', 'name', 'former_names',
                     'date_last_checked']
     list_filter = ['is_active']
