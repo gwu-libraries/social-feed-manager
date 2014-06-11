@@ -72,29 +72,6 @@ Now change the group of the ``supervisor.d`` directory to sfm:
 
 Once the supervsiord.conf file and the respective permissions are setup, supervsiord needs to be configured to manage the sub-process under it.
 
-RUN Supervisord
----------------
-Supervisord is a deamon process, yet it needs to be initiated manually first time after the installation is complete. 
-
-First time run:
-
-.. code-block:: none
-
-    $ sudo service supervisord start
-
-It should show something like this
-
-   "Starting supervisor: supervisord."
-
-supervisord also has a command-line option to control its subprocess, supervisorctl can be used to check on the status of a process. To start supervisorctl you can :
-
-.. code-block:: none
- 
-     $ sudo supervisorctl 
-
-For more information on `Supervisorctl`_.
-    
-.. _Supervisorctl: http://supervisord.org/running.html#running-supervisorctl
 
 Streamsample setup
 ------------------
