@@ -1,45 +1,24 @@
+Using Supervisord to Manage Streaming Filters
+=============================================
 
-Supervisord
-===========
+As of release m4_002, Social Feed Manager uses `supervisord
+<http://supervisord.org/>`_ to manage the
+filterstream and streamsample processes.  As streaming processes,
+these are intended to be run on a continuous, ongoing basis, to collect
+tweets over time.  Supervisord is a process control system that, among
+other features, manages the SFM streaming processes independently from the
+SFM web application, and can restart these processes if they fail or after
+a system reboot.
 
-If you want to capture streams of filtered queries or sample data from Twitter’s
-spritzer feed continually, you might want a process supervisor to ensure
-the process remains active and is restarted automatically after system
-reboots and the like, supervisord does that for sfm.
+Twitterfilters and/or streamsample *can* still be run independently of
+supervisord if desired (e.g. for testing), by invoking them at the command
+line as :doc:`management commands </mgmt_commands>`.
 
-Getting started
----------------
+Supervisord is installed as part of the standard SFM installation; it is
+one of SFM's ubuntu package dependencies.  However, it must be configured
+in order to use filterstreams.
 
-Supervisord is already mentioned as a default package to be installed when SFM is installed into your system, if you have not done so, then install supervisord explicitly as mentioned below.
-
-Install supervisord using either of the mentioned below:
-
-* apt-get
-
-.. code-block:: none
-
-     $ sudo apt-get install supervisor
-
-This will install the supervisord, and you will need to create a
-supervisord configuration file. Invoke the following command under root
-access to set up the configuration file:
-
-* setup configuration file
-
-.. code-block:: none
-
-     $ echo_supervisord_conf > /etc/supervisord.conf
-
-Once the configuration file for supervisord is set up, you will need to
-modify it per the SFM requirements.
-
-For more information on installing supervsiord: `Supervisord explained`_.
-
-.. _Supervisord explained: http://supervisord.org/installing.html
-
-
-SFM-supervisord setup
----------------------
+To configure supervisord for SFM:
 
 -  edit ``/etc/supervisor/supervisord.conf``. Look for the
    ``[include]`` section (in a new instance of supervisor, this is
