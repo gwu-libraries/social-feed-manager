@@ -3,6 +3,8 @@
 CSV Export Data Dictionary
 ==========================
 
+While Social Feed Manager captures the entire JSON data for each tweet, the csv export for each user timeline outputs selected processed fields.
+
 For more info about source tweet data, see Twitter API documentation, including `Tweets <https://dev.twitter.com/docs/platform-objects/tweets>`_ and `Entities <https://dev.twitter.com/docs/platform-objects/entities>`_.
 
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+ 
