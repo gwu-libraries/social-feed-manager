@@ -13,12 +13,21 @@ admin.site.register(m.TwitterFilter, TwitterFilterAdmin)
 
 
 class TwitterUserAdmin(admin.ModelAdmin):
+    fields = ('name', 'is_active', 'uid', 'former_names', 'sets',
+              'date_last_checked')
     list_display = ['id', 'is_active', 'uid', 'name', 'former_names',
                     'date_last_checked']
     list_filter = ['is_active']
     search_fields = ['name', 'former_names', 'uid']
-    readonly_fields = ['uid', 'former_names', 'date_last_checked']
     filter_horizontal = ['sets']
+
+    def get_readonly_fields(self, request, obj=None):
+        # if this is not a new object
+        if obj:
+            return ['uid', 'name', 'former_names', 'date_last_checked']
+        else:
+            return ['uid', 'former_names', 'date_last_checked']
+
 admin.site.register(m.TwitterUser, TwitterUserAdmin)
 
 
