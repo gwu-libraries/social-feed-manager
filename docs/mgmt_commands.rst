@@ -228,9 +228,9 @@ To run organizedata:
 fetch_tweets_by_id
 --------------------
 
-Each tweet in Twitter has a unique numerical ID.  The *fetch_tweets_by_id* management
-command takes a file consisting of a list of tweet IDs (one per line), and fetches the associated
-tweets as JSON.
+Each tweet in Twitter has a unique numerical ID.  The *fetch_tweets_by_id* 
+management command takes a file consisting of a list of tweet IDs (one per
+line), and fetches the associated tweets as JSON.
 
 Errors are logged to a file given the same name as the input file (specified by `--inputfile`) with
 an appended extension of .log (e.g. myinputfile.log)
@@ -250,18 +250,24 @@ To fetch tweets and write to an output file:
 
 fetch_urls
 ----------
-Fetch_urls is a command in SFM, which allows you to store the urls in every tweet explicitly.You can view the expanded urls at admin page, under the twitteruseritemurl.
-Fetch_urls also provides you with options to mention as the criteria to fetch these urls. The options available are:
 
-* startdate -- The earliest date from where you want to fetch the urls
+Links in tweets are often link-shortened.  *fetch_urls* iterates through all
+tweets (TwitterItems), extracts each URL found in a tweet and creates a
+TwitterUserItemUrl for it, and expands the URL if possible.  The final URL
+is stored as part of the TwitterUserItemUrl object.
 
-* enddate -- The latest date, untill which you want to fetch the urls
+*fetch_urls* can be run with the following options:
 
-* twitteruser -- The specific twitter username you want to fetch the url for
+* --start-date -- The earliest date of tweets to fetch URLs for
 
-* limit -- the limit in integers as to how many urls you will like to fetch
+* --end-date -- The latest date of tweets to fetch URLs for
 
-* refetch -- refetch the fetched urls.
+* --twitter-user -- The specific twitter username to fetch URLs for
+
+* --limit -- maximum number of URLs to fetch
+
+* --refetch -- include tweets for which URLs were already fetched; refetch
+  URLs for these tweets.
 
 To run:
 
@@ -269,36 +275,61 @@ To run:
 
     ./manage.py fetch_urls 
 
+
 export_csv
 ----------
-SFM allows you to save the tweets from every twitter username, in the form of csv reports.A detailed explanation of the report can be found at the Data Dictionary at the about page in SFM UI http://gwsfm-prod.wrlc.org/about/   
-The report can be downloaded from the SFM UI directly, otherwise you can use the command as mentioned below to extract reports.The various options which can be given as the criteria to extract the report are:
 
-* start-date -- returns the tweets starting from the specified date.
+Tweets stored in SFM associated with a TwitterUser or a TwitterUserSet can be
+exported in CSV (comma-separated value) format using the *export_csv*
+management command.  The user interface also offers CSV exports via a link on
+each TwitterUser's page (currently there is no page in the UI for a set).
 
-* end-date -- returns the tweets ending at the specified date.
+The format and meaning of each column in the CSV export is explained in the
+:doc:`Data Dictionary </data_dictionary>`.
 
-* twitter-user -- returns all the tweets for the specified date
+*export_csv* can be run with the following options.  Either twitter-user or set-name must be specified.
 
-* set-name -- allows you ro customise the file name of the csv report.
+--start-date -- exports only tweets starting from the specified date (YYYY-MM-DD)
 
-To run:
+--end-date -- exports only tweets through the specified date (YYYY-MM-DD)
 
-extract the CSV report
+--twitter-user -- exports tweets for the specified TwitterUser (by name)
+
+--set-name -- exports tweets for the specified TwitterUserSet
+
+To export tweets for Twitter user "sfmtwitteruser":
 
 .. code-block:: none
 
-       ./manage.py export_csv
+       ./manage.py export_csv --twitter-user sfmtwitteruser
+
+To export tweets for TwitterUserSet "myset":
+
+.. code-block:: none
+
+       ./manage.py export_csv --set-name myset
+
 
 createconf
 ----------
-Createconf command is used to create the configuration files.These conf files are the sub-processes picked up by Supervisord.By default, Supervisord is configuired to initiate the streamsample subprocess, while the filtrestream conf files are dynamically added as sub-process under supervisord. This command is signaled to execute when a twitter filter is added to the system. 
 
-To run manually:
+The *createconf* command is used to create supervisord configuration files
+for each active TwitterFilter.  This command should only need to be run if
+TwitterFilters were created in SFM prior to version m4_002, as part of
+upgrading to SFM version m4_002 or later.
+
+*createconf* can be run with the --twitter-filter option, to create
+a supervisord configuration file only for the specified TwitterFilter
+(specified by numeric id).
+
+To create configuration files for all active TwitterFilters:
 
 .. code-block:: none
     
-     ./manage.py createconf --twitter-filter
+     ./manage.py createconf
 
-Read more about the superviord conf:
-LINK 
+To create configuration files for TwitterFilter 5:
+
+.. code-block:: none
+    
+     ./manage.py createconf --twitter-filter 5
