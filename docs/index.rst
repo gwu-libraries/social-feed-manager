@@ -6,8 +6,9 @@
 Welcome to Social Feed Manager!
 ===============================
 
-Social Feed Manager is... a little bit about SFM goes here.  The code is
-open source, and `available on github`_.
+Social Feed Manager is an application developed by George Washington University Libraries to collect social media data from Twitter. It connects to Twitter's approved API to collect data in bulk and makes it possible for scholars, students, and librarians to identify, select, collect, and preserve Twitter data for research purposes. 
+
+The application code is open source and `available on github`_.
 
 .. _available on github: http://github.com/gwu-libraries/social-feed-manager/ 
 
@@ -21,10 +22,8 @@ Contents:
    Daily operations <dailyops>
    Management commands <mgmt_commands>
    Working with supervisor and streams <supervisor_and_streams>
-   Basic Concepts <concepts>
    Use Cases <use_cases>
    Data Dictionary <data_dictionary>
-   Code <code>
    Frequently Asked Questions <faq>
    Troubleshooting <troubleshooting>
    Glossary <glossary>
