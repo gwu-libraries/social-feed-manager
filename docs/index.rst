@@ -6,7 +6,7 @@
 Welcome to Social Feed Manager!
 ===============================
 
-Social Feed Manager is an application developed by George Washington University Libraries to collect social media data from Twitter. It connects to Twitter's approved API to collect data in bulk and makes it possible for scholars, students, and librarians to identify, select, collect, and preserve Twitter data for research purposes. 
+Social Feed Manager is a Django application developed by George Washington University Libraries to collect social media data from Twitter. It connects to Twitter's approved API to collect data in bulk and makes it possible for scholars, students, and librarians to identify, select, collect, and preserve Twitter data for research purposes. 
 
 The application code is open source and `available on github`_.
 
