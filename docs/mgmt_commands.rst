@@ -29,7 +29,8 @@ SFM management commands may be run:
 * manually (i.e. at the command line),
 * using cron jobs, and/or
 * using supervisord (in the case of filterstream and streamsample)
-  as described in **TODO: Link to other section**
+  as described in the section on :doc:`supervisor and streams
+  </supervisor_and_streams>`.
 
 Each SFM management command is described below.
 
@@ -37,7 +38,7 @@ Each SFM management command is described below.
 user_timeline
 -------------
 
-**user_timeline** calls the Twitter API to retrieve the available tweets for
+*user_timeline* calls the Twitter API to retrieve the available tweets for
 either all *active* TwitterUsers in SFM, or for a specific *active* 
 TwitterUser.  Each tweet is created as a TwitterItem in SFM.
 
@@ -92,14 +93,14 @@ update_usernames
 Twitter account owners can, and often do, change the names of their accounts,
 although an account's UID never changes.
 
-update_usernames looks up the names of the Twitter accounts corresponding to
+*update_usernames* looks up the names of the Twitter accounts corresponding to
 all active TwitterUsers.  If a Twitter account's name has changed since SFM
-last verified the account's name, update_usernames will update the name of the
+last verified the account's name, *update_usernames* will update the name of the
 TwitterUser, and will append the former name (and timestamp) to the TwitterUser's former_names value.  former_names is a json field; an example would be:
 
 ``{"2014-02-19T21:50:56Z": "OldName", "2014-01-16T13:49:02Z": "EvenOlderName"}``
 
-Note that update_username is case sensitive; a change in capitalization *is*
+Note that *update_username* is case sensitive; a change in capitalization *is*
 considered a name change.
 
 To update names of all active TwitterUsers:
@@ -125,14 +126,14 @@ streamsample
 ------------
 
 The Twitter API provides a streaming interface which returns a random sample (approximately 0.5%)
-of all public tweets.  The SFM streamsample management command directs the content of this stream
+of all public tweets.  The SFM *streamsample* management command directs the content of this stream
 to files.  The location of these output files is determined by the DATA_DIR variable in the
-local_settings.py configuration file.  As streamsample is intended to be run as an ongoing,
+local_settings.py configuration file.  As *streamsample* is intended to be run as an ongoing,
 streaming process, SFM provides a streamsample.conf.template file in
 <PROJECT ROOT>/sfm/sfm/supervisor.d that can be copied to streamsample.conf and edited to
 include the relevant pathnames, so that it can be run and managed using supervisord.
 
-Streamsample currently generates 2 GB worth of tweet data per day (roughly 2.2-2.5 million
+*streamsample* currently generates 2 GB worth of tweet data per day (roughly 2.2-2.5 million
 tweets), so it is important to plan storage capacity accordingly.
 
 To run manually and view streaming output to the console:
@@ -156,11 +157,11 @@ filterstream
 
 The Twitter API provides a streaming interface which returns tweets that match one or more filter
 predicates.  SFM administrative users can create multiple TwitterFilters, each with its own
-predicate parameters.  The SFM filterstream management command directs the content of 
+predicate parameters.  The SFM *filterstream* management command directs the content of 
 one or more active TwitterFilters to files.  The location of these output files is determined by
 the DATA_DIR variable in the local_settings.py configuration file. 
 
-Filterstream is intended to be run as a set of ongoing, streaming processes; SFM automatically
+*filterstream* is intended to be run as a set of ongoing, streaming processes; SFM automatically
 generates the necessary supervisord configuration files.  However, generation of these files
 requires the DATA_DIR, SUPERVISOR_PROCESS_USER, and SUPERVISOR_UNIX_SOCKET_FILE settings
 variables to be configured in local_settings.py .
@@ -185,14 +186,14 @@ To run manually and direct output to files in DATA_DIR:
 
      ./manage.py filterstream –save
 
-Filterstream can also take a parameter corresponding to the number of an individidual
+*filterstream* can also take a parameter corresponding to the number of an individidual
 TwitterFilter, e.g.
 
 .. code-block:: none
 
      ./manage.py filterstream 4 –save
 
-This will run filterstream only for the TwitterFilter with an id of 4.
+This will run *filterstream* only for the TwitterFilter with an id of 4.
 If no TwitterFilter number is given, filterstream will run for all active TwitterFilters.
 
 Information on the Twitter API filter streaming resource:
@@ -202,23 +203,21 @@ https://stream.twitter.com/1.1/statuses/filter.json
 organizedata
 ------------
 
-Filterstream and streamsample produce sets of data files in the directory determined by DATA_DIR
+*filterstream* and *streamsample* produce sets of data files in the directory determined by DATA_DIR
 as configured in local_settings.py .  The data files are written as rotating files; periodically
 (as determined by SAVE_INTERVAL_SECONDS in local_settings.py) each file is closed and subsequent
 data is written to a new file.  The naming scheme for each data files includes a timestamp.
 Over time, this can create many files in the DATA_DIR directory.
 
-The organizedata command organizes these files by creating subdirectories named "sample" to
-data files from streamsample, and "twitterfilter-*n*" for data files from filterstream, for
+The *organizedata* command organizes these files by creating subdirectories named "sample" to
+data files from *streamsample*, and "twitterfilter-*n*" for data files from *filterstream*, for
 each TwitterFilter.
 
-Within <DATA_DIR>/sample and each <DATA_DIR>/twitterfilter-*n* directory, organizedata creates
+Within <DATA_DIR>/sample and each <DATA_DIR>/twitterfilter-*n* directory, *organizedata* creates
 a tree with a subdirectory for each year; within each year directory, it creates a subdirectory
 for each month; within each of these, a subdirectory for each day.
 
-gigs of data in numerous file.Organizedata is a feature in SFM which enhances the directory structure for storing these files.The nomenclature of the output files contains the date and day timestamp for each file.This timestamp is then utilized to form a directory structure such that, each file is organized in directories per their type, year, month and then date.
-
-To run organizedata:
+To run *organizedata*:
 
 .. code-block:: none
 
