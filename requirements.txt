@@ -6,3 +6,4 @@ pytz
 requests
 south
 tweepy
+supervisor

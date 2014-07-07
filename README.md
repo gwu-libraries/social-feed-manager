@@ -151,10 +151,10 @@ it under /sfm (spells out virtualenv-based paths, adjust as necessary):
 
         5 */2 * * * cd /sfm/social-feed-manager && /sfm/social-feed-manager/ENV/bin/python /sfm/social-feed-manager/sfm/manage.py user_timeline
 
-* use the admin UI to add a Rule, which specifies follow, track, or locations
-to use to poll from twitter's statuses/filter function. then you can poll
-with the filterstream command, which will write out gzipped files at intervals
-you can specify:
+* use the admin UI to add a TwitterFilter, which specifies follow, track, or
+locations to use to poll from twitter's statuses/filter function. then you can
+poll with the filterstream command, which will write out gzipped files at
+intervals you can specify:
 
         % ./manage.py filterstream
 
@@ -173,16 +173,14 @@ familiar with their documentation:
     https://dev.twitter.com/docs/streaming-apis
 
 
-optional setup for streams (filters, samples)
---------------------------------------------------------------
+Supervisor setup for filterstreams and streamsample
+---------------------------------------------------
 
-If you want to capture streams of filtered queries or sample data from
-Twitter's spritzer feed continually, you might want a process supervisor
-to ensure the process remains active and is restarted automatically
-after system reboots and the like.  ```supervisor``` does that for sfm.
-These steps will get you started.
+In order to use SFM filterstreams and/or to use supervisord to manage
+the streamsample process, supervisor must be configured as described in
+this section.
 
-*NOTE*:  The sample stream includes something like 0.5-1% of all tweets
+*NOTE*:  The Twitter sample stream includes something like 0.5-1% of all tweets
 and deletes, which as of February 2014 means roughly three million or so
 items combined.  Filters can create a similarly large amount of data.
 These files add up quickly, so consider your available disk space, and
@@ -242,7 +240,7 @@ to sort generated files into date-based directories regularly.
 
 * to verify that supervisord detected the new configuration file and
   started the process, run supervisorctl:
-
+ 
         % sudo supervisorctl
 
 * if you don't see a line that reads something like:
@@ -257,10 +255,10 @@ to sort generated files into date-based directories regularly.
 
         supervisor> start streamsample
 
-Supervisor can also be used to manage filterstream processes.  As you
+Supervisor is also used to manage filterstream processes.  As you
 create, modify, activate, and deactivate TwitterFilters using the
 admin UI, SFM creates or deletes a supervisor configuration file for
-each TwitterFilter.  It will also delete a configuration file when you
+each TwitterFilter.  It also delete a configuration file when you
 mark a TwitterFilter as inactive.
 
 However, if you have pre-existing, active TwitterFilters which
@@ -272,12 +270,6 @@ files for your active TwitterFilters.
 
         % ./manage.py createconf
 
-* IMPORTANT: Currently supervisor does not appear to automatically detect 
-  additions/deletions/changes to the filterstream configuration files that occur
-  when you run createconf and/or make changes to TwitterFilter.  To "refresh"
-  supervisor, execute:
-
-        % sudo supervisorctl update
 
 
 development
