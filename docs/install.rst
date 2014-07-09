@@ -49,6 +49,9 @@ First, install these system-level packages:
 
     % sudo apt-get install git apache2 python-dev python-virtualenv postgresql libxml2-dev libxslt1-dev libpq-dev libapache2-mod-wsgi supervisor
 
+(Optionally, change to the directory where you wish to install SFM.  Your user will need
+write permissions here.)
+
 Next, get this code using git:
 
 ::
@@ -167,7 +170,7 @@ Edit this file and set appropriate values for just these parameters at
 first, we'll go back later and get the rest:
 
 - ADMINS (specify your name and email address in the format provided)
-- DATABASES (NAME, USER, PASSWORD as you defined for postgres above)
+- DATABASES (NAME, USER, PASSWORD as you defined for postgres above; HOST should be 'localhost' assuming your database and application are on the same server, as per these instructions.)
 - DATA_DIR (create a directory to hold data files, then specify it here;
   use a new directory that is not inside the social-feed-manager directory)
 - TWITTER_DEFAULT_USER (the name of the twitter account you'll use to
