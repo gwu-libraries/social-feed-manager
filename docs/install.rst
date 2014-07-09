@@ -477,4 +477,3 @@ Some options for what to do next:
  - track SFM progress, file bug/enhancement tickets, fork the code
    and submit pull requests at:
    https://github.com/gwu-libraries/social-feed-manager
-   patches
