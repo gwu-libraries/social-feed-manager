@@ -45,13 +45,20 @@ class Command(BaseCommand):
                     % settings.SAVE_INTERVAL_SECONDS),
     )
 
+    #The help message will display the [twitterfilterid] as an arg
+    @classmethod
+    def usage(self, *args):
+        usage = 'Usage: ./manage.py filterstream [twitterfilterid] ' + \
+                '[options]' + '\n' + '\n' + self.help
+        return usage
+
     def handle(self, *args, **options):
         if len(args) != 1:
-            raise CommandError("one argument is required: twitterfilter id") 
+            raise CommandError("one argument is required: twitterfilter id")
         try:
             twitter_filter = TwitterFilter.objects.get(id=int(args[0]))
         except:
-            raise CommandError("unable to load that TwitterFilter") 
+            raise CommandError("unable to load that TwitterFilter")
         if twitter_filter.is_active is False:
             raise CommandError("TwitterFilter is not active")
 
