@@ -12,13 +12,13 @@ from tweepy.streaming import StreamListener
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.management import call_command
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.db import models as m
 from django.utils import timezone
 
-from ui.utils import delete_conf_file, set_wait_time
+import ui.utils
+from ui.utils import create_conf_file, delete_conf_file, set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
@@ -29,7 +29,7 @@ def authenticated_api(username, api_root=None, parser=None):
     auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,
                                settings.TWITTER_CONSUMER_SECRET)
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(username__iexact=username)
         sa = user.social_auth.all()[0]
         auth.set_access_token(sa.tokens['oauth_token'],
                               sa.tokens['oauth_token_secret'])
@@ -116,13 +116,11 @@ class TwitterUser(m.Model):
         # AND is_active=False
         if self.id is not None and self.is_active is False:
             return
-        # else proceed because:
+        # else proceed with further logic because:
         #     either we are creating rather than updating
         #     OR we are updating with active=True
 
-        # remove left whitespace, leading '@', and right whitespace
-        self.name = self.name.lstrip().lstrip("@").rstrip()
-        # look up user
+        # get an api
         try:
             api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
         except tweepy.error.TweepError as e:
@@ -132,31 +130,45 @@ class TwitterUser(m.Model):
         if api is None:
             raise ValidationError('Could not connect to Twitter \
                                    API using configured credentials.')
-        try:
-            user_status = api.get_user(screen_name=self.name)
-        except tweepy.error.TweepError as e:
-            if "'code': 34" in e.reason:
-                raise ValidationError('Twitter screen name \'%s\' was \
-                                      not found.' % self.name)
-            elif "'code': 32" in e.reason:
-                raise ValidationError('Could not connect to Twitter \
-                                       API using configured credentials.')
-            else:
+
+        # we're activating an existing TwitterUser
+        if self.id is not None:
+            try:
+                user_status = api.get_user(id=self.uid)
+            except tweepy.error.TweepError as e:
                 raise ValidationError('Twitter returned the following \
                                       error: %s' % e.message)
 
-        # check to prevent duplicates
-        dups = TwitterUser.objects.filter(uid=user_status['id'])
-        if self.id is not None:
-            # if updating (vs. creating), remove myself
-            dups = dups.exclude(id=self.id)
-        if dups:
-            raise ValidationError('TwitterUser uids must be unique. %s \
-                                   is already present.' % user_status['id'])
+        # if we're creating a new TwitterUser, then look up by name
+        else:
+            # remove left whitespace, leading '@', and right whitespace
+            self.name = self.name.lstrip().lstrip("@").rstrip()
+            # look up user
+            try:
+                user_status = api.get_user(screen_name=self.name)
+            except tweepy.error.TweepError as e:
+                if "'code': 34" in e.reason:
+                    raise ValidationError('Twitter screen name \'%s\' was \
+                                          not found.' % self.name)
+                elif "'code': 32" in e.reason:
+                    raise ValidationError('Could not connect to Twitter \
+                                           API using configured credentials.')
+                else:
+                    raise ValidationError('Twitter returned the following \
+                                          error: %s' % e.message)
+            # check to prevent duplicates
+            dups = TwitterUser.objects.filter(uid=user_status['id'])
+            if self.id is not None:
+                # if updating (vs. creating), remove myself
+                dups = dups.exclude(id=self.id)
+            if dups:
+                raise ValidationError('TwitterUser uids must be unique. %s \
+                                       is already present.' %
+                                      user_status['id'])
 
-        self.uid = user_status['id']
-        # use the screen name from twitter (may be capitalized differently)
-        self.name = user_status['screen_name']
+            self.uid = user_status['id']
+            # use the screen name from twitter (may be capitalized differently)
+            self.name = user_status['screen_name']
 
 
 def populate_uid(name, force=False, api=None):
@@ -376,11 +388,16 @@ documentation</a> for more information.""")
 @receiver(post_save, sender=TwitterFilter)
 def call_create_conf(sender, instance, **kwargs):
     if instance.is_active is True:
-        call_command('createconf', twitterfilter=instance.id)
+        create_conf_file(instance.id)
+        time.sleep(1)
+        ui.utils.reload_config()
+        ui.utils.add_process_group(instance.id)
     else:
+        ui.utils.remove_process_group(instance.id)
         delete_conf_file(instance.id)
 
 
 @receiver(post_delete, sender=TwitterFilter)
 def call_delete_conf(sender, instance, **kwargs):
     delete_conf_file(instance.id)
+    ui.utils.remove_process_group(instance.id)
