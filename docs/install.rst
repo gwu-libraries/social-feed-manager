@@ -407,15 +407,71 @@ can stay within the API's rate limits.
 You are now up and running with SFM.
 
 
+Apache integration
+------------------
+
+To run SFM in production, we recommend integrating with apache using WSGI.
+It's straightforward and well-tested.  You will need to copy a configuration
+file into apache's ``sites-available`` directory, edit that file to match
+your installation details, enable that site (and optionally disable other
+versions), then restart apache.  Let's get started.
+
+First, copy our apache configuration template to ``sites-available``. We
+like to append the appname "sfm" with the version number,
+e.g. ``sfm_m4_002``, so when we go to deploy a new version, we can just
+add a new config file and make the switchover easy.  You could just call
+it ``sfm`` if you want, but it can help to have the version number in 
+there, so these instructions use that convention.
+
+::
+
+    % sudo cp sfm/apache.conf /etc/apache2/sites-available/sfm_m4_002
+    % sudo vim /etc/apache2/sites-available/sfm_m4_002
+
+You will need to change several things in this file:
+
+ - change references to ``/PATH/TO/sfm`` to the full absolute path to 
+   your ``social-feed-manager/sfm`` directory
+ - change references to ``YOUR-HOSTNAME.HERE`` to your public hostname
+ - change the reference to ``/PATH/TO/YOUR/VENV`` to the full absolute
+   path to your virtualenv (ending in ``ENV``) which you created above
+ - change the reference to ``python/2.X`` to 2.7
+
+When you've made all those changes, save the file.
+
+Next, enable the site configuration you just created:
+
+::
+
+    % sudo a2ensite sfm_m4_002
+
+Assuming you are installing in a clean VM, disable the pre-existing
+default site:
+
+::
+
+    % sudo a2dissite 000-default
+
+Reload the apache configuration, as it suggts when you made the changes
+above:
+
+::
+
+    % sudo service apache2 reload
+
+That's it!  It should be working now.
+
+If you run into any problems, check the logs in ``/var/log/apache2/``.
+
+
 What next?
 ----------
 
 Some options for what to do next:
 
  - add more TwitterUsers and run user_timeline again
- - set up a cronjob to run user_timeline a few times a day
- - integrate SFM with apache for production use
- - set up supervisord and capture one or more streams
+ - set up cronjobs for user_timeline and other daily operations
+ - set up supervisord and use it to capture one or more streams
  - sign up to https://groups.google.com/forum/#!forum/sfm-dev to
    ask questions or suggest improvements
  - track SFM progress, file bug/enhancement tickets, fork the code
