@@ -345,7 +345,7 @@ instance to connect to Twitter's API on behalf of your Twitter account.
 sfmadmin never logged in through Twitter, so it doesn't have one, and
 it doesn't need one.
 
-If this is still confusing, try this:  log out again, then grab a colleage
+If this is still confusing, try this:  log out again, then grab a colleague
 and have them log in to your SFM using their own Twitter account (with the
 "Log in with Twitter" button on the home page).  After they're done, log
 them out of SFM, then log back in using sfmadmin and the ``/admin`` URL.
@@ -413,15 +413,15 @@ versions), then restart apache.  Let's get started.
 
 First, copy our apache configuration template to ``sites-available``. We
 like to append the appname "sfm" with the version number,
-e.g. ``sfm_m4_002``, so when we go to deploy a new version, we can just
+e.g. ``sfm_m5_001``, so when we go to deploy a new version, we can just
 add a new config file and make the switchover easy.  You could just call
 it ``sfm`` if you want, but it can help to have the version number in 
 there, so these instructions use that convention.
 
 ::
 
-    % sudo cp sfm/apache.conf /etc/apache2/sites-available/sfm_m4_002
-    % sudo vim /etc/apache2/sites-available/sfm_m4_002
+    % sudo cp sfm/apache.conf /etc/apache2/sites-available/sfm_m5_001
+    % sudo vim /etc/apache2/sites-available/sfm_m5_001
 
 You will need to change several things in this file:
 
@@ -438,7 +438,7 @@ Next, enable the site configuration you just created:
 
 ::
 
-    % sudo a2ensite sfm_m4_002
+    % sudo a2ensite sfm_m5_001
 
 Assuming you are installing in a clean VM, disable the pre-existing
 default site:
