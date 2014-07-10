@@ -259,14 +259,6 @@ but they don't have to be.
 This is all very confusing, yes, but it will make more sense in a few
 minutes.
 
-The final step before running SFM finally is to "migrate" the database.
-
-::
-
-    % ./manage.py migrate
-
-Now we're ready to run SFM.
-
 First, we set up the database using the regular django method ``syncdb``,
 but read the next three paragraphs first, they're important.
 
