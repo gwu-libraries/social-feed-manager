@@ -215,7 +215,9 @@ django-social-auth/ sfm will not work correctly.
 Did you give it a callback URL?  Good.  It's required.  Really.
 
 When you finish this process, you'll see a OAuth consumer key and secret
-for your SFM instance.  Use these as the values for these two settings in 
+for your SFM instance.  At the time of this writing, they're located on the
+"API Keys" tab listed as the API key and the API secret. 
+Use these as the values for these two settings in 
 ``local_settings.py``:
 
 - TWITTER_CONSUMER_KEY
