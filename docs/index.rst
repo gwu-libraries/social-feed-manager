@@ -27,7 +27,6 @@ Contents:
    Frequently Asked Questions <faq>
    Troubleshooting <troubleshooting>
    Release Notes <release_notes>
-   Glossary <glossary>
 
 
 
