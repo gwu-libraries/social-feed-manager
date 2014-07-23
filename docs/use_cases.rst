@@ -34,7 +34,7 @@ A TwitterUser in SFM exists in one of three states:
 * *Inactive* - The TwitterUser is still in SFM, but no new tweets will be collected while the
   TwitterUser is inactive.
 
-An account in Twitter exists in one of three states:
+An account in Twitter exists in one of four states:
 
 * *Pre-creation*
 * *Active/Public* - Tweets are visibile to anyone
