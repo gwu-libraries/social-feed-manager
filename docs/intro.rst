@@ -56,7 +56,10 @@ Contact us
 ^^^^^^^^^^
 
 - `sfm-dev Google Group <https://groups.google.com/forum/#!forum/sfm-dev>`_
-- Developers responsible for the app include Dan Chudnov (`@dchud <http://twitter.com/dchud/>`_), Dan Kerchner (`@dankerchner <http://twitter.com/dankerchner/>`_), and Ankushi Sharma (`@ankushis <http://twitter.com/ankushis/>`_), 
+- Developers responsible for the app include Dan Chudnov (`@dchud <https://twitter.com/dchud/>`_), 
+  Dan Kerchner (`@dankerchner <https://twitter.com/dankerchner/>`_), 
+  Ankushi Sharma (`@ankushis <https://twitter.com/ankushis/>`_), and
+  Laura Wrubel (`@liblaura <https://twitter.com/liblaura/>`_).
 
 Resources
 ^^^^^^^^^
