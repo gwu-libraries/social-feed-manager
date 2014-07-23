@@ -467,8 +467,10 @@ What next?
 Some options for what to do next:
 
  - add more TwitterUsers and run user_timeline again
- - set up cronjobs for user_timeline and other daily operations
- - set up supervisord and use it to capture one or more streams
+ - set up cronjobs for user_timeline and other 
+   :doc:`daily operations </dailyops>`
+ - :doc:`set up supervisord </supervisor_and_streams>` and use it 
+   to capture one or more streams
  - sign up to https://groups.google.com/forum/#!forum/sfm-dev to
    ask questions or suggest improvements
  - track SFM progress, file bug/enhancement tickets, fork the code
