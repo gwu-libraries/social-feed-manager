@@ -8,13 +8,16 @@ of supervisord to manage multiple processes, and enhances organizedata
 to better structure data files. It also fixes bugs related to supervisord
 and cleans up twitteruser status and filterstream issues.
 
+If you are upgrading an existing SFM instance from a version prior to
+m4_001, to m4_001 or newer, and your instance contains active TwitterFilters,
+then you will need to run the :ref:`createconf` management command.
 
 **Enhancements**
 
-Social-feed-manager has streamsample and filterstream management
-commands which are used to fetch random or filterted twitter feed. These
+Social Feed Manager has streamsample and filterstream management
+commands which are used to fetch random or filtered twitter feeds. These
 management process are automated using supervisord. Supervisord manages
-the streamsample and filterstream process, starting it and stopping
+the streamsample and filterstream processes, starting and stopping
 these processes when required.
 
 
@@ -53,7 +56,7 @@ Twitter data organization:
   Twitter-valid accounts, validating and throwing errors if name is not unique.
 
 
-See the `complete list of changes for milestone m4_001 <m4_001_>`_.
+See the `complete list of changes for milestone m4_001 in github <m4_001_>`_.
 
 .. _m4_001: https://github.com/gwu-libraries/social-feed-manager/issues?milestone=5&state=closed
 
