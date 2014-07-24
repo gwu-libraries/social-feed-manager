@@ -47,7 +47,7 @@ An account in Twitter exists in one of four states:
 State Transitions
 -----------------
 
-**TwitterUser Creation**  The SFM user provides the username of the Twitter
+**TwitterUser Creation** -  The SFM user provides the username of the Twitter
 account to map to this SFM TwitterUser.  SFM looks up the Twitter account's
 UID by the username provided.  If:
 
@@ -60,10 +60,10 @@ TwitterUser as either Active or Inactive.
 associated with a TwitterUser, then SFM will
 not create the TwitterUser, even an in Inactive state.*
 
-**Inactivation of Active TwitterUser**  An SFM user marks an Active TwitterUser as Inactive.  This transition is always allowed.  Inactive TwitterUsers are still shown on the SFM page listing users,
+**Inactivation of Active TwitterUser** -  An SFM user marks an Active TwitterUser as Inactive.  This transition is always allowed.  Inactive TwitterUsers are still shown on the SFM page listing users,
 and CSV extracts
 
-**Activation of Inactive TwitterUser**  An SFM user marks an Inactive
+**Activation of Inactive TwitterUser** -  An SFM user marks an Inactive
 TwitterUser as Active.  SFM looks up the corresponding Twitter account by
 the UID of the TwitterUser.
 If the UID is valid, it updates the TwitterUser's name if differs from the current
@@ -71,11 +71,11 @@ name of the Twitter account, and saves the TwitterUser as Active.
 If the UID is not found, which may occur if the Twitter account has been
 deactivated, then SFM does not allow the TwitterUser to be saved as Active.
 
-**Deletion of a TwitterUser**  An SFM administrative user deletes a TwitterUser.  This is always allowed.  However, it is important to note that
+**Deletion of a TwitterUser** -  An SFM administrative user deletes a TwitterUser.  This is always allowed.  However, it is important to note that
 *all TwitterItems associated with this TwitterUser will also be deleted.*
 
 
-**Name Change** What if the owner of a Twitter account changes the name of the account?
+**Name Change** -  What if the owner of a Twitter account changes the name of the account?
 If the TwitterUser in SFM was created to collect tweets from this Twitter account, it should
 continue to do so, since the UID never changes.  However, the name of the TwitterUser may
 temporarily still show the old name of the Twitter account.  If a cron job has been set up
@@ -87,7 +87,7 @@ if a Twitter account named ``NYTimes`` was then changed to ``NewYorkTimes``, the
 the update_usernames script would update the name of the TwitterUser, and would also append
 to *former_names* so it might have a value like ``{"Thu Jan 16 13:48:56 2014": "NYTimes"}``
 
-**Twitter Account Goes Protected** What if the owner of a Twitter account
+**Twitter Account Goes Protected** - What if the owner of a Twitter account
 marks the account as protected?
 
 If the ``TWITTER_DEFAULT_USERNAME`` configured in *local_settings.py*
@@ -99,7 +99,7 @@ If this is not the case, then user_timeline jobs will
 encounter errors when attempting to retrieve new tweets for the account.
 These errors will be recorded in the TwitterUserTimelineErrors table.
 
-**Twitter Account Deletion** What if the owner of a Twitter account deletes
+**Twitter Account Deletion** -  What if the owner of a Twitter account deletes
 the account?
 
 If the owner of a Twitter account deletes the account and there is an
