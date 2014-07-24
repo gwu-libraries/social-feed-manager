@@ -46,11 +46,16 @@ from the web interface after signing into the site from an institutional IP addr
 
 Development and community
 -------------------------
-Social Feed Manager was developed at The George Washington University Libraries in 2012 as a prototype application 
-and is now being supported by multiple developers and an IMLS Sparks! Innovation Grant. [#f1]_ Several libraries and 
-archives have installed it and are providing feedback to help prioritize development of new features. 
+Social Feed Manager was developed at The George Washington University
+Libraries in 2012 as a prototype application and is now being supported by
+multiple developers and an `IMLS Sparks! Innovation Grant 
+<http://www.imls.gov/applicants/detail.aspx?GrantId=19>` [#f1]_. Several
+libraries and archives have installed it and are providing feedback to help
+prioritize development of new features. 
 
-The software is available for use, study, copying, and modification under a free and open source software license (MIT license). We welcome others to become involved in the project and contribute to the code.
+The software is available for use, study, copying, and modification under a
+free and open source software license (MIT license). We welcome others to
+become involved in the project and contribute to the code.
 
 Contact us
 ^^^^^^^^^^
