@@ -70,6 +70,11 @@ class Command(BaseCommand):
             # update their record (auto_now) as we're checking it now
             tweep.save()
             while True:
+                # wait before next call no matter what;
+                # use getattr() because api might be None the first time or
+                # after errors
+                time.sleep(set_wait_time(getattr(api, 'last_response', None)))
+                job.save()
                 stop = False
                 try:
                     print 'since: %s' % (since_id)
@@ -88,6 +93,7 @@ class Command(BaseCommand):
                                                      error=e)
                     error.save()
                     timeline = []
+                    break
                 if len(timeline) == 0:
                     # Nothing new; stop for this user
                     stop = True
@@ -133,8 +139,5 @@ class Command(BaseCommand):
                                                      error=e)
                     error.save()
                     stop = True
-                job.save()
-                # wait before next call no matter what
-                time.sleep(set_wait_time(api.last_response))
                 if stop:
                     break

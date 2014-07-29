@@ -7,3 +7,5 @@ wsgi.py
 *.swo
 data
 *.rdb
+sfm/sfm/supervisor.d/*.conf
+_build

@@ -26,15 +26,20 @@ class Command(BaseCommand):
                 continue
             # pull out the prefix, year, month, day, and hour
             try:
+                # patterns:
+                #   twitterfilter-2-2014-04-11T04:34:28Z.gz
+                #   sample-2014-04-11T04:34:28Z.gz
                 prefixed_date, t, time_ext = fname.partition('T')
-                twitterword, filterword, idword, year, month, day = \
-                    prefixed_date.split('-')
-                prefix = "%s-%s-%s" % (twitterword, filterword, idword)
+                # get process name by truncating last 11 chars: -YYYY-MM-DD
+                processname = prefixed_date[:-11]
+                # get date as the last 10 chars: YYYY-MM-DD
+                the_date = prefixed_date[-10:]
+                year, month, day = the_date.split('-')
                 hour, minute, seconds_ext = time_ext.split(':')
             except:
                 # probably a prefix/directory
                 continue
-            subdir = '%s/%s/%s/%s/%s/%s' % (settings.DATA_DIR, prefix,
+            subdir = '%s/%s/%s/%s/%s/%s' % (settings.DATA_DIR, processname,
                                             year, month, day, hour)
             try:
                 os.stat(subdir)

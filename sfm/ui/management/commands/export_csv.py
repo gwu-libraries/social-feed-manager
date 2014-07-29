@@ -1,23 +1,11 @@
-import datetime
+import codecs
 from optparse import make_option
+import sys
 
 from django.core.management.base import BaseCommand, CommandError
-from django.utils import timezone
 
 from ui.models import TwitterUser, TwitterUserSet, TwitterUserItem
-
-def make_date_aware(date_str):
-    """take a date in the format YYYY-MM-DD and return an aware date"""
-    try:
-        year, month, day = [int(x) for x in date_str.split('-')]
-        dt = datetime.datetime(year, month, day)
-        dt_aware = timezone.make_aware(dt, 
-                timezone.get_current_timezone())
-        return dt_aware
-    except:
-        import traceback
-        print traceback.print_exc()
-        return None
+from ui.utils import make_date_aware
 
 
 class Command(BaseCommand):
@@ -25,21 +13,21 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option('--start-date', action='store', default=None,
-            type='string', dest='start_date', 
-            help='earliest date (YYYY-MM-DD) for export'),
+                    type='string', dest='start_date',
+                    help='earliest date (YYYY-MM-DD) for export'),
         make_option('--end-date', action='store', default=None,
-            type='string', dest='end_date', 
-            help='latest date (YYYY-MM-DD) for export'),
+                    type='string', dest='end_date',
+                    help='latest date (YYYY-MM-DD) for export'),
         make_option('--twitter-user', action='store', default=None,
-            type='string', dest='twitter_user', 
-            help='username to export'),
+                    type='string', dest='twitter_user',
+                    help='username to export'),
         make_option('--set-name', action='store', default=None,
-            type='string', dest='set_name',
-            help='set name to export'),
-        )
+                    type='string', dest='set_name',
+                    help='set name to export'),
+    )
 
     def handle(self, *args, **options):
-        # FIXME: why use options.get again and again? 
+        # FIXME: why use options.get again and again?
         twitter_user = None
         user_set = None
         start_dt = None
@@ -47,18 +35,18 @@ class Command(BaseCommand):
         if options.get('twitter_user', False):
             try:
                 twitter_user = TwitterUser.objects.get(
-                        name=options.get('twitter_user'))
+                    name=options.get('twitter_user'))
             except TwitterUser.DoesNotExist:
-                raise CommandError('TwitterUser %s does not exist' % \
-                        options.get('twitter_user'))
+                raise CommandError('TwitterUser %s does not exist' %
+                                   options.get('twitter_user'))
         elif options.get('set_name', False):
             user_set = None
             try:
                 user_set = TwitterUserSet.objects.get(
-                        name=options.get('set_name'))
+                    name=options.get('set_name'))
             except TwitterUserSet.DoesNotExist:
-                raise CommandError('TwitterUserSet %s does not exist' % \
-                        options.get('set_name'))
+                raise CommandError('TwitterUserSet %s does not exist' %
+                                   options.get('set_name'))
         else:
             raise CommandError('please specify a twitter user or set name')
 
@@ -82,12 +70,17 @@ class Command(BaseCommand):
             qs = twitter_user.items.all()
         elif user_set:
             qs = TwitterUserItem.objects.filter(
-                    twitter_user__sets__in=[user_set])
+                twitter_user__sets__in=[user_set])
 
         if start_dt:
             qs = qs.filter(date_published__gte=start_dt)
         if end_dt:
             qs = qs.filter(date_published__lte=end_dt)
 
+        # tweak for python 2.7 to avoid having to set PYTHONIOENCODING=utf8
+        # in environment, see Graham Fawcett's comment/suggestion at:
+        #   nedbatchelder.com/blog/200401/printing_unicode_from_python.html
+        writer_class = codecs.getwriter('utf-8')
+        sys.stdout = writer_class(sys.stdout, 'replace')
         for tui in qs:
             print '\t'.join(tui.csv)
