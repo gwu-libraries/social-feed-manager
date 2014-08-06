@@ -59,22 +59,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options.get('list', True):
             twitter_filter = TwitterFilter.objects.all()
-            id_Active = []
-            id_Inactive = []
+            print 'twitterFilter id' + 'status'.rjust(20) + '\n' \
+                  '----------------' + '------'.rjust(20)
             for items in twitter_filter:
                 if items.is_active is True:
-                    id_Active.append(items.id)
+                    print '%s' % items.id + 'Active'.rjust(34)
                 else:
-                    id_Inactive.append(items.id)
-            print "Active filters:" + "Inactive filters:".rjust(50) + '\n'
-            for a, i in itertools.izip_longest(id_Active, id_Inactive):
-                if a is not None:
-                    print "Twitterfilter id %s" % a
-                if i is not None:
-                    print ("Twitterfilter id %s" % i).rjust(68)
+                    print '%s' % items.id + 'Inactive'.rjust(34)
         else:
             if len(args) != 1:
-                raise CommandError("one argument is required: twitterfilter id")
+                raise CommandError("one argument is required:twitterfilter id")
             try:
                 twitter_filter = TwitterFilter.objects.get(id=int(args[0]))
             except:
