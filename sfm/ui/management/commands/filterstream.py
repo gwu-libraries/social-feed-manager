@@ -1,4 +1,3 @@
-import itertools
 from optparse import make_option
 import traceback
 
@@ -45,8 +44,7 @@ class Command(BaseCommand):
                     help='how often to save data (default=%s)'
                     % settings.SAVE_INTERVAL_SECONDS),
         make_option('--list', action='store_true', dest='list',
-                    help='list all twitterfilters, give a filter id' +
-                    'as an argument')
+                    help='list all twitterfilters')
     )
 
     #The help message will display the [twitterfilterid] as an arg
@@ -101,7 +99,8 @@ class Command(BaseCommand):
                         save_interval_seconds=options['interval'],
                         data_dir=options['dir'])
                     stream = tweepy.Stream(auth, listener)
-                    stream.filter(track=words, follow=people, locations=locations)
+                    stream.filter(track=words, follow=people,
+                                  locations=locations)
                 else:
                     listener = StdOutListener()
                     stream = tweepy.Stream(auth, listener)
