@@ -222,7 +222,7 @@ If no TwitterFilter number is given, filterstream will run for all
 active TwitterFilters.
 
 Information on the Twitter API filter streaming resource:
-https://stream.twitter.com/1.1/statuses/filter.json
+https://dev.twitter.com/docs/api/1.1/post/statuses/filter
 
 
 .. _`organizedata`:
