@@ -56,14 +56,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options.get('list', True):
-            twitter_filter = TwitterFilter.objects.all()
-            print 'twitterFilter id' + 'status'.rjust(20) + '\n' \
-                  '----------------' + '------'.rjust(20)
+            twitter_filter = TwitterFilter.objects.order_by('-is_active')
+            print 'Twitterfilter id' + '  ' + 'Status' + '\n' \
+                  '----------------' + '  ' + '------'
             for items in twitter_filter:
                 if items.is_active is True:
-                    print '%s' % items.id + 'Active'.rjust(34)
+                    print '%s'.rjust(15) % items.id + '  ' + 'Active'
                 else:
-                    print '%s' % items.id + 'Inactive'.rjust(34)
+                    print '%s'.rjust(15) % items.id + '  ' + 'Inactive'
         else:
             if len(args) != 1:
                 raise CommandError("one argument is required:twitterfilter id")
