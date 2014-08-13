@@ -65,21 +65,21 @@ svg.selectAll("rect").append("svg:title")
 {% block content %}
 
 <div class='span-6'>
-    <h1>{{ user.name }} - 
-        {{ user.items.count|intcomma }} item{{ user.items.count|pluralize }}
+    <h1>{{ twitter_user.name }} - 
+        {{ twitter_user.items.count|intcomma }} item{{ twitter_user.items.count|pluralize }}
     </h1>
     <div id='viz' width='500' height='30'></div>
     {% if recent_tweet %}
     {% with recent_tweet.tweet as t %}
     <p>
-    Twitter user {{ t.user.id|intcomma }} - created {{ t.user.created_at }}.
+    Twitter twitter_user {{ t.twitter_user.id|intcomma }} - created {{ t.twitter_user.created_at }}.
     <br />
-    {{ t.user.statuses_count|intcomma }} tweets -
-    {{ t.user.followers_count|intcomma }} followers - 
-    {{ t.user.friends_count|intcomma }} following -
-    view <a href="http://twitter.com/{{ user.name }}">in Twitter</a>
+    {{ t.twitter_user.statuses_count|intcomma }} tweets -
+    {{ t.twitter_user.followers_count|intcomma }} followers - 
+    {{ t.twitter_user.friends_count|intcomma }} following -
+    view <a href="http://twitter.com/{{ twitter_user.name }}">in Twitter</a>
     <br />
-    export this data <a href='{% url "twitter_user_csv" name=user.name %}'>as
+    export this data <a href='{% url "twitter_user_csv" name=twitter_user.name %}'>as
     csv for excel</a>
     </p>
     {% endwith %}
@@ -102,8 +102,8 @@ svg.selectAll("rect").append("svg:title")
                 <td>
                     {{ item.date_published|date:"Y-m-d h:i:s a" }} 
                     <br />
-                    {{ item.tweet.user.followers_count|intcomma }} -
-                    {{ item.tweet.user.friends_count|intcomma }} 
+                    {{ item.tweet.twitter_user.followers_count|intcomma }} -
+                    {{ item.tweet.twitter_user.friends_count|intcomma }} 
                 </td>
                 <td>{{ item.tweet.retweet_count }}</td>
                 <td>
