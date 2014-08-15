@@ -93,7 +93,8 @@ def delete_conf_file(twitterfilter):
 
 def get_supervisor_proxy():
     proxy = xmlrpclib.ServerProxy(
-        'http://127.0.0.1', transport=xmlrpc.SupervisorTransport(
+        'http://' + settings.INTERNAL_IPS[0],
+        transport=xmlrpc.SupervisorTransport(
             None, None, 'unix://'+settings.SUPERVISOR_UNIX_SOCKET_FILE))
     return proxy
 
