@@ -43,6 +43,8 @@ class Command(BaseCommand):
                     default=settings.SAVE_INTERVAL_SECONDS, dest='interval',
                     help='how often to save data (default=%s)'
                     % settings.SAVE_INTERVAL_SECONDS),
+        make_option('--list', action='store_true', dest='list',
+                    help='list all twitterfilters')
     )
 
     #The help message will display the [twitterfilterid] as an arg
@@ -53,49 +55,58 @@ class Command(BaseCommand):
         return usage
 
     def handle(self, *args, **options):
-        if len(args) != 1:
-            raise CommandError("one argument is required: twitterfilter id")
-        try:
-            twitter_filter = TwitterFilter.objects.get(id=int(args[0]))
-        except:
-            raise CommandError("unable to load that TwitterFilter")
-        if twitter_filter.is_active is False:
-            raise CommandError("TwitterFilter is not active")
-
-        words = set()
-        people = set()
-        locations = set()
-        words.update(twitter_filter.words.strip().split(' ')
-                     if twitter_filter.words else [])
-        people.update(twitter_filter.people.strip().split(' ')
-                      if twitter_filter.people else [])
-        locations.update(twitter_filter.locations.strip().split(' ')
-                         if twitter_filter.locations else [])
-        if options.get('verbose', False):
-            print 'track:', words
-            print 'follow:', people
-            print 'locations:', locations
-
-        try:
-            sa = twitter_filter.user.social_auth.all()[0]
-            auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,
-                                       settings.TWITTER_CONSUMER_SECRET)
-            auth.set_access_token(sa.tokens['oauth_token'],
-                                  sa.tokens['oauth_token_secret'])
-            filename_prefix = 'twitterfilter-%s' % args[0]
-            if options.get('save', True):
-                listener = RotatingFile(
-                    filename_prefix=filename_prefix,
-                    save_interval_seconds=options['interval'],
-                    data_dir=options['dir'])
-                stream = tweepy.Stream(auth, listener)
-                stream.filter(track=words, follow=people, locations=locations)
-            else:
-                listener = StdOutListener()
-                stream = tweepy.Stream(auth, listener)
-                StdOutListener(stream.filter(
-                    track=words, follow=people, locations=locations))
-        except Exception, e:
+        if options.get('list', True):
+            twitter_filter = TwitterFilter.objects.order_by('-is_active')
+            print 'Twitterfilter id  Status\n' \
+                  '----------------  ------'
+            for items in twitter_filter:
+                if items.is_active is True:
+                    print str(items.id).rjust(16) + '  Active'
+                else:
+                    print str(items.id).rjust(16) + '  Inactive'
+        else:
+            if len(args) != 1:
+                raise CommandError("one argument is required:twitterfilter id")
+            try:
+                twitter_filter = TwitterFilter.objects.get(id=int(args[0]))
+            except:
+                raise CommandError("unable to load that TwitterFilter")
+            if twitter_filter.is_active is False:
+                raise CommandError("TwitterFilter is not active")
+            words = set()
+            people = set()
+            locations = set()
+            words.update(twitter_filter.words.strip().split(' ')
+                         if twitter_filter.words else [])
+            people.update(twitter_filter.people.strip().split(' ')
+                          if twitter_filter.people else [])
+            locations.update(twitter_filter.locations.strip().split(' ')
+                             if twitter_filter.locations else [])
             if options.get('verbose', False):
-                print 'Disconnected from twitter:', e
-                print traceback.print_exc()
+                print 'track:', words
+                print 'follow:', people
+                print 'locations:', locations
+            try:
+                sa = twitter_filter.user.social_auth.all()[0]
+                auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,
+                                           settings.TWITTER_CONSUMER_SECRET)
+                auth.set_access_token(sa.tokens['oauth_token'],
+                                      sa.tokens['oauth_token_secret'])
+                filename_prefix = 'twitterfilter-%s' % args[0]
+                if options.get('save', True):
+                    listener = RotatingFile(
+                        filename_prefix=filename_prefix,
+                        save_interval_seconds=options['interval'],
+                        data_dir=options['dir'])
+                    stream = tweepy.Stream(auth, listener)
+                    stream.filter(track=words, follow=people,
+                                  locations=locations)
+                else:
+                    listener = StdOutListener()
+                    stream = tweepy.Stream(auth, listener)
+                    StdOutListener(stream.filter(
+                        track=words, follow=people, locations=locations))
+            except Exception, e:
+                if options.get('verbose', False):
+                    print 'Disconnected from twitter:', e
+                    print traceback.print_exc()
