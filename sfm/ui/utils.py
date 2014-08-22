@@ -138,3 +138,55 @@ def remove_process_group(filterid):
 def reload_config():
     proxy = get_supervisor_proxy()
     proxy.supervisor.reloadConfig()
+
+
+def process_info():
+    proxy = get_supervisor_proxy()
+    subprocess = proxy.supervisor.getAllProcessInfo()
+    fail_process = ['FATAL', 'BACKOFF', 'STOPPED']
+    process_detail = []
+    for process_name in subprocess:
+        info_detail = {}
+        description = desc_days = desc_hour = desc_min = desc_sec = '0'
+        stop_date = stop_time = start_date = start_time = 'NA'
+        if 'twitterfilter' or 'streamsample' in process_name['name']:
+            start_date = str(datetime.datetime.fromtimestamp(
+                             process_name['start']).strftime('%m-%d-%Y'))
+            start_time = str(datetime.datetime.fromtimestamp(
+                             process_name['start']).strftime('%r'))
+            status = process_name['statename']
+            # description text for status running,
+            if status == 'RUNNING':
+                desc_time = process_name['description'].split(' ')
+                desc_time_split = desc_time[-1]
+                if len(desc_time_split) is 7:
+                    desc_time_split = '0' + desc_time_split
+                if len(desc_time) > 4:
+                    desc_days = desc_time[-3]
+                desc_hour = desc_time_split[0:2]
+                desc_min = desc_time_split[3:5]
+                desc_sec = desc_time_split[6:8]
+        if status in fail_process:
+            stop_date = str(datetime.datetime.fromtimestamp(
+                            process_name['stop']).strftime('%m-%d-%Y'))
+            stop_time = str(datetime.datetime.fromtimestamp(
+                            process_name['stop']).strftime('%r'))
+            #description text for failed status
+            description = process_name['description']
+            if status == 'STOPPED':
+                description = '   '
+            if status == 'BACKOFF':
+                description = 'trying to start again'
+        info_detail['name'] = process_name['name']
+        info_detail['start_date'] = start_date
+        info_detail['start_time'] = start_time
+        info_detail['status'] = status
+        info_detail['stop_date'] = stop_date
+        info_detail['stop_time'] = stop_time
+        info_detail['days'] = desc_days
+        info_detail['hour'] = desc_hour
+        info_detail['min'] = desc_min
+        info_detail['sec'] = desc_sec
+        info_detail['description'] = description
+        process_detail.append(info_detail)
+    return process_detail

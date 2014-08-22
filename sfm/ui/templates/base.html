@@ -38,6 +38,9 @@
                     <ul class="nav hide-med">
                         <li><a class="brand" href="{% url 'home' %}">social feed manager</a></li>
                         <li><a href="{% url 'about' %}">about</a></li>
+                        {% if user.is_superuser %}
+                        <li><a href="{% url 'status' %}">status</a></li>
+                        {% endif %}
                         <form method="get" action="{% url 'search' %}" class="navbar-search pull-left">
                             <input type="text" name="q" class="search-query" placeholder="find users" {% if q %}value="{{ q }}"{% endif %} />
                         </form>

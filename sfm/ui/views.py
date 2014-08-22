@@ -1,9 +1,11 @@
 import codecs
 import cStringIO
 import csv
+import os
 
+from django.conf import settings
 from django.contrib import auth
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db import connection
@@ -11,6 +13,7 @@ from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import TwitterUser, TwitterUserItem
+from .utils import process_info
 
 
 def _paginate(request, paginator):
@@ -184,6 +187,18 @@ def twitter_item_links(request, id=0):
 def logout(request):
     auth.logout(request)
     return redirect(reverse('home'))
+
+
+#redirect to new page in case not superuser
+@user_passes_test(lambda u: u.is_superuser, login_url='django_no_superuser')
+def status(request):
+    if os.path.exists(settings.SUPERVISOR_UNIX_SOCKET_FILE):
+        proc_status = process_info()
+        return render(request, 'status.html', {
+            'list': proc_status,
+            })
+    else:
+        return render(request, 'status_not_found.html')
 
 
 class UnicodeCSVWriter:
