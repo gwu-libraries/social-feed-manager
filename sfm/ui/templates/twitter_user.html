@@ -72,11 +72,11 @@ svg.selectAll("rect").append("svg:title")
     {% if recent_tweet %}
     {% with recent_tweet.tweet as t %}
     <p>
-    Twitter twitter_user {{ t.twitter_user.id|intcomma }} - created {{ t.twitter_user.created_at }}.
+    Twitter user {{ t.user.id|intcomma }} - created {{ t.user.created_at }}.
     <br />
-    {{ t.twitter_user.statuses_count|intcomma }} tweets -
-    {{ t.twitter_user.followers_count|intcomma }} followers - 
-    {{ t.twitter_user.friends_count|intcomma }} following -
+    {{ t.user.statuses_count|intcomma }} tweets -
+    {{ t.user.followers_count|intcomma }} followers - 
+    {{ t.user.friends_count|intcomma }} following -
     view <a href="http://twitter.com/{{ twitter_user.name }}">in Twitter</a>
     <br />
     export this data <a href='{% url "twitter_user_csv" name=twitter_user.name %}'>as
@@ -102,8 +102,8 @@ svg.selectAll("rect").append("svg:title")
                 <td>
                     {{ item.date_published|date:"Y-m-d h:i:s a" }} 
                     <br />
-                    {{ item.tweet.twitter_user.followers_count|intcomma }} -
-                    {{ item.tweet.twitter_user.friends_count|intcomma }} 
+                    {{ item.tweet.user.followers_count|intcomma }} -
+                    {{ item.tweet.user.friends_count|intcomma }} 
                 </td>
                 <td>{{ item.tweet.retweet_count }}</td>
                 <td>
