@@ -14,6 +14,8 @@ urlpatterns += patterns('ui.views',
     url(r'^logout/$', 'logout', name='logout'),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'),
         name='about'),
+    url(r'^django_no_superuser/$', TemplateView.as_view(template_name=
+        'django_no_superuser.html'), name='django_no_superuser'),
 
     # twitter data patterns
     url(r'^search/$', 'search', name='search'),
@@ -27,6 +29,7 @@ urlpatterns += patterns('ui.views',
         name='twitter_item'),
     url(r'^twitter-item/(?P<id>[0-9]+)/links/$', 'twitter_item_links',
         name='twitter_item_links'),
+    url(r'^status/$', 'status', name='status'),
 
     url(r'', include('social_auth.urls')),
-)
+    )

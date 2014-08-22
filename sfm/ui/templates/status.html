@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block javascript_extra %}
+<script type="text/javascript">
+    $(function() {
+            setTimeout(function() {
+                window.location = location.href;
+                }, 30000);
+            });
+        </script>
+
+<script type='text/javascript' src="http://d3js.org/d3.v3.min.js"></script>
+{% endblock javascript_extra %}
+
+{% block content %}
+<div class="row">
+    <div class="span12"> 
+        <h1>supervisord process status</h1>
+        <table class='table'>
+            <thead>
+                <tr>
+                    <th>processname</th>
+                    <th>start-date</th>
+                    <th>start-time</th>
+                    <th>status</tho>
+                    <th>stop-date</th>
+                    <th>stop-time</th>
+                    <th>description</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {% for i in list %}
+                    <tr>
+                        <td>{{ i.name }} </td>
+                        <td>{{ i.start_date }} </td>
+                        <td>{{ i.start_time }} </td>
+                        <td>{{ i.status }} </td>
+                        <td>{{ i.stop_date }} </td>
+                        <td>{{ i.stop_time }} </td>
+                            <td>
+                            {% if i.description == '0' %}
+                                {% if i.days != '0' %}
+                                upfor {{ i.days }} day{{ i.days|pluralize }}
+                                      {{ i.hour}} hour{{i.hour|pluralize }}
+                                      {{ i.min}} minute{{i.min|pluralize }} 
+                                      {{ i.sec}} second{{i.sec|pluralize }} 
+                                {% else %}
+                                upfor {{ i.hour}} hour{{i.hour|pluralize }}
+                                      {{ i.min}} minute{{i.min|pluralize }} 
+                                      {{ i.sec}} second{{i.sec|pluralize }} 
+                                {% endif %}
+                            {% else %}  
+                                {{ i.description }} </td>
+                            {% endif %}
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+    
+{% endblock content %}
