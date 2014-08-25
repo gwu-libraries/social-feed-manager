@@ -65,8 +65,8 @@ svg.selectAll("rect").append("svg:title")
 {% block content %}
 
 <div class='span-6'>
-    <h1>{{ user.name }} - 
-        {{ user.items.count|intcomma }} item{{ user.items.count|pluralize }}
+    <h1>{{ twitter_user.name }} - 
+        {{ twitter_user.items.count|intcomma }} item{{ twitter_user.items.count|pluralize }}
     </h1>
     <div id='viz' width='500' height='30'></div>
     {% if recent_tweet %}
@@ -77,9 +77,9 @@ svg.selectAll("rect").append("svg:title")
     {{ t.user.statuses_count|intcomma }} tweets -
     {{ t.user.followers_count|intcomma }} followers - 
     {{ t.user.friends_count|intcomma }} following -
-    view <a href="http://twitter.com/{{ user.name }}">in Twitter</a>
+    view <a href="http://twitter.com/{{ twitter_user.name }}">in Twitter</a>
     <br />
-    export this data <a href='{% url "twitter_user_csv" name=user.name %}'>as
+    export this data <a href='{% url "twitter_user_csv" name=twitter_user.name %}'>as
     csv for excel</a>
     </p>
     {% endwith %}

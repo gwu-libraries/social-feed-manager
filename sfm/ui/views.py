@@ -139,7 +139,7 @@ def twitter_user(request, name=''):
         daily_counts = []
     return render(request, 'twitter_user.html', {
         'title': 'twitter user: %s' % name,
-        'user': user,
+        'twitter_user': user,
         'qs_tweets': qs_tweets,
         'tweets': tweets,
         'recent_tweet': recent_tweet,
