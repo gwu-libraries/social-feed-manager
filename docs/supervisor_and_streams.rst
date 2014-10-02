@@ -20,10 +20,13 @@ in order to use filterstreams.
 
 To configure supervisord for SFM:
 
-edit ``/etc/supervisor/supervisord.conf``. Look for the
-``[include]`` section (in a new instance of supervisor, this is
-usually at the bottom) and add ``supervisor.d/*.conf`` to the
-space-separated list of ``files``:
+edit ``/etc/supervisor/supervisord.conf``. 
+Look for the below mentioned section:
+
+     ``[unix_http_server]`` section, add ``chown=www-data`` changing the owner as apache for the file.
+     
+     ``[include]`` section (in a new instance of supervisor, this is usually at the bottom) 
+     and add ``supervisor.d/*.conf`` to the space-separated list of ``files``:
    
        ``files = /etc/supervisor/conf.d/*.conf <PATH_TO_YOUR_SFM>/sfm/sfm/supervisor.d/*.conf``
 
@@ -41,34 +44,29 @@ adjust SAVE\_INTERVAL\_SETTINGS, which controls how often sfm will
 save data to a new file (default is every 15 minutes, specified in
 ```settings.py```).
 
+
 set the permissions on the ``sfm/sfm/supervisor.d`` directory to
-allow the sfm process owner to write to it. Since the sfm process may
-be running as a different user than the owner of the directory, we’re
-going to create a new ‘sfm’ group:
-
-.. code-block:: none
-
-      $ sudo groupadd sfm
-
-and add the sfm process owner to this group. Edit ``/etc/group``:
+allow the apache user(www-data) as the process owner to write to it. 
+To add your own user to the www-data group. 
+Edit ``/etc/group``:
 
 .. code-block:: none
 
      $ sudo vi /etc/group
 
-You should see a new line at the end that looks something like this:
+You should see a line that looks something like this:
 
-       ``sfm:x:<a group number>:``
+       ``www-data:x:<a group number>:``
 
-Add the process owner, and optionally add your own user to this group:
+add your own user to this group:
 
-       ``sfm:x:<a group number>:www-data,<your user name>``
+       ``www-data:x:<a group number>:<your user name>``
 
-Now change the group of the ``supervisor.d`` directory to sfm:
+Now change the group of the ``supervisor.d`` directory to www-data:
 
 .. code-block:: none
 
-   $ sudo chgrp sfm sfm/sfm/supervisor.d
+   $ sudo chgrp www-data sfm/sfm/supervisor.d
 
 Once the supervsiord.conf file and the respective permissions are setup, supervsiord needs to be configured to manage the sub-process under it.
 
