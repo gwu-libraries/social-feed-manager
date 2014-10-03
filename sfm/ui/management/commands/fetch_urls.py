@@ -9,6 +9,7 @@ from django.core.management.base import BaseCommand, CommandError
 from ui.models import TwitterUser, TwitterUserItem, TwitterUserItemUrl
 from ui.utils import make_date_aware
 
+from queryset_iterator import queryset_iterator
 
 class Command(BaseCommand):
     help = 'fetch expanded urls for tweets with urls in text'
@@ -71,8 +72,7 @@ class Command(BaseCommand):
         if end_dt:
             qs = qs.filter(date_published__lte=end_dt)
 
-        # be sure we move through the list in a consistent order
-        qs = qs.order_by('date_published')
+        qs = queryset_iterator(qs)
 
         session = requests.Session()
         count = 0
