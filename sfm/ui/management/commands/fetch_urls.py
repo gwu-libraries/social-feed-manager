@@ -1,6 +1,7 @@
 import json
 from optparse import make_option
 import sys
+from contextlib import closing
 
 import requests
 
@@ -74,7 +75,6 @@ class Command(BaseCommand):
 
         qs = queryset_iterator(qs)
 
-        session = requests.Session()
         count = 0
         for tui in qs:
             urls = []
@@ -85,34 +85,35 @@ class Command(BaseCommand):
                     urls.append({'url': u, 'expanded_url': u})
             for url in urls:
                 try:
-                    r = session.get(url['url'], allow_redirects=True,
-                                    stream=False)
-                    r.close()
-                except:
+                    with closing(requests.get(url['expanded_url'],
+                        allow_redirects=True, stream=True, timeout=10)) as r:
+                        tuiu = TwitterUserItemUrl(
+                            item=tui,
+                            start_url=url['url'],
+                            expanded_url=url['expanded_url'],
+                            history=json.dumps([(
+                                req.status_code, req.url, dict(req.headers))
+                                for req in r.history]),
+                            final_url=r.url,
+                            final_status=r.status_code,
+                            final_headers=json.dumps(dict(r.headers)),
+                            duration_seconds=r.elapsed.total_seconds())
+                    tuiu.save()
+                except requests.RequestException as e:
                     # TODO: consider trapping/recording
                     # requests.exceptions.ConnectionError,
                     # requests.exceptions.TooManyRedirects etc.
                     # and flagging records as having errored out
+                    print("%s: %s" % (url['url'], e))
+
                     tuiu = TwitterUserItemUrl(
                         item=tui,
                         start_url=url['url'],
-                        expanded_url=url['url'],
+                        expanded_url=url['expanded_url'],
                         final_url=url['url'],
                         final_status=410)
                     tuiu.save()
-                    continue
-                tuiu = TwitterUserItemUrl(
-                    item=tui,
-                    start_url=url['url'],
-                    expanded_url=url['expanded_url'],
-                    history=json.dumps([(
-                        req.status_code, req.url, dict(req.headers))
-                        for req in r.history]),
-                    final_url=r.url,
-                    final_status=r.status_code,
-                    final_headers=json.dumps(dict(r.headers)),
-                    duration_seconds=r.elapsed.total_seconds())
-                tuiu.save()
+
             count += 1
             if options['limit']:
                 if count >= options['limit']:
