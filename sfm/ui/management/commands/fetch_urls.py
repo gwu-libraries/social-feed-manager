@@ -63,6 +63,9 @@ class Command(BaseCommand):
         else:
             qs = TwitterUserItem.objects.all()
 
+        if not options['refetch']:
+            qs = qs.filter(urls__isnull=True)
+
         if start_dt:
             qs = qs.filter(date_published__gte=start_dt)
         if end_dt:
@@ -81,16 +84,6 @@ class Command(BaseCommand):
                 for u in tui.links:
                     urls.append({'url': u, 'expanded_url': u})
             for url in urls:
-                # use filter because 0-to-many might already exist
-                qs_tuiu = TwitterUserItemUrl.objects.filter(
-                    item=tui,
-                    start_url=url['url'],
-                    expanded_url=url['expanded_url'])
-                # if any already exist, and we're not refetching, move on
-                if qs_tuiu.count() > 0 and \
-                        not options['refetch']:
-                    continue
-                # otherwise, create a new one from scratch
                 try:
                     r = session.get(url['url'], allow_redirects=True,
                                     stream=False)
