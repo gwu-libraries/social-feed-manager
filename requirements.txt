@@ -3,8 +3,9 @@ django-social-auth
 lxml
 psycopg2
 pytz
-requests
+requests>2.4.1
 south
 tweepy
 supervisor
 xlwt
+django-queryset-iterator
