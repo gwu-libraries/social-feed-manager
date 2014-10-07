@@ -92,11 +92,17 @@ class Command(BaseCommand):
                             start_url=url['url'],
                             expanded_url=url['expanded_url'],
                             history=json.dumps([(
-                                req.status_code, req.url, dict(req.headers))
+                                req.status_code, req.url, {
+                                    k.decode(req.encoding or 'utf-8'):
+                                    v.decode(req.encoding or 'utf-8')
+                                    for k, v in req.headers.items()})
                                 for req in r.history]),
                             final_url=r.url,
                             final_status=r.status_code,
-                            final_headers=json.dumps(dict(r.headers)),
+                            final_headers=json.dumps({
+                                k.decode(r.encoding or 'utf-8'):
+                                v.decode(r.encoding or 'utf-8')
+                                for k, v in r.headers.items()}),
                             duration_seconds=r.elapsed.total_seconds())
                     tuiu.save()
                 except requests.RequestException as e:
