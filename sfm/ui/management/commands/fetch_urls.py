@@ -2,6 +2,7 @@ import json
 from optparse import make_option
 import sys
 from contextlib import closing
+from socket import error as socket_error
 
 import requests
 
@@ -105,7 +106,9 @@ class Command(BaseCommand):
                                 for k, v in r.headers.items()}),
                             duration_seconds=r.elapsed.total_seconds())
                     tuiu.save()
-                except requests.RequestException as e:
+                except (requests.RequestException,
+                        requests.packages.urllib3.exceptions.HTTPError,
+                        socket_error) as e:
                     # TODO: consider trapping/recording
                     # requests.exceptions.ConnectionError,
                     # requests.exceptions.TooManyRedirects etc.
