@@ -3,6 +3,7 @@ from optparse import make_option
 import sys
 from contextlib import closing
 from socket import error as socket_error
+import codecs
 
 import requests
 
@@ -12,6 +13,7 @@ from ui.models import TwitterUser, TwitterUserItem, TwitterUserItemUrl
 from ui.utils import make_date_aware
 
 from queryset_iterator import queryset_iterator
+
 
 class Command(BaseCommand):
     help = 'fetch expanded urls for tweets with urls in text'
@@ -87,23 +89,45 @@ class Command(BaseCommand):
             for url in urls:
                 try:
                     with closing(requests.get(url['expanded_url'],
-                        allow_redirects=True, stream=True, timeout=10)) as r:
+                                              allow_redirects=True,
+                                              stream=True, timeout=10)) as r:
+                        req_history_headers = []
+                        for req in r.history:
+                            req_headers = {}
+                            try:
+                                header_codec = codecs.lookup(req.encoding
+                                                                or 'utf-8')
+                            except LookupError:
+                                header_codec = codecs.lookup('utf-8')
+                            for k, v in req.headers.items():
+                                req_headers.update({
+                                    header_codec.decode(k),
+                                    header_codec.decode(v)})
+                            req_history_headers.append((
+                                req.status_code,
+                                req.url,
+                                req_headers))
+
+                        try:
+                            header_codec = codecs.lookup(r.encoding
+                                                            or 'utf-8')
+                        except LookupError:
+                            header_codec = codecs.lookup('utf-8')
+
+                        final_req_headers = {}
+                        for k, v in r.headers.items():
+                            final_req_headers.update({
+                                header_codec.decode(k),
+                                header_codec.decode(v)})
+
                         tuiu = TwitterUserItemUrl(
                             item=tui,
                             start_url=url['url'],
                             expanded_url=url['expanded_url'],
-                            history=json.dumps([(
-                                req.status_code, req.url, {
-                                    k.decode(req.encoding or 'utf-8'):
-                                    v.decode(req.encoding or 'utf-8')
-                                    for k, v in req.headers.items()})
-                                for req in r.history]),
+                            history=json.dumps(req_history_headers),
                             final_url=r.url,
                             final_status=r.status_code,
-                            final_headers=json.dumps({
-                                k.decode(r.encoding or 'utf-8'):
-                                v.decode(r.encoding or 'utf-8')
-                                for k, v in r.headers.items()}),
+                            final_headers=json.dumps(final_req_headers),
                             duration_seconds=r.elapsed.total_seconds())
                     tuiu.save()
                 except (requests.RequestException,
