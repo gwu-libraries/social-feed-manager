@@ -31,7 +31,8 @@ Edit ``/etc/supervisor/supervisord.conf``:
 
 NOTE:  If you wish to modify (add/enable/remove/disable) filterstreams when
 running the app with django "runserver" rather than apache, you will need to
-ensure that the supervisor socket file has 777 permissions.  After the ``chown=www-data:www-data`` line in supervisord.conf, add another line with ``chmod=777``.
+ensure that the supervisor socket file has 777 permissions.  After the ``chown=www-data:www-data`` line in supervisord.conf, modify the default ``chmod=700``
+line to ``chmod=777``.
 
 Next we will create a ``www-data`` group and add your user to it:
 
