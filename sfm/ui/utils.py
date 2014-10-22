@@ -78,9 +78,9 @@ def create_conf_file(twitterfilter_id):
     fp = open(file_path, "wb")
     fp.write(contents)
     filestatus = os.stat(file_path)
-    # do a chmod +x
+    # do a chmod +x, and add group write permissions
     os.chmod(file_path, filestatus.st_mode | stat.S_IXUSR |
-             stat.S_IXGRP | stat.S_IXOTH)
+             stat.S_IXGRP | stat.S_IXOTH | stat.S_IWGRP )
     fp.close()
 
 

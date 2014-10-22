@@ -1,9 +1,8 @@
 Using Supervisord to Manage Streaming Filters
 =============================================
 
-As of release m4_002, Social Feed Manager uses `supervisord
-<http://supervisord.org/>`_ to manage the
-filterstream and streamsample processes.  As streaming processes,
+Social Feed Manager uses `supervisord <http://supervisord.org/>`_ to manage
+the filterstream and streamsample processes.  As streaming processes,
 these are intended to be run on a continuous, ongoing basis, to collect
 tweets over time.  Supervisord is a process control system that, among
 other features, manages the SFM streaming processes independently from the
@@ -14,63 +13,73 @@ Twitterfilters and/or streamsample *can* still be run independently of
 supervisord if desired (e.g. for testing), by invoking them at the command
 line as :doc:`management commands </mgmt_commands>`.
 
+Supervisor setup
+----------------
 Supervisord is installed as part of the standard SFM installation; it is
 one of SFM's ubuntu package dependencies.  However, it must be configured
 in order to use filterstreams.
 
 To configure supervisord for SFM:
 
-edit ``/etc/supervisor/supervisord.conf``. Look for the
-``[include]`` section (in a new instance of supervisor, this is
-usually at the bottom) and add ``supervisor.d/*.conf`` to the
-space-separated list of ``files``:
+Edit ``/etc/supervisor/supervisord.conf``:
+
+     In the ``[unix_http_server]`` section, add ``chown=www-data:www-data`` so that the socket file will be created with www-data as the owner (apache runs as the www-data user)
+     
+     In the ``[include]`` section (in a new instance of supervisor, this is usually at the bottom) add ``supervisor.d/*.conf`` to the space-separated list of ``files``:
    
        ``files = /etc/supervisor/conf.d/*.conf <PATH_TO_YOUR_SFM>/sfm/sfm/supervisor.d/*.conf``
 
-create a ``/var/log/sfm`` directory. The supervisor-supervised
-processes will write log files to this directory.
+NOTE:  If you wish to modify (add/enable/remove/disable) filterstreams when
+running the app with django "runserver" rather than apache, you will need to
+ensure that the supervisor socket file has 777 permissions.  After the ``chown=www-data:www-data`` line in supervisord.conf, modify the default ``chmod=700``
+line to ``chmod=777``.
 
-.. code-block:: none
-
-        $ sudo mkdir /var/log/sfm
-
-edit local_settings.py to set DATA_DIR to the directory where you
-want stream output stored. Set SUPERVISOR\_PROCESS\_OWNER to a user
-who has rights to write to ``/var/log/sfm``. You may also wish to
-adjust SAVE\_INTERVAL\_SETTINGS, which controls how often sfm will
-save data to a new file (default is every 15 minutes, specified in
-```settings.py```).
-
-set the permissions on the ``sfm/sfm/supervisor.d`` directory to
-allow the sfm process owner to write to it. Since the sfm process may
-be running as a different user than the owner of the directory, we’re
-going to create a new ‘sfm’ group:
-
-.. code-block:: none
-
-      $ sudo groupadd sfm
-
-and add the sfm process owner to this group. Edit ``/etc/group``:
+Next we will create a ``www-data`` group and add your user to it:
 
 .. code-block:: none
 
      $ sudo vi /etc/group
 
-You should see a new line at the end that looks something like this:
+You should see a line that looks something like this:
 
-       ``sfm:x:<a group number>:``
+       ``www-data:x:<a group number>:``
 
-Add the process owner, and optionally add your own user to this group:
+add your own user to this group:
 
-       ``sfm:x:<a group number>:www-data,<your user name>``
+       ``www-data:x:<a group number>:<your user name>``
 
-Now change the group of the ``supervisor.d`` directory to sfm:
+Next, create a ``/var/log/sfm`` directory. The supervisor-supervised processes will write log files to this directory.
 
 .. code-block:: none
 
-   $ sudo chgrp sfm sfm/sfm/supervisor.d
+        $ sudo mkdir /var/log/sfm
 
-Once the supervsiord.conf file and the respective permissions are setup, supervsiord needs to be configured to manage the sub-process under it.
+Change the directory group ownership to ``www-data``:
+
+.. code-block:: none
+
+        $ sudo chown www-data:www-data /var/log/sfm
+
+Edit local_settings.py to set DATA_DIR to the directory where you
+want stream output stored. Set SUPERVISOR\_PROCESS\_OWNER to a user
+who has rights to write to ``/var/log/sfm`` (such as your user).
+You may also wish to adjust SAVE\_INTERVAL\_SETTINGS, which controls
+how often sfm will save data to a new file (default is every 15 minutes,
+specified in ``settings.py``).
+
+Set ownership of the ``sfm/sfm/supervisor.d`` directory to www-data:www-data
+allow the apache user (www-data) to write to it. 
+
+.. code-block:: none
+
+   $ sudo chown www-data:www-data sfm/sfm/supervisor.d
+
+Finally, restart supervisor:
+
+.. code-block:: none
+
+     $ sudo service supervisor stop
+     $ sudo service supervisor start
 
 
 Streamsample setup
