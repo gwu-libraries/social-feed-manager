@@ -80,7 +80,8 @@ svg.selectAll("rect").append("svg:title")
     view <a href="http://twitter.com/{{ twitter_user.name }}">in Twitter</a>
     <br />
     export this data <a href='{% url "twitter_user_csv" name=twitter_user.name %}'>as
-    csv for excel</a>
+    csv </a> 
+    or <a href='{% url "twitter_user_xls" name=twitter_user.name %}'> as Excel</a>
     </p>
     {% endwith %}
 
@@ -126,6 +127,4 @@ svg.selectAll("rect").append("svg:title")
     {% include "twitter_user_pagination.html" %}
     {% endif %}
 </div>
-
-
 {% endblock content %}

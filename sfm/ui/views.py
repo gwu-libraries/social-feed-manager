@@ -2,6 +2,8 @@ import codecs
 import cStringIO
 import csv
 import os
+import xlwt
+from xlwt import Workbook
 
 from django.conf import settings
 from django.contrib import auth
@@ -13,7 +15,7 @@ from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import TwitterUser, TwitterUserItem
-from .utils import process_info
+from .utils import process_info, write_xls
 
 
 def _paginate(request, paginator):
@@ -169,6 +171,18 @@ def twitter_user_csv(request, name=''):
 
 
 @login_required
+def twitter_user_xls(request, name=''):
+    user = get_object_or_404(TwitterUser, name=name)
+    qs_tweets = user.items.order_by('-date_published')
+    new_workbook = write_xls(qs_tweets)
+    response = HttpResponse(content_type='text/ms-excel')
+    response['Content-Disposition'] = \
+        'attachment; filename="%s.xls"' % name
+    new_workbook.save(response)
+    return response
+
+
+@login_required
 def twitter_item(request, id=0):
     item = get_object_or_404(TwitterUserItem, id=int(id))
     return HttpResponse(item.item_json, content_type='application/json')
@@ -218,3 +232,5 @@ class UnicodeCSVWriter:
 
     def out(self):
         return cStringIO.StringIO(self.queue.getvalue())
+
+

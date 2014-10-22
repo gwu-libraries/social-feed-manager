@@ -6,6 +6,8 @@ from supervisor import xmlrpc
 import time
 import traceback
 import xmlrpclib
+import xlwt
+from xlwt import Workbook
 
 from django.conf import settings
 from django.utils import timezone
@@ -190,3 +192,27 @@ def process_info():
         info_detail['description'] = description
         process_detail.append(info_detail)
     return process_detail
+
+
+def write_xls(qs_tweets):
+    fieldnames = ['sfm_id', 'created_at', 'created_at_date', 'twitter_id',
+                  'screen_name', 'followers_count', 'friends_count',
+                  'retweet_count', 'hashtags', 'in_reply_to_screen_name',
+                  'mentions', 'twitter_url', 'is_retweet_strict', 'is_retweet',
+                  'text', 'url1', 'url1_expanded', 'url2', 'url2_expanded']
+    new_workbook = Workbook(encoding="UTF-8")
+    new_sheet = new_workbook.add_sheet('sheet1')
+    font = xlwt.Font()
+    font.name = 'Arial Unicode MS'
+    style = xlwt.XFStyle()
+    style.font = font
+    for i in range(0, len(fieldnames)):
+        new_sheet.write(0, i, fieldnames[i], style=style)
+        row = 0
+    for t in qs_tweets:
+        row = row+1
+        col = 0
+        for r in range(0, len(t.csv)):
+            new_sheet.write(row, col, t.csv[r], style=style)
+            col = col+1
+    return new_workbook
