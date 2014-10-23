@@ -44,7 +44,7 @@ supported; recommend piping output to a file")
         if options['twitter_user']:
             try:
                 twitter_user = TwitterUser.objects.get(
-                    name=options.get('twitter_user'))
+                    name__iexact=options.get('twitter_user'))
                 qs = twitter_user.items.all()
             except TwitterUser.DoesNotExist:
                 raise CommandError('TwitterUser %s does not exist' %
