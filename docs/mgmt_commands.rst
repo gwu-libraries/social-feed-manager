@@ -358,12 +358,12 @@ export_xls
 ----------
 
 Tweets stored in SFM associated with a TwitterUser or a TwitterUserSet can
-be exported in Excel(xls) format using the *export_xls*
-management command.  The user interface also offers excel exports via a
+be exported in Excel XLS format using the *export_xls*
+management command.  The user interface also offers XLS exports via a
 link on each TwitterUser's page (currently there is no page in the UI
 for a set).
 
-The format and meaning of each column in the excel export is explained in
+The format and meaning of each column in the XLS export is explained in
 the :doc:`Data Dictionary </data_dictionary>`.
 
 *export_xls* requires a filename and either twitter-user or set-name. It can be run with the following options.
@@ -382,13 +382,13 @@ To export tweets for Twitter user "sfmtwitteruser":
 
 .. code-block:: none
 
-       ./manage.py export_xls [filename] --twitter-user sfmtwitteruser
+       ./manage.py export_xls --twitter-user sfmtwitteruser --filename=MYFILE.XLS
 
 To export tweets for TwitterUserSet "myset":
 
 .. code-block:: none
 
-       ./manage.py export_xls [filename] --set-name myset
+       ./manage.py export_xls --set-name myset --filename=MYFILE.XLS
 
 
 .. _`createconf`:
