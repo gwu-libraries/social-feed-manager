@@ -337,7 +337,8 @@ the :doc:`Data Dictionary </data_dictionary>`.
 
 --xls -- export in XLS format (default is CSV)
 
---filename -- filename (required when --xls is used; not yet supported for CSV)
+--filename -- file name for export file (required when --xls is used; 
+not yet supported for CSV)
 
 To export tweets for Twitter user "sfmtwitteruser":
 
