@@ -4,11 +4,11 @@ import sys
 from django.core.management.base import BaseCommand, CommandError
 
 from ui.models import TwitterUser, TwitterUserSet, TwitterUserItem
-from ui.utils import make_date_aware, write_xls
+from ui.utils import make_date_aware, xls_tweets_workbook
 
 
 class Command(BaseCommand):
-    help = 'export data for a user or a set in csv'
+    help = 'export data for a user or a set in csv or xls'
 
     option_list = BaseCommand.option_list + (
         make_option('--start-date', action='store', default=None,
@@ -23,22 +23,24 @@ class Command(BaseCommand):
         make_option('--set-name', action='store', default=None,
                     type='string', dest='set_name',
                     help='set name to export'),
+        make_option('--xls', action='store_true', default=False,
+                    dest='xls', help='export in .xls format'),
+        make_option('--filename', action='store', default=None,
+                    type='string', dest='filename',
+                    help='filename to export (required with --xls)'),
     )
 
     def handle(self, *args, **options):
-        twitter_user = user_set = start_dt = end_dt = if_xls = f_name = None
-        for idx in args:
-            if len(args) == 0:
-                continue
-            elif len(args) == 1:
-                try:
-                    idx['xls'] = 'xls'
-                    if_xls = 'Y'
-                    f_name = idx['f_name']
-                except Exception:
-                    raise CommandError("please use --help to check usage")
-            else:
-                raise CommandError("please use --help to check usage")
+        twitter_user = user_set = start_dt = end_dt = xls = filename = None
+        if options['filename']:
+            filename = options.get('filename')
+        xls = options['xls']
+        if xls and filename is None:
+            raise CommandError("When --xls is specified, \
+--filename=FILENAME is required")
+        if not xls and filename is not None:
+            raise CommandError("Writing CSV files currently not yet \
+supported; recommend piping output to a file")
         if options['twitter_user']:
             try:
                 twitter_user = TwitterUser.objects.get(
@@ -76,10 +78,9 @@ class Command(BaseCommand):
         #   nedbatchelder.com/blog/200401/printing_unicode_from_python.html
         writer_class = codecs.getwriter('utf-8')
         sys.stdout = writer_class(sys.stdout, 'replace')
-        if if_xls is 'Y':
-            new_workbook = write_xls(qs)
-            new_workbook.save(f_name)
-            print "File created"
+        if xls:
+            tworkbook = xls_tweets_workbook(qs, TwitterUserItem.csv_headers)
+            tworkbook.save(filename)
         else:
             for tui in qs:
                 print '\t'.join(tui.csv)
