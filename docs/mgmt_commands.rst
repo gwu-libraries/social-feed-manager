@@ -335,6 +335,10 @@ the :doc:`Data Dictionary </data_dictionary>`.
 
 --set-name -- exports tweets for the specified TwitterUserSet
 
+--xls -- export in XLS format (default is CSV)
+
+--filename -- filename (required when --xls is used; not yet supported for CSV)
+
 To export tweets for Twitter user "sfmtwitteruser":
 
 .. code-block:: none
@@ -370,6 +374,8 @@ the :doc:`Data Dictionary </data_dictionary>`.
 --twitter-user -- exports tweets for the specified TwitterUser (by name)
 
 --set-name -- exports tweets for the specified TwitterUserSet
+
+--filename -- file name for export file
 
 To export tweets for Twitter user "sfmtwitteruser":
 
