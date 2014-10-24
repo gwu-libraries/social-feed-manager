@@ -211,6 +211,12 @@ class TwitterUserItem(m.Model):
     item_json = m.TextField(default='', blank=True)
     place = m.TextField(default='', blank=True)
     source = m.TextField(default='', blank=True)
+    csv_headers = ['sfm_id', 'created_at', 'created_at_date', 'twitter_id',
+                   'screen_name', 'followers_count', 'friends_count',
+                   'retweet_count', 'hashtags', 'in_reply_to_screen_name',
+                   'mentions', 'twitter_url', 'is_retweet_strict',
+                   'is_retweet', 'text', 'url1', 'url1_expanded', 'url2',
+                   'url2_expanded']
 
     def __unicode__(self):
         return '<useritem (%s)>' % (self.id)

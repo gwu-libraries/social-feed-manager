@@ -1,3 +1,6 @@
+import codecs
+import cStringIO
+import csv
 import datetime
 import getpass
 import os
@@ -6,10 +9,11 @@ from supervisor import xmlrpc
 import time
 import traceback
 import xmlrpclib
+import xlwt
+from xlwt import Workbook
 
 from django.conf import settings
 from django.utils import timezone
-
 
 # A little added cushion
 WAIT_BUFFER_SECONDS = 2
@@ -190,3 +194,51 @@ def process_info():
         info_detail['description'] = description
         process_detail.append(info_detail)
     return process_detail
+
+
+def csv_tweets_writer(qs_tweets, fieldnames):
+    """Returns a UnicodeCSVWriter object loaded with one row per tweet."""
+    csvwriter = UnicodeCSVWriter()
+    csvwriter.writerow(fieldnames)
+    for t in qs_tweets:
+        csvwriter.writerow(t.csv)
+    return csvwriter
+
+
+def xls_tweets_workbook(qs_tweets, fieldnames):
+    """Returns an XLS Workbook object with one row per tweet."""
+    new_workbook = Workbook(encoding="UTF-8")
+    new_sheet = new_workbook.add_sheet('sheet1')
+    font = xlwt.Font()
+    font.name = 'Arial Unicode MS'
+    style = xlwt.XFStyle()
+    style.font = font
+    for i in range(0, len(fieldnames)):
+        new_sheet.write(0, i, fieldnames[i], style=style)
+        row = 0
+    for t in qs_tweets:
+        row = row+1
+        col = 0
+        for r in range(0, len(t.csv)):
+            new_sheet.write(row, col, t.csv[r], style=style)
+            col = col+1
+    return new_workbook
+
+
+class UnicodeCSVWriter:
+
+    def __init__(self, dialect=csv.excel, encoding='utf-8', **params):
+        self.queue = cStringIO.StringIO()
+        self.writer = csv.writer(self.queue, dialect=dialect, **params)
+        self.encoding = encoding
+        self.encoder = codecs.getincrementalencoder(self.encoding)()
+
+    def writerow(self, row):
+        self.writer.writerow([s.encode(self.encoding) for s in row])
+
+    def writerows(self, rows):
+        for row in rows:
+            self.writerow(row)
+
+    def out(self):
+        return cStringIO.StringIO(self.queue.getvalue())

@@ -1,6 +1,3 @@
-import codecs
-import cStringIO
-import csv
 import os
 
 from django.conf import settings
@@ -13,7 +10,7 @@ from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import TwitterUser, TwitterUserItem
-from .utils import process_info
+from .utils import process_info, xls_tweets_workbook, csv_tweets_writer
 
 
 def _paginate(request, paginator):
@@ -151,20 +148,24 @@ def twitter_user(request, name=''):
 
 @login_required
 def twitter_user_csv(request, name=''):
-    fieldnames = ['sfm_id', 'created_at', 'created_at_date', 'twitter_id',
-                  'screen_name', 'followers_count', 'friends_count',
-                  'retweet_count', 'hashtags', 'in_reply_to_screen_name',
-                  'mentions', 'twitter_url', 'is_retweet_strict', 'is_retweet',
-                  'text', 'url1', 'url1_expanded', 'url2', 'url2_expanded']
     user = get_object_or_404(TwitterUser, name=name)
     qs_tweets = user.items.order_by('-date_published')
-    csvwriter = UnicodeCSVWriter()
-    csvwriter.writerow(fieldnames)
-    for t in qs_tweets:
-        csvwriter.writerow(t.csv)
+    csvwriter = csv_tweets_writer(qs_tweets, TwitterUserItem.csv_headers)
     response = StreamingHttpResponse(csvwriter.out(), content_type='text/csv')
     response['Content-Disposition'] = \
         'attachment; filename="%s.csv"' % name
+    return response
+
+
+@login_required
+def twitter_user_xls(request, name=''):
+    user = get_object_or_404(TwitterUser, name=name)
+    qs_tweets = user.items.order_by('-date_published')
+    tworkbook = xls_tweets_workbook(qs_tweets, TwitterUserItem.csv_headers)
+    response = HttpResponse(content_type='text/ms-excel')
+    response['Content-Disposition'] = \
+        'attachment; filename="%s.xls"' % name
+    tworkbook.save(response)
     return response
 
 
@@ -199,22 +200,3 @@ def status(request):
             })
     else:
         return render(request, 'status_not_found.html')
-
-
-class UnicodeCSVWriter:
-
-    def __init__(self, dialect=csv.excel, encoding='utf-8', **params):
-        self.queue = cStringIO.StringIO()
-        self.writer = csv.writer(self.queue, dialect=dialect, **params)
-        self.encoding = encoding
-        self.encoder = codecs.getincrementalencoder(self.encoding)()
-
-    def writerow(self, row):
-        self.writer.writerow([s.encode(self.encoding) for s in row])
-
-    def writerows(self, rows):
-        for row in rows:
-            self.writerow(row)
-
-    def out(self):
-        return cStringIO.StringIO(self.queue.getvalue())
