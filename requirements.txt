@@ -7,3 +7,4 @@ requests
 south
 tweepy
 supervisor
+xlwt
