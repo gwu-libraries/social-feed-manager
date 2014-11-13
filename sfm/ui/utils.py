@@ -6,6 +6,7 @@ import getpass
 import os
 import stat
 from supervisor import xmlrpc
+import sys
 import time
 import traceback
 import xmlrpclib
@@ -61,7 +62,7 @@ def create_conf_file(twitterfilter_id):
         processowner = getpass.getuser()
 
     contents = "[program:twitterfilter-%s]" % twitterfilter_id + '\n' + \
-               "command=%s/ENV/bin/python " % projectroot + \
+               "command=%s " % sys.executable + \
                "%s/sfm/manage.py " % projectroot + \
                "filterstream %s --save" % twitterfilter_id + '\n' \
                "user=%s" % processowner + '\n' \
