@@ -18,6 +18,9 @@ class Command(BaseCommand):
                             a list of tweet ids, each on a separate line'),
         make_option('--outputfile', action='store',
                     default=None, help='Path of the output file'),
+        make_option('--limit', action='store',
+            default=None, help='Limit on the number of tweets to fetch.'),
+
     )
 
     def handle(self, *args, **options):
@@ -34,21 +37,41 @@ class Command(BaseCommand):
             outstream = open(outfile, 'w')
         else:
             outstream = sys.stdout
+        limit = int(options['limit']) if options['limit'] else None
         api = authenticated_api(username=settings.TWITTER_DEFAULT_USERNAME)
+        assert api
         errors_occurred = False
-        for tweetidline in fin:
-            try:
-                status = api.get_status(id=tweetidline)
-                json_value = json.dumps(status) + '\n\n'
-                outstream.write(json_value)
-            except tweepy.error.TweepError as e:
-                content = 'Error: %s for the tweetid: %s' \
-                          % (e, tweetidline) + '\n'
-                flog.write(content)
-                errors_occurred = True
+        tweet_ids = []
+        for count, tweetidline in enumerate(fin):
+            if limit and limit == count:
+                print "Reached limit of %s tweets" % limit
+                break
+            tweet_ids.append(tweetidline[:-1])
+            if len(tweet_ids) == 5:
+                errors_occurred = self.fetch(tweet_ids, api, outstream, flog) or errors_occurred
+                tweet_ids = []
+        #Final fetch
+        errors_occurred = self.fetch(tweet_ids, api, outstream, flog) or errors_occurred
         fin.close()
         flog.close()
         if options.get('outputfile', True):
             outstream.close()
         if errors_occurred:
-            print 'Completed with errors. Please view the log file for details'
+            print 'Completed with errors. Please view the log file (%s) for details' % logfile
+
+    def fetch(self, tweet_ids, api, outstream, flog):
+        if tweet_ids:
+            try:
+                statuses = api.statuses_lookup(tweet_ids)
+                for status in statuses:
+                    json_value = json.dumps(status) + '\n\n'
+                    outstream.write(json_value)
+            except tweepy.error.TweepError as e:
+                content = 'Error: %s for the tweetids: %s' \
+                          % (e, tweet_ids) + '\n'
+                flog.write(content)
+                #Return true if errors occurred
+                return True
+        return False
+
+
