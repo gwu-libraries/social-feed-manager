@@ -75,7 +75,7 @@ class RotatingFile(StreamListener):
 
     def _get_filename(self):
         return '%s/%s-%s%s' % (self.data_dir, self.filename_prefix,
-                               time.strftime('%Y-%m-%dT%H:%M:%SZ',
+                               time.strftime('%Y-%m-%dT%H-%M-%SZ',
                                              time.gmtime()),
                                '.gz' if self.compress else '')
 

@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # for every file in the data dir, eg:
-        #   DATA/PREFIX-2012-04-22T17:33:44Z.xml.gz
+        #   DATA/PREFIX-2012-04-22T17-33-44Z.xml.gz
         # if the modification time is greater than
         #   (2 * settings.SAVE_INTERVAL_SECONDS):
         # make sure there's a directory under DATA names PREFIX
@@ -27,15 +27,17 @@ class Command(BaseCommand):
             # pull out the prefix, year, month, day, and hour
             try:
                 # patterns:
-                #   twitterfilter-2-2014-04-11T04:34:28Z.gz
-                #   sample-2014-04-11T04:34:28Z.gz
+                #   twitterfilter-2-2014-04-11T04-34-28Z.gz
+                #   sample-2014-04-11T04-34-28Z.gz
                 prefixed_date, t, time_ext = fname.partition('T')
                 # get process name by truncating last 11 chars: -YYYY-MM-DD
                 processname = prefixed_date[:-11]
                 # get date as the last 10 chars: YYYY-MM-DD
                 the_date = prefixed_date[-10:]
                 year, month, day = the_date.split('-')
-                hour, minute, seconds_ext = time_ext.split(':')
+                #This supports old-style filenames, which used : as separator
+                #as well as new-style, which uses -.
+                hour, minute, seconds_ext = time_ext.split(':' if ':' in time_ext else '-')
             except:
                 # probably a prefix/directory
                 continue
