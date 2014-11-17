@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 print "Reached limit of %s tweets" % limit
                 break
             tweet_ids.append(tweetidline[:-1])
-            if len(tweet_ids) == 5:
+            if len(tweet_ids) == 100:
                 errors_occurred = self.fetch(tweet_ids, api, outstream, flog) or errors_occurred
                 tweet_ids = []
         #Final fetch
