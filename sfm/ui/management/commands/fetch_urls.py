@@ -1,6 +1,8 @@
 import json
 from optparse import make_option
 import sys
+from socket import error as socket_error
+import codecs
 
 import requests
 
@@ -8,6 +10,8 @@ from django.core.management.base import BaseCommand, CommandError
 
 from ui.models import TwitterUser, TwitterUserItem, TwitterUserItemUrl
 from ui.utils import make_date_aware
+
+from queryset_iterator import queryset_iterator
 
 
 class Command(BaseCommand):
@@ -63,15 +67,16 @@ class Command(BaseCommand):
         else:
             qs = TwitterUserItem.objects.all()
 
+        if not options['refetch']:
+            qs = qs.filter(urls__isnull=True)
+
         if start_dt:
             qs = qs.filter(date_published__gte=start_dt)
         if end_dt:
             qs = qs.filter(date_published__lte=end_dt)
 
-        # be sure we move through the list in a consistent order
-        qs = qs.order_by('date_published')
+        qs = queryset_iterator(qs)
 
-        session = requests.Session()
         count = 0
         for tui in qs:
             urls = []
@@ -81,46 +86,69 @@ class Command(BaseCommand):
                 for u in tui.links:
                     urls.append({'url': u, 'expanded_url': u})
             for url in urls:
-                # use filter because 0-to-many might already exist
-                qs_tuiu = TwitterUserItemUrl.objects.filter(
-                    item=tui,
-                    start_url=url['url'],
-                    expanded_url=url['expanded_url'])
-                # if any already exist, and we're not refetching, move on
-                if qs_tuiu.count() > 0 and \
-                        not options['refetch']:
-                    continue
-                # otherwise, create a new one from scratch
                 try:
-                    r = session.get(url['url'], allow_redirects=True,
-                                    stream=False)
-                    r.close()
-                except:
+                    r = requests.head(url['expanded_url'],
+                                              allow_redirects=True,
+                                              timeout=10)
+                    if r.status_code == 405:
+                        r = requests.get(url['expanded_url'],
+                                                  allow_redirects=True,
+                                                  stream=True, timeout=10)
+                        r.close()
+                    req_history_headers = []
+                    for req in r.history:
+                        req_headers = self.decode_headers(req.headers, req.encoding)
+
+                        req_history_headers.append((
+                            req.status_code,
+                            req.url,
+                            req_headers))
+
+                    final_req_headers = self.decode_headers(r.headers, r.encoding)
+
+                    tuiu = TwitterUserItemUrl(
+                        item=tui,
+                        start_url=url['url'],
+                        expanded_url=url['expanded_url'],
+                        history=json.dumps(req_history_headers),
+                        final_url=r.url,
+                        final_status=r.status_code,
+                        final_headers=json.dumps(final_req_headers),
+                        duration_seconds=r.elapsed.total_seconds())
+                    tuiu.save()
+                except (requests.RequestException,
+                        requests.packages.urllib3.exceptions.HTTPError,
+                        socket_error) as e:
                     # TODO: consider trapping/recording
                     # requests.exceptions.ConnectionError,
                     # requests.exceptions.TooManyRedirects etc.
                     # and flagging records as having errored out
+                    print("Error fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
+
                     tuiu = TwitterUserItemUrl(
                         item=tui,
                         start_url=url['url'],
-                        expanded_url=url['url'],
+                        expanded_url=url['expanded_url'],
                         final_url=url['url'],
                         final_status=410)
                     tuiu.save()
-                    continue
-                tuiu = TwitterUserItemUrl(
-                    item=tui,
-                    start_url=url['url'],
-                    expanded_url=url['expanded_url'],
-                    history=json.dumps([(
-                        req.status_code, req.url, dict(req.headers))
-                        for req in r.history]),
-                    final_url=r.url,
-                    final_status=r.status_code,
-                    final_headers=json.dumps(dict(r.headers)),
-                    duration_seconds=r.elapsed.total_seconds())
-                tuiu.save()
-            count += 1
+
+            if urls:
+                count += 1
             if options['limit']:
                 if count >= options['limit']:
                     sys.exit()
+
+    def decode_headers(self, headers, encoding):
+        try:
+            header_codec = codecs.lookup(encoding
+                                            or 'utf-8')
+        except LookupError:
+            header_codec = codecs.lookup('utf-8')
+
+        final_headers = {}
+        for k, v in headers.items():
+            final_headers.update({
+                header_codec.decode(k),
+                header_codec.decode(v)})
+        return final_headers
