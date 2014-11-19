@@ -88,47 +88,34 @@ class Command(BaseCommand):
                     urls.append({'url': u, 'expanded_url': u})
             for url in urls:
                 try:
-                    with closing(requests.get(url['expanded_url'],
+                    r = requests.head(url['expanded_url'],
                                               allow_redirects=True,
-                                              stream=True, timeout=10)) as r:
-                        req_history_headers = []
-                        for req in r.history:
-                            req_headers = {}
-                            try:
-                                header_codec = codecs.lookup(req.encoding
-                                                                or 'utf-8')
-                            except LookupError:
-                                header_codec = codecs.lookup('utf-8')
-                            for k, v in req.headers.items():
-                                req_headers.update({
-                                    header_codec.decode(k),
-                                    header_codec.decode(v)})
-                            req_history_headers.append((
-                                req.status_code,
-                                req.url,
-                                req_headers))
+                                              timeout=10)
+                    if r.status_code == 405:
+                        r = requests.get(url['expanded_url'],
+                                                  allow_redirects=True,
+                                                  stream=True, timeout=10)
+                        r.close()
+                    req_history_headers = []
+                    for req in r.history:
+                        req_headers = self.decode_headers(req.headers, req.encoding)
 
-                        try:
-                            header_codec = codecs.lookup(r.encoding
-                                                            or 'utf-8')
-                        except LookupError:
-                            header_codec = codecs.lookup('utf-8')
+                        req_history_headers.append((
+                            req.status_code,
+                            req.url,
+                            req_headers))
 
-                        final_req_headers = {}
-                        for k, v in r.headers.items():
-                            final_req_headers.update({
-                                header_codec.decode(k),
-                                header_codec.decode(v)})
+                    final_req_headers = self.decode_headers(r.headers, r.encoding)
 
-                        tuiu = TwitterUserItemUrl(
-                            item=tui,
-                            start_url=url['url'],
-                            expanded_url=url['expanded_url'],
-                            history=json.dumps(req_history_headers),
-                            final_url=r.url,
-                            final_status=r.status_code,
-                            final_headers=json.dumps(final_req_headers),
-                            duration_seconds=r.elapsed.total_seconds())
+                    tuiu = TwitterUserItemUrl(
+                        item=tui,
+                        start_url=url['url'],
+                        expanded_url=url['expanded_url'],
+                        history=json.dumps(req_history_headers),
+                        final_url=r.url,
+                        final_status=r.status_code,
+                        final_headers=json.dumps(final_req_headers),
+                        duration_seconds=r.elapsed.total_seconds())
                     tuiu.save()
                 except (requests.RequestException,
                         requests.packages.urllib3.exceptions.HTTPError,
@@ -137,7 +124,7 @@ class Command(BaseCommand):
                     # requests.exceptions.ConnectionError,
                     # requests.exceptions.TooManyRedirects etc.
                     # and flagging records as having errored out
-                    print("%s: %s" % (url['url'], e))
+                    print("Error fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
 
                     tuiu = TwitterUserItemUrl(
                         item=tui,
@@ -147,7 +134,22 @@ class Command(BaseCommand):
                         final_status=410)
                     tuiu.save()
 
-            count += 1
+            if urls:
+                count += 1
             if options['limit']:
                 if count >= options['limit']:
                     sys.exit()
+
+    def decode_headers(self, headers, encoding):
+        try:
+            header_codec = codecs.lookup(encoding
+                                            or 'utf-8')
+        except LookupError:
+            header_codec = codecs.lookup('utf-8')
+
+        final_headers = {}
+        for k, v in headers.items():
+            final_headers.update({
+                header_codec.decode(k),
+                header_codec.decode(v)})
+        return final_headers
