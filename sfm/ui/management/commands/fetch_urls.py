@@ -1,7 +1,6 @@
 import json
 from optparse import make_option
 import sys
-from contextlib import closing
 from socket import error as socket_error
 import codecs
 
