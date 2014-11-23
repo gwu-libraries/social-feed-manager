@@ -46,10 +46,10 @@ class Command(BaseCommand):
             qs_page = paginator.page(page_counter)
             tweep_map = {}
             for tweep in qs_page:
-                print 'user: %s' % tweep.name
                 # check user status, update twitter user name if it has changed
                 if tweep.uid == 0:
-                    print 'uid has not been set yet - skipping.'
+                    print 'user: %s' % tweep.name
+                    print ' -- uid has not been set yet - skipping.'
                     continue
                 else:
                     tweep_map[tweep.uid] = tweep
@@ -58,6 +58,7 @@ class Command(BaseCommand):
                     user_statuses = api.lookup_users(user_ids=tweep_map.keys())
                     for user_status in user_statuses:
                         tweep = tweep_map[user_status['id']]
+                        print 'user: %s' % tweep.name
                         if user_status['screen_name'] != tweep.name:
                             print ' -- updating screen name to %s' % \
                                 user_status['screen_name']
