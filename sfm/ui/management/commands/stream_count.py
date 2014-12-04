@@ -41,7 +41,9 @@ class Command(BaseCommand):
                 if not include_dir(os.path.join(root, tweet_dir), stream_dir, start_date, end_date):
                     dirs.remove(tweet_dir)
             for tweet_file in files:
-                count += self.count_tweets(os.path.join(root, tweet_file))
+                file_tweets = self.count_tweets(os.path.join(root, tweet_file))
+                print "%s: %s" % (tweet_file, file_tweets)
+                count += file_tweets
         print count
 
     @staticmethod

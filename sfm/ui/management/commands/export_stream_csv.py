@@ -11,12 +11,6 @@ import codecs
 class Command(BaseCommand):
     help = 'export data for a stream in csv or xls'
 
-    @classmethod
-    def usage(self, *args):
-        usage = 'Usage: ./manage.py export_stream_csv [export-filepath] ' + \
-                '[options]' + '\n' + self.help
-        return usage
-
     option_list = BaseCommand.option_list + (
         make_option('--name', action='store', default=None,
                     type='string', dest='name',
@@ -83,8 +77,7 @@ class Command(BaseCommand):
                             export_file.close()
                         export_file_count += 1
                         export_filepath = self.get_export_filepath(export_dir, stream_base_name, export_file_count)
-                        print "Writing to %s" % export_filepath
-                        export_file = codecs.open(export_filepath, mode="w", encoding="utf-8")
+                        export_file = self.open_export_file(export_filepath)
                         export_file.write(self.csv_headers())
                         merge_count = 0
                     export_file.write(csv_tweet)
@@ -98,18 +91,25 @@ class Command(BaseCommand):
             for tweet_file in self.tweet_file_generator(stream_dir, start_date, end_date):
                 #Replace stream_dir with export_dir
                 export_filepath = os.path.join(export_dir, "%s.csv" % tweet_file[len(stream_dir)+1:-3])
-                export_parent_dir = os.path.dirname(export_filepath)
-                if not os.path.exists(export_parent_dir):
-                    os.makedirs(export_parent_dir)
-                print "Writing to %s" % export_filepath
-                with codecs.open(export_filepath, mode="w", encoding="utf-8") as export_file:
+                export_file = self.open_export_file(export_filepath)
+                try:
                     export_file.write(self.csv_headers())
                     for csv_tweet in self.csv_tweets_from_file_generator(tweet_file):
                         export_file.write(csv_tweet)
+                finally:
+                    export_file.close()
 
     @staticmethod
     def get_export_filepath(export_dir, stream_base_name, export_file_count):
         return os.path.join(export_dir, "%s-%s.csv" % (stream_base_name, export_file_count))
+
+    @staticmethod
+    def open_export_file(export_filepath):
+        export_parent_dir = os.path.dirname(export_filepath)
+        if not os.path.exists(export_parent_dir):
+            os.makedirs(export_parent_dir)
+        print "Writing to %s" % export_filepath
+        return codecs.open(export_filepath, mode="w", encoding="utf-8")
 
     @staticmethod
     def tweet_file_generator(stream_dir, start_date=None, end_date=None):
@@ -128,15 +128,16 @@ class Command(BaseCommand):
         """
         A generator that returns the tweets from a file.
         """
+        print "Exporting %s" % tweet_file
         with gzip.open(tweet_file, "rb") as gz_file:
             for line in gz_file:
                 if line != "\n":
                     try:
                         tweet = json.loads(unicode(line))
-                        yield unicode("\t".join(Command.csv(tweet)) + "\n")
                     except Exception:
                         #Malformed tweet. It happens.
                         continue
+                    yield unicode("\t".join(Command.csv(tweet)) + "\n")
 
     @staticmethod
     def csv_tweet_stream_generator(stream_dir, sample_rate=1):
@@ -148,8 +149,8 @@ class Command(BaseCommand):
             for csv_tweet in Command.csv_tweets_from_file_generator(tweet_file):
                 sample_count += 1
                 if sample_count == sample_rate:
-                    yield csv_tweet
                     sample_count = 0
+                    yield csv_tweet
 #
 
     @staticmethod
@@ -167,8 +168,8 @@ class Command(BaseCommand):
         A list of fields to include in csv. This is almost the same list as TwitterUserItem.csv
         """
         date_published = dt_aware_from_created_at(tweet['created_at'])
-        r = [date_published.strftime(date_published, '%Y-%m-%dT%H:%M:%SZ'),
-             date_published.strftime(date_published, '%m/%d/%Y'),
+        r = [date_published.strftime('%Y-%m-%dT%H:%M:%SZ'),
+             date_published.strftime('%m/%d/%Y'),
              tweet['id_str'],
              tweet['user']['screen_name'],
              str(tweet['user']['followers_count']),
