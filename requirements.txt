@@ -5,6 +5,6 @@ psycopg2
 pytz
 requests
 south
-tweepy
+tweepy>=3.1.0
 supervisor
 xlwt
