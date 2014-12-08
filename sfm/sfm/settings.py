@@ -1,6 +1,7 @@
 from os.path import dirname, abspath
 
 from django.core.urlresolvers import reverse_lazy
+import sys
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -198,6 +199,15 @@ SFM_ROOT = dirname(__file__)[:-8]
 
 # How often to save polled data to the DATA_DIR
 SAVE_INTERVAL_SECONDS = 60 * 15  # 15 minutes
+
+# Python executable.
+# When using mod_wsgi, you get the system python executable, not the virtualenv
+# python executable.
+try:
+    from wsgi import ENV
+    PYTHON_EXECUTABLE = "%s/bin/python" % ENV
+except ImportError:
+    PYTHON_EXECUTABLE = sys.executable
 
 # Be sure to create your own 'local_settings.py' file as described in README
 try:
