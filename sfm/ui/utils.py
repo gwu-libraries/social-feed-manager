@@ -61,7 +61,7 @@ def create_conf_file(twitterfilter_id):
         processowner = getpass.getuser()
 
     contents = "[program:twitterfilter-%s]" % twitterfilter_id + '\n' + \
-               "command=%s/ENV/bin/python " % projectroot + \
+               "command=%s " % settings.PYTHON_EXECUTABLE + \
                "%s/sfm/manage.py " % projectroot + \
                "filterstream %s --save" % twitterfilter_id + '\n' \
                "user=%s" % processowner + '\n' \
