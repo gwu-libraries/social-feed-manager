@@ -82,5 +82,6 @@ supported; recommend piping output to a file")
             tworkbook = xls_tweets_workbook(qs, TwitterUserItem.csv_headers)
             tworkbook.save(filename)
         else:
+            print '\t'.join(TwitterUserItem.csv_headers)
             for tui in qs:
                 print '\t'.join(tui.csv)
