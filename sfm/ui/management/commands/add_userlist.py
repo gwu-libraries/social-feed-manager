@@ -71,7 +71,7 @@ class Command(BaseCommand):
                         try:
                             twitter_user.sets.add(tuset_id)
                             print 'TwitterUser %s successfully added to ' \
-                                'SFM and successfully added to' \
+                                'SFM and successfully added to ' \
                                 'TwitterUserSet %s.' % (tu_name, set_name)
                         except Exception as e:
                             print 'TwitterUser %s successfully added to ' \
