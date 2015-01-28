@@ -72,7 +72,7 @@ def create_conf_file(twitterfilter_id):
                "stdout_logfile=/var/log/sfm/" \
                "twitterfilter-%s.out.log" % twitterfilter_id + '\n'
     filename = "twitterfilter-%s.conf" % twitterfilter_id
-    file_path = "%s/sfm/sfm/supervisor.d/%s" % (projectroot, filename)
+    file_path = "%s/%s" % (settings.SUPERVISOR_ROOT, filename)
     # Remove any existing config file
     # we don't assume that the contents are up-to-date
     # (PATH settings may have changed, etc.)
@@ -90,7 +90,7 @@ def create_conf_file(twitterfilter_id):
 
 def delete_conf_file(twitterfilter):
     filename = "twitterfilter-%s.conf" % twitterfilter
-    file_path = "%s/sfm/sfm/supervisor.d/%s" % (settings.SFM_ROOT, filename)
+    file_path = "%s/%s" % (settings.SUPERVISOR_ROOT, filename)
     if os.path.exists(file_path):
         os.remove(file_path)
 

@@ -196,6 +196,8 @@ LOGOUT_REDIRECT_URL = reverse_lazy('home')
 DATA_DIR = 'data'
 # Autodetect SFM_ROOT as 'my location' minus trailing '/sfm/sfm'
 SFM_ROOT = dirname(__file__)[:-8]
+# Location of the supervisor.d configuration files.
+SUPERVISOR_ROOT = "%s/sfm/sfm/supervisor.d" % SFM_ROOT
 
 # How often to save polled data to the DATA_DIR
 SAVE_INTERVAL_SECONDS = 60 * 15  # 15 minutes
