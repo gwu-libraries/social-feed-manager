@@ -132,7 +132,7 @@ class Command(BaseCommand):
                     print 'stop: max_id < since_id'
                     stop = True
                 # Check response codes for issues
-                response_status = api.last_response.status
+                response_status = api.last_response.status_code
                 if response_status >= 400:
                     print 'error:', api.last_response.getheader('status')
                     error = TwitterUserTimelineError(job=job, user=tweep,
