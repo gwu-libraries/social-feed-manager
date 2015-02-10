@@ -35,8 +35,7 @@ def authenticated_api(username, api_root=None, parser=None):
                               sa.tokens['oauth_token_secret'])
         return tweepy.API(auth,
                           api_root=api_root or settings.TWITTER_API_ROOT,
-                          parser=parser or JSONParser(),
-                          secure=settings.TWITTER_USE_SECURE)
+                          parser=parser or JSONParser())
     except:
         return None
 
