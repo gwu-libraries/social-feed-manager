@@ -11,7 +11,7 @@ import traceback
 import xmlrpclib
 from openpyxl import Workbook
 from openpyxl.cell import get_column_letter
-from openpyxl.styles import Style, Font
+from openpyxl.styles import Font, Style
 
 from django.conf import settings
 from django.utils import timezone
@@ -212,15 +212,18 @@ def xls_tweets_workbook(qs_tweets, fieldnames):
     new_sheet = new_workbook.create_sheet(0)
     for i in range(1, len(fieldnames)):
         col_A1_style = get_column_letter(i)
-        new_sheet.cell('%s%s' % (col_A1_style, 1)).value = '%s' % (fieldnames[(i-1)])
+        new_sheet.cell('%s%s' % (col_A1_style, 1)).value = \
+            '%s' % (fieldnames[(i-1)])
         row = 1
     for t in qs_tweets:
         row = row+1
         col_num = 1
         for r in range(0, len(t.csv)):
             col_A1_style = get_column_letter(col_num)
-            new_sheet.cell('%s%s' % (col_A1_style, row)).value = '%s' % (t.csv[r])
-            new_sheet.cell('%s%s' % (col_A1_style, row)).style = Style(font=Font(name='Arial Unicode MS'))
+            new_sheet.cell('%s%s' % (col_A1_style, row)).value = \
+                '%s' % (t.csv[r])
+            new_sheet.cell('%s%s' % (col_A1_style, row)).style = \
+                Style(font=Font(name='Arial Unicode MS'))
             col_num = col_num+1
     return new_workbook
 
