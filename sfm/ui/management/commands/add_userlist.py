@@ -82,11 +82,14 @@ class Command(BaseCommand):
                             % tu_name
                 except Exception as e:
                     if 'not found' in e.message:
-                        print '%s is not a valid Twitter user.  Not added ' \
-                            'to SFM.' % tu_name
+                        print '%s is not a valid Twitter user.  Not added' \
+                            ' to SFM.' % tu_name
+                    elif 'suspended' in e.message:
+                        print '%s is a suspended Twitter account.  Not added' \
+                            ' to SFM.' % tu_name
                     else:
                         print 'Unable to create TwitterUser %s in SFM ' \
-                            '-- Error: ' % tu_name, e
+                            '-- Error: %s' % (tu_name, e)
             else:
                 # if user exists, add to set if needed
                 twitter_user = tu_matching[0]
