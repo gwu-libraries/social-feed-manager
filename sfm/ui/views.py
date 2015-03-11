@@ -164,7 +164,7 @@ def twitter_user_xls(request, name=''):
     tworkbook = xls_tweets_workbook(qs_tweets, TwitterUserItem.csv_headers)
     response = HttpResponse(content_type='text/ms-excel')
     response['Content-Disposition'] = \
-        'attachment; filename="%s.xls"' % name
+        'attachment; filename="%s.xlsx"' % name
     tworkbook.save(response)
     return response
 

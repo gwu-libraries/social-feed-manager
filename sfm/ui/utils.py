@@ -9,8 +9,9 @@ from supervisor import xmlrpc
 import time
 import traceback
 import xmlrpclib
-import xlwt
-from xlwt import Workbook
+from openpyxl import Workbook
+from openpyxl.cell import get_column_letter
+from openpyxl.styles import Style, Font
 
 from django.conf import settings
 from django.utils import timezone
@@ -208,20 +209,19 @@ def csv_tweets_writer(qs_tweets, fieldnames):
 def xls_tweets_workbook(qs_tweets, fieldnames):
     """Returns an XLS Workbook object with one row per tweet."""
     new_workbook = Workbook(encoding="UTF-8")
-    new_sheet = new_workbook.add_sheet('sheet1')
-    font = xlwt.Font()
-    font.name = 'Arial Unicode MS'
-    style = xlwt.XFStyle()
-    style.font = font
-    for i in range(0, len(fieldnames)):
-        new_sheet.write(0, i, fieldnames[i], style=style)
-        row = 0
+    new_sheet = new_workbook.create_sheet(0)
+    for i in range(1, len(fieldnames)):
+        col_A1_style = get_column_letter(i)
+        new_sheet.cell('%s%s' % (col_A1_style, 1)).value = '%s' % (fieldnames[(i-1)])
+        row = 1
     for t in qs_tweets:
         row = row+1
-        col = 0
+        col_num = 1
         for r in range(0, len(t.csv)):
-            new_sheet.write(row, col, t.csv[r], style=style)
-            col = col+1
+            col_A1_style = get_column_letter(col_num)
+            new_sheet.cell('%s%s' % (col_A1_style, row)).value = '%s' % (t.csv[r])
+            new_sheet.cell('%s%s' % (col_A1_style, row)).style = Style(font=Font(name='Arial Unicode MS'))
+            col_num = col_num+1
     return new_workbook
 
 
