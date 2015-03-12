@@ -59,7 +59,7 @@ class RotatingFile(StreamListener):
         self.fp = self._get_file()
 
     def on_data(self, data):
-        self.fp.write('%s\n' % data)
+        self.fp.write(data)
         time_now = time.time()
         if time_now - self.start_time > self.save_interval_seconds:
             self.fp.close()
