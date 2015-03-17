@@ -71,6 +71,11 @@ For more info about source tweet data, see the `Twitter API documentation <https
 |                         | old-style method of placing RT in front of tweet    |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| coordinates             | The geographic coordinates of the tweet.  This is   | [-0.22012208, 51.59248806]                       | 
+|                         | only enabled if geotagging is enabled on the        |                                                  |
+|                         | account.  The value, if present, is of the form     |                                                  |
+|                         | [longitude, latitude]                               |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | text                    | The UTF-8 text of the tweet                         | Observing Hurricane Raymond Lashing Western      | 
 |                         |                                                     | Mexico: Low pressure System 96E developed quickly|
 |                         |                                                     | over the... http://t.co/YpffdKVrgm               |

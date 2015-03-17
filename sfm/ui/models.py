@@ -214,7 +214,7 @@ class TwitterUserItem(m.Model):
                    'screen_name', 'followers_count', 'friends_count',
                    'retweet_count', 'hashtags', 'in_reply_to_screen_name',
                    'mentions', 'twitter_url', 'is_retweet_strict',
-                   'is_retweet', 'text', 'url1', 'url1_expanded', 'url2',
+                   'is_retweet', 'coordinates', 'text', 'url1', 'url1_expanded', 'url2',
                    'url2_expanded']
 
     def __unicode__(self):
@@ -301,6 +301,8 @@ class TwitterUserItem(m.Model):
              self.twitter_url,
              str(self.is_retweet()),
              str(self.is_retweet(strict=False)),
+             str(self.tweet['coordinates']['coordinates']) if self.tweet[
+                 'coordinates'] else '',
              self.tweet['text'].replace('\n', ' '),
              ]
         # only show up to two urls w/expansions
