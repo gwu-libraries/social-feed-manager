@@ -197,8 +197,7 @@ equivalent to logical 'OR' & 'AND' respectively.Please see the TwitterAPI for mo
 
 People - It tracks the twitter usernames to stream, can contain a comma-separated list of screen names.
 
-Location - Geographic bounding boxes to track.It accepts only one set of geographic bounding box, without 
-brackets and special characters.
+Location - Geographic bounding boxes to track.  A bounding box is of the format: long1,lat1,long2,lat2 where each value is a floating-point number between -180 and 180.  This parameter may include mutiple bounding boxes; for example, two bounding boxes would be a comma-separated list of 8 values.
 
 Sample twitterfilter rule:
 
@@ -216,7 +215,7 @@ To run manually and direct output to files in DATA_DIR, say for twitterfilterid 
 
      ./manage.py filterstream 4 –save
 
-Information on the Twitter API filter streaming resource:
+Information on the Twitter streaming API filter method:
 https://dev.twitter.com/docs/api/1.1/post/statuses/filter
 
 
