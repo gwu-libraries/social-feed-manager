@@ -192,36 +192,30 @@ settings variables to be configured in local_settings.py .
 
 Each TwitterFilter may contain the following predicates:
 
-Words - Keywords to track
+Words - It tracks comma-separated and space-separated list of words performing a fetch for tweets 
+equivalent to logical 'OR' & 'AND' respectively.Please see the TwitterAPI for more info on track.
 
-People - Twitter accounts to track
+People - It tracks the twitter usernames to stream, can contain a comma-separated list of screen names.
 
-Location - Geographic bonuding boxes to track
+Location - Geographic bounding boxes to track.  A bounding box is of the format: long1,lat1,long2,lat2 where each value is a floating-point number between -180 and 180.  This parameter may include mutiple bounding boxes; for example, two bounding boxes would be a comma-separated list of 8 values.
 
-To run manually and view streaming output to the console:
+Sample twitterfilter rule:
 
+.. image:: twitter_filter_rule_sample.png
+
+*filterstream* takes the parameter twitterfilterid. To run manually and view streaming output to the console:
+   
 .. code-block:: none
-
-     ./manage.py filterstream
-
-To run manually and direct output to files in DATA_DIR:
-
-.. code-block:: none
-
-     ./manage.py filterstream –save
-
-*filterstream* can also take a parameter corresponding to the number of
-an individidual TwitterFilter, e.g.
+    
+         ./manage.py filterstream [twitterfilterid]
+            
+To run manually and direct output to files in DATA_DIR, say for twitterfilterid 4:
 
 .. code-block:: none
 
      ./manage.py filterstream 4 –save
 
-This will run *filterstream* only for the TwitterFilter with an id of 4.
-If no TwitterFilter number is given, filterstream will run for all
-active TwitterFilters.
-
-Information on the Twitter API filter streaming resource:
+Information on the Twitter streaming API filter method:
 https://dev.twitter.com/docs/api/1.1/post/statuses/filter
 
 

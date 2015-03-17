@@ -1,6 +1,9 @@
 from django.contrib import admin
+from django.contrib import messages
 
+import tweepy
 from ui import models as m
+from django.conf import settings
 
 
 class TwitterFilterAdmin(admin.ModelAdmin):
@@ -9,6 +12,44 @@ class TwitterFilterAdmin(admin.ModelAdmin):
     list_filter = ['is_active']
     search_fields = ['name', 'words', 'people', 'locations']
     fields = ('name', 'user', 'is_active', 'words', 'people', 'locations')
+
+    def save_model(self, request, obj, form, change):
+        ppl = []
+        uids = []
+        ppl_fetched = set()
+        if 'people' in form.changed_data:
+            for person in obj.people.split(','):
+                ppl.append(person.lstrip().rstrip())
+            try:
+                if obj.people != '':
+                    api = m.authenticated_api(username=
+                                              settings.TWITTER_DEFAULT_USERNAME
+                                              )
+                    people_uids = api.lookup_users(screen_names=ppl)
+                    for person in range(0, len(people_uids)):
+                        uids.append(people_uids[person]['id'])
+                        ppl_fetched.add(str(people_uids[person]
+                                            ['screen_name']).lower())
+                    obj.uids = ', '.join(map(str, uids))
+                    ppl_form = set(n.lower() for n in ppl)
+                    if ppl_form - ppl_fetched != set():
+                        diff = ppl_form - ppl_fetched
+                        messages.add_message(request, messages.WARNING,
+                                             'TwitterFilter %s was saved '
+                                             'with the following invalid '
+                                             'accounts: %s' %
+                                             (obj, ', '.join(map(str, diff))))
+                else:
+                    obj.uids = ''
+            except Exception as e:
+                if tweepy.error.TweepError:
+                    e = e[0][0]['message']
+                messages.add_message(request, messages.WARNING,
+                                     'TwitterFilter %s was saved with the '
+                                     'an exception: %s' % (obj, e))
+        super(TwitterFilterAdmin, self).save_model(request, obj, form, change)
+
+
 admin.site.register(m.TwitterFilter, TwitterFilterAdmin)
 
 

@@ -3,7 +3,7 @@ import traceback
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.contrib.auth.models import User
+from django.utils.encoding import smart_bytes
 
 import tweepy
 from tweepy.streaming import StreamListener
@@ -73,19 +73,26 @@ class Command(BaseCommand):
                 raise CommandError("unable to load that TwitterFilter")
             if twitter_filter.is_active is False:
                 raise CommandError("TwitterFilter is not active")
-            words = set()
-            people = set()
-            locations = set()
-            words.update(twitter_filter.words.strip().split(' ')
-                         if twitter_filter.words else [])
-            people.update(twitter_filter.people.strip().split(' ')
-                          if twitter_filter.people else [])
-            locations.update(twitter_filter.locations.strip().split(' ')
-                             if twitter_filter.locations else [])
+            #words to track
+            words = []
+            words.append(twitter_filter.words)
+            #people to track, fetch uids for each
+            people = twitter_filter.people.strip('').split(',')
+            uids = []
+            if twitter_filter.uids != '':
+                uids_split = smart_bytes(twitter_filter.uids).split(',')
+                for ids in range(0, len(uids_split)):
+                    val = uids_split[ids].lstrip("[").strip(' ').rstrip("]")
+                    uids.append(str(val))
+            #locations to track
+            loc = []
+            if twitter_filter.locations != '':
+                for l in twitter_filter.locations.split(','):
+                    loc.append(float(l))
             if options.get('verbose', False):
                 print 'track:', words
                 print 'follow:', people
-                print 'locations:', locations
+                print 'locations:', loc
             try:
                 sa = twitter_filter.user.social_auth.all()[0]
                 auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,
@@ -99,13 +106,13 @@ class Command(BaseCommand):
                         save_interval_seconds=options['interval'],
                         data_dir=options['dir'])
                     stream = tweepy.Stream(auth, listener)
-                    stream.filter(track=words, follow=people,
-                                  locations=locations)
+                    stream.filter(track=words, follow=uids,
+                                  locations=loc)
                 else:
                     listener = StdOutListener()
                     stream = tweepy.Stream(auth, listener)
                     StdOutListener(stream.filter(
-                        track=words, follow=people, locations=locations))
+                        track=words, follow=uids, locations=loc))
             except Exception, e:
                 if options.get('verbose', False):
                     print 'Disconnected from twitter:', e
