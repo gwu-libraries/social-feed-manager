@@ -22,6 +22,8 @@ from ui.utils import create_conf_file, delete_conf_file, set_wait_time
 
 RE_LINKS = re.compile(r'(https?://\S+)')
 RE_MENTIONS = re.compile(u'(@[a-zA-z0-9_]+)')
+RE_LINE_BREAK = re.compile(u'(@[a-zA-z0-9]+\r)')
+RE_STR_VALID = r'([a-zA-z0-9_]+,\s |[a-zA-z0-9_]+\s,\s |[a-zA-z0-9_]+,\r\w)'
 
 
 def authenticated_api(username, api_root=None, parser=None):
@@ -344,21 +346,21 @@ class TwitterFilter(m.Model):
                        help_text="Name of this TwitterFilter")
     user = m.ForeignKey(User,
                         help_text="Account to use for authentication")
+    uids = m.TextField(blank=True, default="")
     is_active = m.BooleanField(default=False)
     people = m.TextField(blank=True,
-                         help_text="""Space-separated list of user IDs \
-for which tweets, retweets, and mentions will be captured. See the \
-<a href="https://dev.twitter.com/docs/streaming-apis/parameters#follow" \
-onclick="window.open(this.href); return false;">follow parameter \
-documentation</a> for more information.""")
+                         help_text="""List of comma-separated twitter
+usernames for which tweets, retweets, and mentions will be captured.""")
     words = m.TextField(blank=True,
-                        help_text="""Space-separated keywords to track. See \
-<a href="https://dev.twitter.com/docs/streaming-apis/parameters#track" \
-onclick="window.open(this.href); return false;">the track parameter \
+                        help_text="""List of \
+space & comma separated keywords, tracked as 'AND' & 'OR' respectively.\
+See <a href="https://dev.twitter.com/docs/streaming-apis/parameters#track" \
+onclick="window.open(this.href); return false;">track parameter \
 documentation</a> for more information.""")
     locations = m.TextField(blank=True,
-                            help_text="""
-Specifies a set of bounding boxes to track. See the \
+                            help_text="""Comma-separated list of geographic \
+bounding boxes, where a bounding box is two comma-separated long/lat pairs. \
+See the \
 <a href="https://dev.twitter.com/docs/streaming-apis/parameters#locations" \
 onclick="window.open(this.href); return false;">locations parameter \
 documentation</a> for more information.""")
@@ -388,6 +390,42 @@ documentation</a> for more information.""")
                                      Please select a different user or mark
                                      this filter as inactive.''' %
                                   (conflicting_tfs[0].id, self.user.username))
+        # update line-breaks in words with spaces
+        if self.words != '':
+            wrd = self.words
+            wrd = re.sub('\n|\r', ' ', wrd)
+            self.words = wrd
+
+        # replace line-breaks with space
+        if self.people != '':
+            ppl = self.people
+            ppl = re.sub('\n|\r', ' ', ppl)
+            ppl = ppl.lstrip().rstrip().lstrip(',').rstrip(',')
+            ppl = re.sub('\s*,\s*', ',', ppl)
+            if ' ' in ''.join(ppl):
+                raise ValidationError("Please use commas to separate \
+                        the list of twitter usernames")
+            else:
+                ppl = re.sub(',', ', ', ppl)
+            self.people = ppl
+
+        # check against values and length
+        if self.locations != '':
+            self.locations = re.sub('\n|\r|\s', '', self.locations)
+            # Ensure it's a list of 4-tuples
+            loclist = self.locations.split(',')
+            if len(loclist) % 4 != 0:
+                raise ValidationError("Locations must include valid, \
+                    comma-separated bounding boxes.")
+            # Each lat/long value must be numeric and between -180 and 180
+            try:
+                for loc in loclist:
+                    if not(-180 <= float(loc) < 180):
+                        raise ValidationError("Invalid bounding box; each \
+                            long/lat value must be between -180 and 180")
+            except ValueError:
+                raise ValidationError("Invalid bounding box; each \
+                        long/lat value must be between -180 and 180")
 
 
 @receiver(post_save, sender=TwitterFilter)
