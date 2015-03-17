@@ -148,15 +148,17 @@ class TwitterUser(m.Model):
             try:
                 user_status = api.get_user(screen_name=self.name)
             except tweepy.error.TweepError as e:
-                if "'code': 34" in e.reason:
+                if "u'code': 34" in e.reason:
                     raise ValidationError('Twitter screen name \'%s\' was \
                                           not found.' % self.name)
-                elif "'code': 32" in e.reason:
+                elif "u'code': 63" in e.reason:
+                    raise ValidationError('Twitter screen name \'%s\' is \
+                                          suspended.' % self.name)
+                elif "u'code': 32" in e.reason:
                     raise ValidationError('Could not connect to Twitter \
                                            API using configured credentials.')
                 else:
-                    raise ValidationError('Twitter returned the following \
-                                          error: %s' % e.message)
+                    raise e
             # check to prevent duplicates
             dups = TwitterUser.objects.filter(uid=user_status['id'])
             if self.id is not None:
