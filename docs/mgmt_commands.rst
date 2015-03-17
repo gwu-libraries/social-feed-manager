@@ -165,7 +165,7 @@ To run manually and direct output to files in DATA_DIR:
 
 .. code-block:: none
 
-     ./manage.py streamsample –save
+     ./manage.py streamsample --save
 
 Information on the Twitter API streamsample resource:
 https://dev.twitter.com/docs/api/1.1/get/statuses/sample
@@ -213,7 +213,7 @@ To run manually and direct output to files in DATA_DIR, say for twitterfilterid 
 
 .. code-block:: none
 
-     ./manage.py filterstream 4 –save
+     ./manage.py filterstream 4 --save
 
 Information on the Twitter streaming API filter method:
 https://dev.twitter.com/docs/api/1.1/post/statuses/filter
