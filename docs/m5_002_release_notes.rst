@@ -20,4 +20,4 @@ m5_002 release notes
 
 See the `complete list of changes for milestone m5_002 in github <m5_002_>`_.
 
-.. _m5_002: https://github.com/gwu-libraries/social-feed-manager/issues?q=is%3Aissue+is%3Aclosed
+.. _m5_002: https://github.com/gwu-libraries/social-feed-manager/issues?q=milestone%3Am5_002+is%3Aclosed
