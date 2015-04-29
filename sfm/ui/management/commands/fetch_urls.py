@@ -3,6 +3,7 @@ from optparse import make_option
 import sys
 from socket import error as socket_error
 import codecs
+import unicodedata
 
 import requests
 
@@ -81,10 +82,21 @@ class Command(BaseCommand):
         for tui in qs:
             urls = []
             urls.extend(tui.tweet['entities']['urls'])
+            #print 'tui in qs >>>>>>>>> %r' %tui
+            #print 'urls from json :::::::: %r' % urls
             if not urls:
                 # use of entities.urls was spotty at first
                 for u in tui.links:
+                    # Include a condition in if loop where retweet count > 0 and
+                    # then continue
+                    if ('...' in unicodedata.normalize('NFKD', u).encode('ascii','ignore')
+                        and tui.tweet['retweet_count'] > 0) :
+                        #print '----- Retweet Count --%r----' %tui.tweet['retweet_count']
+                        continue
                     urls.append({'url': u, 'expanded_url': u})
+            # above code is correct for half of cases only
+            # but one condition is missing where its taking url from text
+            # instead of tui links
             for url in urls:
                 try:
                     r = requests.head(url['expanded_url'],
@@ -115,15 +127,18 @@ class Command(BaseCommand):
                         final_status=r.status_code,
                         final_headers=json.dumps(final_req_headers),
                         duration_seconds=r.elapsed.total_seconds())
+                    print '%r ----' % url['expanded_url']
                     tuiu.save()
-                except (requests.RequestException,
-                        requests.packages.urllib3.exceptions.HTTPError,
-                        socket_error) as e:
+                except (requests.RequestException) as e:
                     # TODO: consider trapping/recording
                     # requests.exceptions.ConnectionError,
                     # requests.exceptions.TooManyRedirects etc.
                     # and flagging records as having errored out
-                    print("Error fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
+                    print("Request Exceptions Error fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
+                except (requests.packages.urllib3.exceptions.HTTPError) as e:
+                    print("HTTPError fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
+                except (socket_error) as e:
+                    print("Socket error fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
 
                     tuiu = TwitterUserItemUrl(
                         item=tui,
