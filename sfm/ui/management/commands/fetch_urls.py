@@ -119,7 +119,6 @@ class Command(BaseCommand):
                         final_status=r.status_code,
                         final_headers=json.dumps(final_req_headers),
                         duration_seconds=r.elapsed.total_seconds())
-                    print '%r ----' % url['expanded_url']
                     tuiu.save()
                 except (requests.RequestException) as e:
                     # TODO: consider trapping/recording
