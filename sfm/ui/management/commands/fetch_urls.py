@@ -82,6 +82,8 @@ class Command(BaseCommand):
         for tui in qs:
             urls = []
             urls.extend(tui.tweet['entities']['urls'])
+            if 'media' in tui.tweet['entities'].keys():
+                urls.extend(tui.tweet['entities']['media'])
             if not urls:
                 # use of entities.urls was spotty at first
                 for u in tui.links:
