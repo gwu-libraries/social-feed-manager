@@ -7,5 +7,5 @@ requests>2.4.1
 south
 tweepy==3.2.0
 supervisor
-xlwt
 django-queryset-iterator
+openpyxl
