@@ -65,8 +65,8 @@ class Command(BaseCommand):
                 else:
                     print str(items.id).rjust(16) + '  Inactive'
         else:
-            if len(args) != 1:
-                raise CommandError("one argument is required:twitterfilter id")
+            if len(args) < 1:
+                raise CommandError("at least one argument is required:twitterfilter id")
             try:
                 twitter_filter = TwitterFilter.objects.get(id=int(args[0]))
             except:
