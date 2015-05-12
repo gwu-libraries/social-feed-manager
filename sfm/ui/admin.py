@@ -1,3 +1,4 @@
+import os
 from django.contrib import admin
 from django.contrib import messages
 
@@ -47,6 +48,12 @@ class TwitterFilterAdmin(admin.ModelAdmin):
                 messages.add_message(request, messages.WARNING,
                                      'TwitterFilter %s was saved with the '
                                      'an exception: %s' % (obj, e))
+        if os.path.exists(settings.SUPERVISOR_UNIX_SOCKET_FILE) is False:
+            messages.add_message(request, messages.WARNING,
+                                 'Supervsiord is not running, twitterfilter'
+                                 ' saved but not added to supervisor'
+                                 ' subprocesses')
+
         super(TwitterFilterAdmin, self).save_model(request, obj, form, change)
 
 

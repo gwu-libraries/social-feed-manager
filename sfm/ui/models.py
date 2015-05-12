@@ -2,6 +2,7 @@ import datetime
 import gzip
 import json
 import re
+import os
 import time
 
 import requests
@@ -433,9 +434,13 @@ documentation</a> for more information.""")
 
 @receiver(post_save, sender=TwitterFilter)
 def call_create_conf(sender, instance, **kwargs):
-    # Removing the process so that supervisor may implement the updates in
-    # twitter filter dynamically as previously the updates were ignored by
-    # supervisor in case an active filter was modified
+<<<<<<< HEAD
+    # Remove and (in the case of an active filter) re-add
+    # the supervisor process group.  Otherwise the configuration
+    # file updates are ignored by supervisor.
+    # TODO: How to handle when Supervisor isn't running
+    # which can be checked by
+    # if os.path.exists(settings.SUPERVISOR_UNIX_SOCKET_FILE)
     ui.utils.remove_process_group(instance.id)
     if instance.is_active is True:
         create_conf_file(instance.id)
@@ -448,5 +453,6 @@ def call_create_conf(sender, instance, **kwargs):
 
 @receiver(post_delete, sender=TwitterFilter)
 def call_delete_conf(sender, instance, **kwargs):
-    delete_conf_file(instance.id)
-    ui.utils.remove_process_group(instance.id)
+    if os.path.exists(settings.SUPERVISOR_UNIX_SOCKET_FILE):
+        delete_conf_file(instance.id)
+        ui.utils.remove_process_group(instance.id)
