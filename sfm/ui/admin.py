@@ -18,9 +18,13 @@ class TwitterFilterAdmin(admin.ModelAdmin):
         ppl = []
         uids = []
         ppl_fetched = set()
+        diff = set()
+        warn_msg = {'sock_exists': False,
+                    'tweep_error': False,
+                    'invalid_acc': False}
         if 'people' in form.changed_data:
             for person in obj.people.split(','):
-                ppl.append(person.lstrip().rstrip())
+                ppl.append(person.lstrip().lstrip('@').rstrip())
             try:
                 if obj.people != '':
                     api = m.authenticated_api(username=
@@ -35,27 +39,33 @@ class TwitterFilterAdmin(admin.ModelAdmin):
                     ppl_form = set(n.lower() for n in ppl)
                     if ppl_form - ppl_fetched != set():
                         diff = ppl_form - ppl_fetched
-                        messages.add_message(request, messages.WARNING,
-                                             'TwitterFilter %s was saved '
-                                             'with the following invalid '
-                                             'accounts: %s' %
-                                             (obj, ', '.join(map(str, diff))))
+                        warn_msg['invalid_acc'] = True
                 else:
                     obj.uids = ''
             except Exception as e:
                 if tweepy.error.TweepError:
-                    e = e[0][0]['message']
-                messages.add_message(request, messages.WARNING,
-                                     'TwitterFilter %s was saved with the '
-                                     'an exception: %s' % (obj, e))
+                    warn_msg['tweep_error'] = True
+                    warn_msg['error'] = e[0][0]['message']
         if os.path.exists(settings.SUPERVISOR_UNIX_SOCKET_FILE) is False:
-            messages.add_message(request, messages.WARNING,
-                                 'Supervsiord is not running, twitterfilter'
-                                 ' saved but not added to supervisor'
-                                 ' subprocesses')
+            warn_msg['sock_exists'] = True
 
         super(TwitterFilterAdmin, self).save_model(request, obj, form, change)
 
+        if warn_msg['tweep_error']:
+            messages.add_message(request, messages.WARNING,
+                                 'TwitterFilter %s was saved with the '
+                                 'exception: %s' % (obj.id, warn_msg['error']))
+        if warn_msg['sock_exists']:
+            messages.add_message(request, messages.WARNING,
+                                 'Supervsiord is not running, Twitter'
+                                 'Filter %s saved but not added to supervisor'
+                                 ' subprocesses' % (obj.id))
+        if warn_msg['invalid_acc']:
+            messages.add_message(request, messages.WARNING,
+                                 'TwitterFilter %s was saved '
+                                 'with the following invalid '
+                                 'accounts: %s' %
+                                 (obj.id, ', '.join(map(str, diff))))
 
 admin.site.register(m.TwitterFilter, TwitterFilterAdmin)
 
