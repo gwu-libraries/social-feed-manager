@@ -431,16 +431,18 @@ documentation</a> for more information.""")
                 raise ValidationError("Invalid bounding box; each \
                         long/lat value must be between -180 and 180")
 
-
 @receiver(post_save, sender=TwitterFilter)
 def call_create_conf(sender, instance, **kwargs):
+    # Removing the process so that supervisor may implement the updates in
+    # twitter filter dynamically as previously the updates were ignored by
+    # supervisor in case an active filter was modified
+    ui.utils.remove_process_group(instance.id)
     if instance.is_active is True:
         create_conf_file(instance.id)
         time.sleep(1)
         ui.utils.reload_config()
         ui.utils.add_process_group(instance.id)
     else:
-        ui.utils.remove_process_group(instance.id)
         delete_conf_file(instance.id)
 
 
