@@ -57,6 +57,17 @@ Next, get this code using git:
 ::
 
     % git clone https://github.com/gwu-libraries/social-feed-manager.git
+
+To run a tagged release (tagged releases are listed at https://github.com/gwu-libraries/social-feed-manager/releases), rather than the latest development code (i.e. the "master" branch), then check out the appropriate tag:
+
+::
+
+    % git checkout m5_004
+
+Change directory into the social-feed-manager folder:
+
+::
+
     % cd social-feed-manager
 
 Create and activate a virtualenv:
