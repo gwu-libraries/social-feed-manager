@@ -129,6 +129,8 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'social_auth',
     'south',
+    'celery',
+    'kombu.transport.django',
     'ui',
 )
 
