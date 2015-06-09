@@ -9,3 +9,4 @@ tweepy==3.2.0
 supervisor
 django-queryset-iterator
 openpyxl
+celery
