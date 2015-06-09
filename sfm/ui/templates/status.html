@@ -41,12 +41,12 @@
                             <td>
                             {% if i.description == '0' %}
                                 {% if i.days != '0' %}
-                                up for {{ i.days }} day{{ i.days|pluralize }}
+                                upfor {{ i.days }} day{{ i.days|pluralize }}
                                       {{ i.hour}} hour{{i.hour|pluralize }}
                                       {{ i.min}} minute{{i.min|pluralize }} 
                                       {{ i.sec}} second{{i.sec|pluralize }} 
                                 {% else %}
-                                up for {{ i.hour}} hour{{i.hour|pluralize }}
+                                upfor {{ i.hour}} hour{{i.hour|pluralize }}
                                       {{ i.min}} minute{{i.min|pluralize }} 
                                       {{ i.sec}} second{{i.sec|pluralize }} 
                                 {% endif %}
