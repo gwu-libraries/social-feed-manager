@@ -23,24 +23,24 @@ class Command(BaseCommand):
         make_option('--set-name', action='store', default=None,
                     type='string', dest='set_name',
                     help='set name to export'),
-        make_option('--xls', action='store_true', default=False,
-                    dest='xls', help='export in .xls format'),
+        make_option('--format', action='store', default='csv',
+                    type='string', dest='format',
+                    help='set output format (csv, xls, json)'),
         make_option('--filename', action='store', default=None,
                     type='string', dest='filename',
                     help='filename to export (required with --xls)'),
     )
 
     def handle(self, *args, **options):
-        twitter_user = user_set = start_dt = end_dt = xls = filename = None
+        twitter_user = user_set = start_dt = end_dt = fmt = filename = None
+        fmt = options['format'].lower()
+        if fmt not in ['csv', 'json', 'xls']:
+            raise CommandError("format must be either csv, json or xls")
         if options['filename']:
             filename = options.get('filename')
-        xls = options['xls']
-        if xls and filename is None:
-            raise CommandError("When --xls is specified, \
+        if fmt == 'xls' and filename is None:
+            raise CommandError("When --format is xls, \
 --filename=FILENAME is required")
-        if not xls and filename is not None:
-            raise CommandError("Writing CSV files currently not yet \
-supported; recommend piping output to a file")
         if options['twitter_user']:
             try:
                 twitter_user = TwitterUser.objects.get(
@@ -73,14 +73,22 @@ supported; recommend piping output to a file")
         if start_dt and end_dt:
             if end_dt < start_dt:
                 raise CommandError('start date must be earlier than end date')
+
         # tweak for python 2.7 to avoid having to set PYTHONIOENCODING=utf8
         # in environment, see Graham Fawcett's comment/suggestion at:
         #   nedbatchelder.com/blog/200401/printing_unicode_from_python.html
-        writer_class = codecs.getwriter('utf-8')
-        sys.stdout = writer_class(sys.stdout, 'replace')
-        if xls:
+        if filename:
+            sys.stdout = codecs.open(filename, 'w', 'utf-8')
+        else:
+            writer_class = codecs.getwriter('utf-8')
+            sys.stdout = writer_class(sys.stdout, 'replace')
+
+        if fmt == 'xls':
             tworkbook = xls_tweets_workbook(qs, TwitterUserItem.csv_headers)
             tworkbook.save(filename)
+        elif fmt == 'json':
+            for tui in qs:
+                print tui.item_json
         else:
             print '\t'.join(TwitterUserItem.csv_headers)
             for tui in qs:
