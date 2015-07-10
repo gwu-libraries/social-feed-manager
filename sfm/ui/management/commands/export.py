@@ -8,7 +8,7 @@ from ui.utils import make_date_aware, xls_tweets_workbook
 
 
 class Command(BaseCommand):
-    help = 'export data for a user or a set in csv or xls'
+    help = 'export data for a user or a set in csv, xls or json'
 
     option_list = BaseCommand.option_list + (
         make_option('--start-date', action='store', default=None,
