@@ -127,6 +127,10 @@ these python packages are being installed into your virtualenv, not
 system-wide, which is what we want.  They will only be available while
 you are in this activated virtualenv.
 
+You'll need to be using at least version 6.0 of ``pip``, which you can check with ``pip --version``.  You can upgrade to the latest version of pip with ``pip install pip --upgrade``.
+
+Now to proceed with using ``pip`` to install SFM's python library requirements in your virtualenv:
+
 ::
 
     % pip install -r requirements.txt
