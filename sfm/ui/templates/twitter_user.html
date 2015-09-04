@@ -101,7 +101,7 @@ svg.selectAll("rect").append("svg:title")
             {% for item in tweets %}
             <tr>
                 <td>
-                    {{ item.date_published|date:"Y-m-d h:i:s a" }} 
+                    {{ item.date_published|date:"Y-m-d h:i:s"}}&nbsp;{{ item.date_published|date:"a" }}
                     <br />
                     {{ item.tweet.user.followers_count|intcomma }} -
                     {{ item.tweet.user.friends_count|intcomma }} 
