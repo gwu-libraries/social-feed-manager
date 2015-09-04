@@ -285,6 +285,9 @@ all tweets (TwitterItems), extracts each URL found in a tweet and
 creates a TwitterUserItemUrl for it, and expands the URL if possible.
 The final URL is stored as part of the TwitterUserItemUrl object.
 
+Note that fetch_urls extracts and expands URLs that are links to web pages
+as well as embedded media (photos etc.) which are generally t.co URLs.
+
 *fetch_urls* can be run with the following options:
 
 * --start-date -- The earliest date of tweets to fetch URLs for

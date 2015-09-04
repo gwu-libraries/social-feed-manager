@@ -3,6 +3,7 @@ from optparse import make_option
 import sys
 from socket import error as socket_error
 import codecs
+import unicodedata
 
 import requests
 
@@ -81,9 +82,14 @@ class Command(BaseCommand):
         for tui in qs:
             urls = []
             urls.extend(tui.tweet['entities']['urls'])
+            if 'media' in tui.tweet['entities'].keys():
+                urls.extend(tui.tweet['entities']['media'])
             if not urls:
                 # use of entities.urls was spotty at first
                 for u in tui.links:
+                    if ('...' in unicodedata.normalize('NFKD', u).encode('ascii','ignore')
+                        and tui.tweet['retweet_count'] > 0) :
+                        continue
                     urls.append({'url': u, 'expanded_url': u})
             for url in urls:
                 try:
@@ -116,14 +122,16 @@ class Command(BaseCommand):
                         final_headers=json.dumps(final_req_headers),
                         duration_seconds=r.elapsed.total_seconds())
                     tuiu.save()
-                except (requests.RequestException,
-                        requests.packages.urllib3.exceptions.HTTPError,
-                        socket_error) as e:
+                except (requests.RequestException) as e:
                     # TODO: consider trapping/recording
                     # requests.exceptions.ConnectionError,
                     # requests.exceptions.TooManyRedirects etc.
                     # and flagging records as having errored out
-                    print("Error fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
+                    print("Request Exceptions Error fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
+                except (requests.packages.urllib3.exceptions.HTTPError) as e:
+                    print("HTTPError fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
+                except (socket_error) as e:
+                    print("Socket error fetching %s: %s" % (url['expanded_url'].encode('utf-8'), e))
 
                     tuiu = TwitterUserItemUrl(
                         item=tui,
