@@ -123,7 +123,7 @@
             <thead>
                 <tr>
                     <th>user</th>
-                    <th>date time</th>
+                    <th>date</th>
                     <th>rt #</th>
                     <th>text</th>
                 </tr>
@@ -132,7 +132,7 @@
                 {% for item in items %}
                 <tr>
                     <td><a href='{% url "twitter_user" item.twitter_user.name %}'>{{ item.twitter_user.name }}</a></td>
-                    <td>{{ item.date_published|date:"H:i:s m-d-Y" }}</td>
+                    <td>{{ item.date_published|date:"Y-m-d h:i:s"}}&nbsp;{{ item.date_published|date:"a" }}</td>
                     <td>{{ item.tweet.retweet_count }}</td>
                     <td>{{ item.tweet.text|twitterize }}</td>
                 </tr>
