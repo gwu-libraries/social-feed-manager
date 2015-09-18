@@ -57,19 +57,28 @@ class Command(BaseCommand):
         if options.get('outputfile', True):
             outstream.close()
         if errors_occurred:
-            print 'Completed with errors. Please view the log file (%s) for details' % logfile
+            print 'Not all tweets found. View the log file (%s) for ids of missing tweets' % logfile
 
     def fetch(self, tweet_ids, api, outstream, flog):
         if tweet_ids:
-            try:
-                statuses = api.statuses_lookup(tweet_ids)
-                for status in statuses:
-                    json_value = json.dumps(status) + '\n\n'
-                    outstream.write(json_value)
-            except tweepy.error.TweepError as e:
-                content = 'Error: %s for the tweetids: %s' \
-                          % (e, tweet_ids) + '\n'
-                flog.write(content)
-                #Return true if errors occurred
-                return True
+            tweets_orig = set()
+            tweets_orig.update(tweet_ids)
+            found_ids = set()
+                
+            statuses = api.statuses_lookup(tweet_ids)
+            for status in statuses:
+                json_value = json.dumps(status) + '\n\n'
+                outstream.write(json_value)
+                found_ids.add(status['id_str'])
+            if len(found_ids) > 0:
+                missing_tweets = set()
+                missing_tweets = tweets_orig.difference(found_ids) 
+                if len(missing_tweets) > 0:
+                    for m in missing_tweets:
+                        content = m + '\n' 
+                        flog.write(content) 
+                    # return True if missing tweets 
+                    return True
         return False
+
+
