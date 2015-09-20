@@ -15,57 +15,79 @@ class TwitterFilterAdmin(admin.ModelAdmin):
     fields = ('name', 'user', 'is_active', 'words', 'people', 'locations')
 
     def save_model(self, request, obj, form, change):
-        ppl = []
+        ppl_submitted = []
         uids = []
-        ppl_fetched = set()
-        diff = set()
-        warn_msg = {'sock_exists': False,
-                    'tweep_error': False,
+        ppl_found = []
+        ppl_not_found = []
+        warn_msg = {'supervisor_not_running': False, 'tweep_error': False,
                     'invalid_acc': False}
-        if 'people' in form.changed_data:
+
+        if obj.people.lstrip().rstrip():
             for person in obj.people.split(','):
-                ppl.append(person.lstrip().lstrip('@').rstrip())
+                # create array of cleaned-up usernames
+                ppl_submitted.append(person.lstrip().lstrip('@').rstrip())
+        if ppl_submitted == []:
+            obj.uids = ''
+        else:
             try:
-                if obj.people != '':
-                    api = m.authenticated_api(username=
-                                              settings.TWITTER_DEFAULT_USERNAME
-                                              )
-                    people_uids = api.lookup_users(screen_names=ppl)
-                    for person in range(0, len(people_uids)):
-                        uids.append(people_uids[person]['id'])
-                        ppl_fetched.add(str(people_uids[person]
-                                            ['screen_name']).lower())
-                    obj.uids = ', '.join(map(str, uids))
-                    ppl_form = set(n.lower() for n in ppl)
-                    if ppl_form - ppl_fetched != set():
-                        diff = ppl_form - ppl_fetched
-                        warn_msg['invalid_acc'] = True
-                else:
-                    obj.uids = ''
+                print ppl_submitted
+                api = m.authenticated_api(username=
+                                          settings.TWITTER_DEFAULT_USERNAME)
+                profiles_found = api.lookup_users(screen_names=ppl_submitted)
+                # construct lower-case equivalent for usernames submitted
+                for profile in profiles_found:
+                    uids.append(profile['id'])
+                    sn = str(profile['screen_name'])
+                    ppl_found.append(sn)
+
+                # set the filter's uids to a comma-separated list of uids
+                # of found profiles
+                obj.uids = ', '.join(map(str, uids))
+
+                # create a lower-case version of ppl_found
+                # for case-sensitive comparison of lists
+                ppl_found_lower = set(n.lower() for n in ppl_found)
+
+                # Compare lists, create list of people_not_found
+                # (needed when we display the warning)
+                for p in ppl_submitted:
+                    if p.lower() not in ppl_found_lower:
+                        ppl_not_found.append(p)
+                # At least one account name wasn't found
+                if ppl_not_found != []:
+                    warn_msg['invalid_acc'] = True
+
+                # save people list back to the model without @ symbols
+                obj.people = ', '.join(ppl_submitted)
+
             except Exception as e:
                 if tweepy.error.TweepError:
-                    warn_msg['tweep_error'] = True
-                    warn_msg['error'] = e[0][0]['message']
+                    if e[0][0]['code'] == 17:
+                        warn_msg['invalid_acc'] = True
+                        ppl_not_found = ppl_submitted
+                    else:
+                        warn_msg['tweep_error'] = True
+                        warn_msg['error'] = e[0][0]['message']
+
         if os.path.exists(settings.SUPERVISOR_UNIX_SOCKET_FILE) is False:
-            warn_msg['sock_exists'] = True
-
-        super(TwitterFilterAdmin, self).save_model(request, obj, form, change)
-
+            warn_msg['supervisor_not_running'] = True
         if warn_msg['tweep_error']:
             messages.add_message(request, messages.WARNING,
                                  'TwitterFilter %s was saved with the '
                                  'exception: %s' % (obj.id, warn_msg['error']))
-        if warn_msg['sock_exists']:
+        if warn_msg['supervisor_not_running']:
             messages.add_message(request, messages.WARNING,
-                                 'Supervsiord is not running, Twitter'
-                                 'Filter %s saved but not added to supervisor'
+                                 'Supervsiord is not running, TwitterFilter %s'
+                                 ' saved but not added to supervisor'
                                  ' subprocesses' % (obj.id))
         if warn_msg['invalid_acc']:
             messages.add_message(request, messages.WARNING,
-                                 'TwitterFilter %s was saved '
-                                 'with the following invalid '
-                                 'accounts: %s' %
-                                 (obj.id, ', '.join(map(str, diff))))
+                                 'TwitterFilter %s was saved with the'
+                                 ' following invalid accounts: %s' %
+                                 (obj.id, ', '.join(map(str, ppl_not_found))))
+
+        super(TwitterFilterAdmin, self).save_model(request, obj, form, change)
+
 
 admin.site.register(m.TwitterFilter, TwitterFilterAdmin)
 
