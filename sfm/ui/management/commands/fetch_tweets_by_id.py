@@ -50,7 +50,7 @@ class Command(BaseCommand):
             if len(tweet_ids) == 100:
                 errors_occurred = self.fetch(tweet_ids, api, outstream, flog) or errors_occurred
                 tweet_ids = []
-        #Final fetch
+        # Final fetch
         errors_occurred = self.fetch(tweet_ids, api, outstream, flog) or errors_occurred
         fin.close()
         flog.close()
@@ -61,24 +61,19 @@ class Command(BaseCommand):
 
     def fetch(self, tweet_ids, api, outstream, flog):
         if tweet_ids:
-            tweets_orig = set()
-            tweets_orig.update(tweet_ids)
+            tweets_orig = set(tweet_ids)
             found_ids = set()
-                
             statuses = api.statuses_lookup(tweet_ids)
             for status in statuses:
-                json_value = json.dumps(status) + '\n\n'
+                json_value = json.dumps(status) + '\n'
                 outstream.write(json_value)
                 found_ids.add(status['id_str'])
-            if len(found_ids) > 0:
-                missing_tweets = set()
-                missing_tweets = tweets_orig.difference(found_ids) 
-                if len(missing_tweets) > 0:
-                    for m in missing_tweets:
-                        content = m + '\n' 
-                        flog.write(content) 
-                    # return True if missing tweets 
-                    return True
+            missing_tweets = set()
+            missing_tweets = tweets_orig.difference(found_ids)
+            if len(missing_tweets) > 0:
+                for m in missing_tweets:
+                    content = m + '\n'
+                    flog.write(content)
+                # return True if missing tweets 
+                return True
         return False
-
-
