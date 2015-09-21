@@ -18,8 +18,11 @@ class Command(BaseCommand):
                             a list of tweet ids, each on a separate line'),
         make_option('--outputfile', action='store',
                     default=None, help='Path of the output file'),
+        make_option('--lognotfound', action='store_true',
+                    default=False, help='Log a list of tweet ids that were \
+                            not found, each on a separate line'),
         make_option('--limit', action='store',
-            default=None, help='Limit on the number of tweets to fetch.'),
+                    default=None, help='Limit on the number of tweets to fetch.')
 
     )
 
@@ -30,8 +33,11 @@ class Command(BaseCommand):
 
         infile = options['inputfile']
         fin = open(infile, 'r+')
-        logfile = infile + '.log'
-        flog = open(logfile, 'w')
+        if options['lognotfound']:
+            logfile = options['inputfile'] + '.log'
+            flog = open(logfile, 'w')
+        else:
+            flog = None
         if options['outputfile']:
             outfile = options['outputfile']
             outstream = open(outfile, 'w')
@@ -53,14 +59,14 @@ class Command(BaseCommand):
         # Final fetch
         errors_occurred = self.fetch(tweet_ids, api, outstream, flog) or errors_occurred
         fin.close()
-        flog.close()
         if options.get('outputfile', True):
             outstream.close()
-        if errors_occurred:
-            print 'Not all tweets found. View the log file (%s) for ids of missing tweets' % logfile
+        if errors_occurred and options.get('logfile', True):
+            print 'Some tweets not found. View the log file (%s) for ids of missing tweets' % logfile
+            flog.close()
 
     def fetch(self, tweet_ids, api, outstream, flog):
-        if tweet_ids:
+        if tweet_ids and flog:
             tweets_orig = set(tweet_ids)
             found_ids = set()
             statuses = api.statuses_lookup(tweet_ids)
@@ -68,12 +74,16 @@ class Command(BaseCommand):
                 json_value = json.dumps(status) + '\n'
                 outstream.write(json_value)
                 found_ids.add(status['id_str'])
-            missing_tweets = set()
-            missing_tweets = tweets_orig.difference(found_ids)
+            missing_tweets = set(tweets_orig - found_ids)
             if len(missing_tweets) > 0:
                 for m in missing_tweets:
-                    content = m + '\n'
-                    flog.write(content)
-                # return True if missing tweets 
+                    flog.write(m + '\n')
                 return True
-        return False
+            else:
+                return False
+        elif tweet_ids:
+            statuses = api.statuses_lookup(tweet_ids)
+            for status in statuses:
+                json_value = json.dumps(status) + '\n'
+                outstream.write(json_value)
+            return False
