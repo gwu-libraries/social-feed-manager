@@ -6,9 +6,19 @@ A django application for managing multiple feeds of social media data.
 Developed at the GWU Libraries in Washington, DC, USA.
 
 This project was made possible in part by the Institute of Museum and
-Library Services, Sparks Grant LG-46-13-0257.
+Library Services, Sparks Grant LG-46-13-0257 and the National 
+Historical Publications and Records Commission (NHPRC), Innovation Grant
+NAR14-DI-50017-14.
 
 See also LICENSE.txt and AUTHORS.txt.
+
+Current status
+--------------
+
+We're rearchitecting the application and only addressing bugs after the 
+the upcoming release of m5_004. Follow new work in the sfm-ui repo:
+
+  https://github.com/gwu-libraries/sfm-ui 
 
 
 Documentation
