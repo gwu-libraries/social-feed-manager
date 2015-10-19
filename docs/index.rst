@@ -12,6 +12,11 @@ The application code is open source and `available on github`_.
 
 .. _available on github: http://github.com/gwu-libraries/social-feed-manager/ 
 
+We are in the process of re-architecting Social Feed Manager. For updates, see the `sfm-ui repo on github`_ and the project scope and background in its `wiki`_. When documentation for the new app is available, we will point to that from here.
+
+.. _sfm-ui repo on github: https://github.com/gwu-libraries/sfm-ui
+.. _wiki: https://github.com/gwu-libraries/sfm-ui/wiki 
+
 Contents:
 
 .. toctree::
