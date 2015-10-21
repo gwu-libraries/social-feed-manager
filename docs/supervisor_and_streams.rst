@@ -15,9 +15,13 @@ line as :doc:`management commands </mgmt_commands>`.
 
 Supervisor setup
 ----------------
+
 Supervisord is installed as part of the standard SFM installation; it is
 one of SFM's ubuntu package dependencies.  However, it must be configured
 in order to use filterstreams.
+
+Configuring the supervisor process
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To configure supervisord for SFM:
 
@@ -34,6 +38,9 @@ running the app with django "runserver" rather than apache, you will need to
 ensure that the supervisor socket file has 777 permissions.  After the ``chown=www-data:www-data`` line in supervisord.conf, modify the default ``chmod=700``
 line to ``chmod=777``.
 
+Configuring the www-data system group
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Next we will create a ``www-data`` group and add your user to it:
 
 .. code-block:: none
@@ -48,6 +55,9 @@ add your own user to this group:
 
        ``www-data:x:<a group number>:<your user name>``
 
+Setting up the log directory
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Next, create a ``/var/log/sfm`` directory. The supervisor-supervised processes will write log files to this directory.
 
 .. code-block:: none
@@ -60,12 +70,21 @@ Change the directory group ownership to ``www-data``:
 
         $ sudo chown www-data:www-data /var/log/sfm
 
-Edit local_settings.py to set DATA_DIR to the directory where you
-want stream output stored. Set SUPERVISOR\_PROCESS\_OWNER to a user
+Edit local_settings.py to set SUPERVISOR\_PROCESS\_OWNER to a user
 who has rights to write to ``/var/log/sfm`` (such as your user).
-You may also wish to adjust SAVE\_INTERVAL\_SETTINGS, which controls
-how often sfm will save data to a new file (default is every 15 minutes,
-specified in ``settings.py``).
+
+Setting up the data directory for stream output
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Edit local_settings.py to set DATA\_DIR to the directory where you
+want stream output stored.  Change its ownership to ``www-data:www-data``:
+
+.. code-block:: none
+
+        $ sudo chown www-data:www-data <YOUR DATA DIRECTORY>
+
+Setting ownership of sfm/sfm/supervisor.d
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Set ownership of the ``sfm/sfm/supervisor.d`` directory to www-data:www-data
 allow the apache user (www-data) to write to it. 
@@ -73,6 +92,16 @@ allow the apache user (www-data) to write to it.
 .. code-block:: none
 
    $ sudo chown www-data:www-data sfm/sfm/supervisor.d
+
+Optional configurations
+^^^^^^^^^^^^^^^^^^^^^^^
+
+You may also wish to adjust SAVE\_INTERVAL\_SETTINGS, which controls
+how often sfm will save data to a new file (default is every 15 minutes,
+specified in ``settings.py``).
+
+Restarting supervisor
+^^^^^^^^^^^^^^^^^^^^^
 
 Finally, restart supervisor:
 
@@ -84,6 +113,7 @@ Finally, restart supervisor:
 
 Streamsample setup
 ------------------
+
 A template streamsample configuration file "streamsample.conf.template" is
 included in the SFM distribution.  To set up a streamsample process managed by
 supervisor:
