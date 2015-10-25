@@ -5,7 +5,7 @@ psycopg2
 pytz
 requests==2.5.3
 south
-tweepy==3.2.0
+tweepy==3.4.0
 supervisor
 django-queryset-iterator
 openpyxl
