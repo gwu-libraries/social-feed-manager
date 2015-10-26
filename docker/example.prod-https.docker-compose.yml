@@ -1,0 +1,22 @@
+sfmdb:
+    image: gwul/sfm_db
+    environment:
+        - POSTGRES_PASSWORD=gherD42#dl5
+    restart: always
+sfmapp:
+    image: gwul/sfm_app:latest_https
+    ports:
+        - "80:80"
+        - "443:443"
+    links:
+        - sfmdb:db
+    environment:
+        - SFM_DEBUG=True
+        - SFM_TWITTER_DEFAULT_USERNAME=jlittman_dev
+        - SFM_TWITTER_CONSUMER_KEY=EHdoTe7ksgflP5nUalEfhaeo
+        - SFM_TWITTER_CONSUMER_SECRET=ZtUpemBkf2cEmaqiy52Ddihu9FPAiLebuMOmqN0jeQtXeAlen
+    volumes:
+        - /sfm-data:/var/sfm
+        - ~/social-feed-manager/docker/sfm.crt:/etc/ssl/certs/sfm.crt:ro
+        - ~/social-feed-manager/docker/sfm.key:/etc/ssl/private/sfm.key:ro
+    restart: always

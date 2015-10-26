@@ -1,0 +1,15 @@
+sfmmasterdb:
+    image: gwul/sfm_db
+    environment:
+        - POSTGRES_PASSWORD=gherD42#dl5
+sfmmasterapp:
+    image: gwul/sfm_app:master
+    ports:
+        - "8000:80"
+    links:
+        - sfmmasterdb:db
+    environment:
+        - SFM_DEBUG=True
+        - SFM_TWITTER_DEFAULT_USERNAME=jlittman_dev
+        - SFM_TWITTER_CONSUMER_KEY=EHdoTff7ksBgflP5nUalEfhaeo
+        - SFM_TWITTER_CONSUMER_SECRET=ZtUpmtkf2cEmaqiy52Ddihu9FPAiLebuMOmqN0jeQtXeAlen
