@@ -430,15 +430,15 @@ versions), then restart apache.  Let's get started.
 
 First, copy our apache configuration template to ``sites-available``. We
 like to append the appname "sfm" with the version number,
-e.g. ``sfm_m5_001.conf``, so when we go to deploy a new version, we can just
+e.g. ``sfm_m5_004.conf``, so when we go to deploy a new version, we can just
 add a new config file and make the switchover easy.  You could just call
 it ``sfm.conf`` if you want, but it can help to have the version number in 
 there, so these instructions use that convention.
 
 ::
 
-    % sudo cp sfm/apache.conf /etc/apache2/sites-available/sfm_m5_001.conf
-    % sudo vim /etc/apache2/sites-available/sfm_m5_001.conf
+    % sudo cp sfm/apache.conf /etc/apache2/sites-available/sfm_m5_004.conf
+    % sudo vim /etc/apache2/sites-available/sfm_m5_004.conf
 
 You will need to change several things in this file:
 
@@ -455,7 +455,7 @@ Next, enable the site configuration you just created:
 
 ::
 
-    % sudo a2ensite sfm_m5_001
+    % sudo a2ensite sfm_m5_004
 
 Assuming you are installing in a clean VM, disable the pre-existing
 default site:
