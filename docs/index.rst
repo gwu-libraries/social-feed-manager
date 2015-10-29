@@ -32,13 +32,3 @@ Contents:
    Frequently Asked Questions <faq>
    Troubleshooting <troubleshooting>
    Release Notes <release_notes>
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-

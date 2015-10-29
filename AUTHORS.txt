@@ -5,8 +5,10 @@ The programmer team (past and present) at GW Libraries includes:
 - Daniel Chudnov <dchud@gwu.edu>
 - Daniel Kerchner <kerchner@gwu.edu>
 - Laura Wrubel <lwrubel@gwu.edu>
-- Ankushi Sharma <anksharm@email.gwu.edu>
 - Christian Aldridge <zut@gwu.edu>
+- Justin Littman <justinlittman@gwu.edu>
+- Rajat Vij <rajatvij@gwu.edu>
+- Ankushi Sharma <anksharm@gwu.edu>
 
 The following people have contributed code to this repository and agreed
 to assign the copyright on their contributions to The George Washington
