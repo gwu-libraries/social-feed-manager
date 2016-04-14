@@ -1,6 +1,8 @@
 social feed manager
 ===================
 
+A re-archictected version of Social Feed Manager is in the works: https://github.com/gwu-libraries/sfm-ui
+
 A django application for managing multiple feeds of social media data.
 
 Developed at the GWU Libraries in Washington, DC, USA.
