@@ -1,5 +1,7 @@
-__THIS IS NOT THE SFM YOU SEEK__. (Well, probably not.) This is the original
-version of Social Feed Manager. For the new version, see [go.gwu.edu/sfm](http://go.gwu.edu/sfm).
+__THIS IS THE "OLD" SFM__, the original
+version of Social Feed Manager developed between 2012-2015.
+
+__IF YOU ARE LOOKING FOR THE "NEW" SFM__, which began development in 2015, head to __[go.gwu.edu/sfm](http://go.gwu.edu/sfm)__ for full information (and start at [https://github.com/gwu-libraries/sfm-ui](https://github.com/gwu-libraries/sfm-ui) if you want just the code)
 
 
 social feed manager
