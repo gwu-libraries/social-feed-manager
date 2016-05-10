@@ -1,7 +1,9 @@
+__THIS IS NOT THE SFM YOU SEEK__. (Well, probably not.) This is the original
+version of Social Feed Manager. For the new version, see [go.gwu.edu/sfm](http://go.gwu.edu/sfm).
+
+
 social feed manager
 ===================
-
-A re-archictected version of Social Feed Manager is in the works: https://github.com/gwu-libraries/sfm-ui
 
 A django application for managing multiple feeds of social media data.
 
@@ -17,11 +19,8 @@ See also LICENSE.txt and AUTHORS.txt.
 Current status
 --------------
 
-We're rearchitecting the application and only addressing bugs after the 
-the upcoming release of m5_004. Follow new work in the sfm-ui repo:
-
-  https://github.com/gwu-libraries/sfm-ui 
-
+We're only addressing bugs in this version of SFM. However, we're actively
+developing the [new version](http://go.gwu.edu/sfm) of SFM with similar and extended functionality.
 
 Documentation
 -------------
