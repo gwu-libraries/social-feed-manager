@@ -12,7 +12,7 @@ The application code is open source and `available on github`_.
 
 .. _available on github: http://github.com/gwu-libraries/social-feed-manager/ 
 
-We are in the process of re-architecting Social Feed Manager. For updates, see the `sfm-ui repo on github`_ and the project scope and background in its `wiki`_. When documentation for the new app is available, we will point to that from here.
+**Social Feed Manager was rewritten in 2016; this documentation is for the "old" SFM.** The new SFM documentation is located at `http://sfm.readthedocs.org/ <http://sfm.readthedocs.org/>`_  . The application code for the new SFM is available at the `sfm-ui repo on github`_ and there is a complete `project site <http://gwu-libraries.github.io/sfm-ui/>`_ as well.
 
 .. _sfm-ui repo on github: https://github.com/gwu-libraries/sfm-ui
 .. _wiki: https://github.com/gwu-libraries/sfm-ui/wiki 
